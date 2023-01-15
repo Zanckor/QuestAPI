@@ -7,8 +7,11 @@ public class ServerQuest {
     public String title;
 
     public String quest_type;
-    public List<String> target_entity;
+    public List<String> quest_target;
     public List<Integer> target_quantity;
+
+    public boolean hasTimeLimit;
+    public int timeLimitInSeconds;
 
     public String requirements_type;
     public int requirements_min;
@@ -17,6 +20,30 @@ public class ServerQuest {
     public String reward_type;
     public List<String> reward;
     public List<Integer> reward_quantity;
+
+
+    public static ServerQuest createQuest(ServerQuest abstractQuest){
+        ServerQuest playerQuest = new ServerQuest();
+
+        playerQuest.setId(abstractQuest.getId());
+        playerQuest.setTitle(abstractQuest.getTitle());
+        playerQuest.setQuest_type(abstractQuest.getQuest_type());
+        playerQuest.setQuest_target(abstractQuest.getQuest_target());
+        playerQuest.setTarget_quantity(abstractQuest.getTarget_quantity());
+        playerQuest.setHasTimeLimit(abstractQuest.isHasTimeLimit());
+        playerQuest.setTimeLimitInSeconds(abstractQuest.getTimeLimitInSeconds());
+        playerQuest.setRequirements_type(abstractQuest.getRequirements_type());
+        playerQuest.setRequirements_min(abstractQuest.getRequirements_min());
+        playerQuest.setRequirements_max(abstractQuest.getRequirements_max());
+        playerQuest.setReward_type(abstractQuest.getReward_type());
+        playerQuest.setReward(abstractQuest.getReward());
+        playerQuest.setReward_quantity(abstractQuest.getReward_quantity());
+
+        return playerQuest;
+    }
+
+
+
 
     public int getId() {
         return id;
@@ -42,12 +69,12 @@ public class ServerQuest {
         this.quest_type = quest_type;
     }
 
-    public List<String> getTarget_entity() {
-        return target_entity;
+    public List<String> getQuest_target() {
+        return quest_target;
     }
 
-    public void setTarget_entity(List<String> target_entity) {
-        this.target_entity = target_entity;
+    public void setQuest_target(List<String> quest_target) {
+        this.quest_target = quest_target;
     }
 
     public List<Integer> getTarget_quantity() {
@@ -106,23 +133,20 @@ public class ServerQuest {
         this.reward_quantity = reward_quantity;
     }
 
+    public boolean isHasTimeLimit() {
+        return hasTimeLimit;
+    }
 
-    public static ServerQuest createQuest(ServerQuest abstractQuest){
-        ServerQuest playerQuest = new ServerQuest();
+    public void setHasTimeLimit(boolean hasTimeLimit) {
+        this.hasTimeLimit = hasTimeLimit;
+    }
 
-        playerQuest.setId(abstractQuest.getId());
-        playerQuest.setTitle(abstractQuest.getTitle());
-        playerQuest.setQuest_type(abstractQuest.getQuest_type());
-        playerQuest.setTarget_entity(abstractQuest.getTarget_entity());
-        playerQuest.setTarget_quantity(abstractQuest.getTarget_quantity());
-        playerQuest.setRequirements_type(abstractQuest.getRequirements_type());
-        playerQuest.setRequirements_min(abstractQuest.getRequirements_min());
-        playerQuest.setRequirements_max(abstractQuest.getRequirements_max());
-        playerQuest.setReward_type(abstractQuest.getReward_type());
-        playerQuest.setReward(abstractQuest.getReward());
-        playerQuest.setReward_quantity(abstractQuest.getReward_quantity());
+    public int getTimeLimitInSeconds() {
+        return timeLimitInSeconds;
+    }
 
-        return playerQuest;
+    public void setTimeLimitInSeconds(int timeLimitInSeconds) {
+        this.timeLimitInSeconds = timeLimitInSeconds;
     }
 }
 
