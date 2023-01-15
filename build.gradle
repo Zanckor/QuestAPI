@@ -84,6 +84,9 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    maven {
+        url "https://raw.githubusercontent.com/Zanckor/QuestAPI/master"
+    }
 }
 
 dependencies {
