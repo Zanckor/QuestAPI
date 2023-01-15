@@ -5,9 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.zanckor.questapi.createQuest.PlayerQuest;
 import com.zanckor.questapi.createQuest.ServerQuest;
-import com.zanckor.questapi.utils.Timer;
+import com.zanckor.questapi.utils.QuestTimers;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -86,10 +85,10 @@ public class QuestCommands {
                 writer.close();
 
                 if (playerQuest.hasTimeLimit) {
-                    Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
+                    QuestTimers.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
                 }
 
-                if(playerQuest.getQuest_type().equals("protect_entity")){
+                if (playerQuest.getQuest_type().equals("protect_entity")) {
                     EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
 
                     Entity entity = entityType.create(level);
@@ -107,7 +106,7 @@ public class QuestCommands {
                     gson.toJson(protectEntityPlayerQuest, protectEntityWriter);
                     protectEntityWriter.close();
 
-                    Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
+                    QuestTimers.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
                 }
 
                 break;

@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zanckor.questapi.QuestApi;
 import com.zanckor.questapi.createQuest.PlayerQuest;
-import com.zanckor.questapi.network.SendPacket;
+import com.zanckor.questapi.network.SendQuestPacket;
 import com.zanckor.questapi.network.messages.QuestData;
 import com.zanckor.questapi.utils.Maths;
-import com.zanckor.questapi.utils.Timer;
+import com.zanckor.questapi.utils.QuestTimers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +30,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = QuestApi.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ServerEvents {
+public class ServerQuestEvents {
 
     @SubscribeEvent
     public static void createFolder(ServerAboutToStartEvent e) {
@@ -78,26 +78,26 @@ public class ServerEvents {
     @SubscribeEvent
     public static void killQuest(LivingDeathEvent e) {
         if (e.getEntity().level.isClientSide || !(e.getSource().getEntity() instanceof Player)) return;
-        SendPacket.TO_SERVER(new QuestData("kill"));
+        SendQuestPacket.TO_SERVER(new QuestData("kill"));
     }
 
 
     @SubscribeEvent
     public static void recollectPickUpQuest(PlayerEvent.ItemPickupEvent e) {
         if (e.getEntity().level.isClientSide || !(e.getEntity() instanceof Player)) return;
-        SendPacket.TO_SERVER(new QuestData("recollect"));
+        SendQuestPacket.TO_SERVER(new QuestData("recollect"));
     }
 
     @SubscribeEvent
     public static void recollectCraftQuest(PlayerEvent.ItemCraftedEvent e) {
         if (e.getEntity().level.isClientSide || !(e.getEntity() instanceof Player)) return;
-        SendPacket.TO_SERVER(new QuestData("recollect"));
+        SendQuestPacket.TO_SERVER(new QuestData("recollect"));
     }
 
     @SubscribeEvent
     public static void recollectCraftQuest(PlayerEvent.ItemSmeltedEvent e) {
         if (e.getEntity().level.isClientSide || !(e.getEntity() instanceof Player)) return;
-        SendPacket.TO_SERVER(new QuestData("recollect"));
+        SendQuestPacket.TO_SERVER(new QuestData("recollect"));
     }
 
 
@@ -105,7 +105,7 @@ public class ServerEvents {
     public static void interactWithNPC(PlayerInteractEvent.EntityInteract e) {
         if (e.getEntity().level.isClientSide || e.getHand() == InteractionHand.MAIN_HAND) return;
 
-        SendPacket.TO_SERVER(new QuestData("npc_interact"));
+        SendQuestPacket.TO_SERVER(new QuestData("npc_interact"));
     }
 
 
@@ -150,7 +150,7 @@ public class ServerEvents {
             return;
         }
 
-        if (!playerQuest.isCompleted() && playerQuest.hasTimeLimit && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+        if (!playerQuest.isCompleted() && playerQuest.hasTimeLimit && QuestTimers.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
             FileWriter writer = new FileWriter(file);
             playerQuest.setCompleted(true);
 
@@ -163,15 +163,16 @@ public class ServerEvents {
 
 
     public static void reachCoord(PlayerQuest playerQuest, Player player) throws IOException {
+        if (playerQuest.getQuest_target().get(0).contains("entity") || !playerQuest.getQuest_type().equals("reach_coord"))
+            return;
+
         Integer xCoord = Integer.valueOf(playerQuest.getQuest_target().get(0));
         Integer yCoord = Integer.valueOf(playerQuest.getQuest_target().get(1));
         Integer zCoord = Integer.valueOf(playerQuest.getQuest_target().get(2));
         Vec3 playerCoord = new Vec3(player.getBlockX(), player.getBlockY(), player.getBlockZ());
 
-        if (Maths.numberBetween(playerCoord.x, xCoord - 10, xCoord + 10) &&
-                Maths.numberBetween(playerCoord.y, yCoord - 10, yCoord + 10) &&
-                Maths.numberBetween(playerCoord.z, zCoord - 10, zCoord + 10)) {
-            SendPacket.TO_SERVER(new QuestData("reach_coord"));
+        if (Maths.numberBetween(playerCoord.x, xCoord - 10, xCoord + 10) && Maths.numberBetween(playerCoord.y, yCoord - 10, yCoord + 10) && Maths.numberBetween(playerCoord.z, zCoord - 10, zCoord + 10)) {
+            SendQuestPacket.TO_SERVER(new QuestData("reach_coord"));
         }
     }
 
@@ -182,11 +183,11 @@ public class ServerEvents {
 
             Entity entity = player.getServer().overworld().getEntity(entityUUID);
 
-            if (entity != null && entity.isAlive() && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
-                SendPacket.TO_SERVER(new QuestData("protect_entity"));
+            if (entity != null && entity.isAlive() && QuestTimers.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+                SendQuestPacket.TO_SERVER(new QuestData("protect_entity"));
                 entity.remove(Entity.RemovalReason.DISCARDED);
             } else if (entity == null || !entity.isAlive()) {
-                SendPacket.TO_SERVER(new QuestData("protect_entity"));
+                SendQuestPacket.TO_SERVER(new QuestData("protect_entity"));
             }
         }
     }

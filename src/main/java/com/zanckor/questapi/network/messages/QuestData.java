@@ -5,23 +5,19 @@ import com.google.gson.GsonBuilder;
 import com.zanckor.questapi.QuestApi;
 import com.zanckor.questapi.createQuest.PlayerQuest;
 import com.zanckor.questapi.createQuest.ServerQuest;
-import com.zanckor.questapi.utils.LookinAt;
-import com.zanckor.questapi.utils.Timer;
+import com.zanckor.questapi.utils.GetLookinAt;
+import com.zanckor.questapi.utils.QuestTimers;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,72 +51,17 @@ public class QuestData {
             Path playerdata = Paths.get(questapi.toString(), "player-data");
             Path userFolder = Paths.get(playerdata.toString(), player.getUUID().toString());
             Path activeQuest = Paths.get(userFolder.toString(), "active-quests");
-            Path completedQuest = Paths.get(userFolder.toString(), "completed-quests");
 
-            Path serverquests = Paths.get(questapi.toString(), "server-quests");
 
             for (File file : activeQuest.toFile().listFiles()) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
                 try {
                     //Incrementa el proceso de la misión
-                    FileReader reader = new FileReader(file);
-                    PlayerQuest playerQuest = gson.fromJson(reader, PlayerQuest.class);
-                    reader.close();
-
-                    questProgress(player, playerQuest, gson, file, msg, serverDirectory);
+                    incrementQuestProgress(player, gson, file, msg.quest, serverDirectory, 0, 1);
 
                     //Completa la misión en caso de cumplir los requisitos
-                    FileReader completeQuestReader = new FileReader(file);
-                    PlayerQuest modifiedPlayerQuest = gson.fromJson(completeQuestReader, PlayerQuest.class);
-                    completeQuestReader.close();
-
-                    if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
-                        FileWriter completeQuestWriter = new FileWriter(file);
-                        modifiedPlayerQuest.setCompleted(true);
-                        gson.toJson(modifiedPlayerQuest, completeQuestWriter);
-
-                        completeQuestWriter.close();
-                    }
-
-                    //Da la recompensa de la misión
-                    if (modifiedPlayerQuest.isCompleted()) {
-                        for (File serverFile : serverquests.toFile().listFiles()) {
-                            if (serverFile.getName().equals("id_" + playerQuest.getId() + ".json")) {
-
-                                FileReader serverQuestReader = new FileReader(serverFile);
-                                ServerQuest serverQuest = gson.fromJson(serverQuestReader, ServerQuest.class);
-
-                                switch (serverQuest.getReward_type()) {
-                                    case "item" -> {
-                                        for (int rewardIndex = 0; rewardIndex < serverQuest.getReward().size(); rewardIndex++) {
-                                            String valueItem = serverQuest.getReward().get(rewardIndex);
-                                            int quantity = serverQuest.getReward_quantity().get(rewardIndex);
-
-                                            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
-                                            ItemStack stack = new ItemStack(item, quantity);
-
-                                            player.addItem(stack);
-                                        }
-
-                                        break;
-                                    }
-
-                                    case "command" -> {
-                                        break;
-                                    }
-                                }
-
-                                serverQuestReader.close();
-                            }
-                        }
-                    }
-
-                    //Mueve el json a la carpeta "completed-quests"
-                    if (modifiedPlayerQuest.isCompleted()) {
-                        Files.move(file.toPath(), Paths.get(completedQuest.toString(), file.getName()));
-                    }
-
+                    completeQuest(player, gson, file, serverDirectory);
                 } catch (IOException e) {
                     QuestApi.LOGGER.error(e.getMessage());
                     QuestApi.LOGGER.error(e.getCause().getMessage());
@@ -133,11 +74,14 @@ public class QuestData {
     }
 
 
-    public static void questProgress(Player player, PlayerQuest playerQuest, Gson gson, File file, QuestData msg, Path serverDirectory) throws IOException {
+    public static void incrementQuestProgress(Player player, Gson gson, File file, String quest, Path serverDirectory, int position, int times) throws IOException {
+        FileReader reader = new FileReader(file);
+        PlayerQuest playerQuest = gson.fromJson(reader, PlayerQuest.class);
+        reader.close();
 
-        if (playerQuest.completed || !(playerQuest.getQuest_type().equals(msg.quest))) return;
+        if (playerQuest.completed || !(playerQuest.getQuest_type().equals(quest))) return;
 
-        switch (msg.quest) {
+        switch (quest) {
             case "kill" -> {
 
                 for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
@@ -202,7 +146,7 @@ public class QuestData {
                     PlayerQuest interactPlayerQuest = gson.fromJson(interactReader, PlayerQuest.class);
                     interactReader.close();
 
-                    Entity entityLookinAt = LookinAt.getEntityLookinAt(player, player.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
+                    Entity entityLookinAt = GetLookinAt.getEntityLookinAt(player, player.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
 
                     if (interactPlayerQuest.getQuest_target().get(targetIndex).equals(entityLookinAt.getType().getDescriptionId())
                             && interactPlayerQuest.getTarget_current_quantity().get(targetIndex) < interactPlayerQuest.getTarget_quantity().get(targetIndex)) {
@@ -243,7 +187,7 @@ public class QuestData {
 
                     FileWriter protectEntityWriter = new FileWriter(file);
 
-                    if (Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds()) && entity.isAlive()) {
+                    if (QuestTimers.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds()) && entity.isAlive()) {
                         gson.toJson(playerQuest.setProgress(protectEntityPlayerQuest, 0, 1), protectEntityWriter);
                     } else {
                         playerQuest.setCompleted(true);
@@ -254,7 +198,7 @@ public class QuestData {
                     protectEntityWriter.flush();
                     protectEntityWriter.close();
 
-                    if(!entity.isAlive()){
+                    if (!entity.isAlive()) {
                         Path questapi = Paths.get(serverDirectory.toString(), "quest-api");
                         Path playerdata = Paths.get(questapi.toString(), "player-data");
                         Path userFolder = Paths.get(playerdata.toString(), player.getUUID().toString());
@@ -265,6 +209,88 @@ public class QuestData {
                     }
 
                     return;
+                }
+            }
+
+            default -> {
+                FileReader customReader = new FileReader(file);
+                PlayerQuest customPlayerQuest = gson.fromJson(customReader, PlayerQuest.class);
+                customReader.close();
+
+                if (customPlayerQuest.getTarget_current_quantity().get(position) >= customPlayerQuest.getTarget_quantity().get(position) || !(customPlayerQuest.getQuest_target().get(position).equals(player.getLastHurtMob().getType().getDescriptionId()))) {
+                    return;
+                }
+
+                FileWriter customWriter = new FileWriter(file);
+                gson.toJson(customPlayerQuest.incrementProgress(customPlayerQuest, position), customWriter);
+                customWriter.flush();
+                customWriter.close();
+            }
+        }
+    }
+
+
+    public static void completeQuest(Player player, Gson gson, File file,Path serverDirectory) throws IOException {
+        Path questapi = Paths.get(serverDirectory.toString(), "quest-api");
+        Path playerdata = Paths.get(questapi.toString(), "player-data");
+        Path userFolder = Paths.get(playerdata.toString(), player.getUUID().toString());
+
+        FileReader completeQuestReader = new FileReader(file);
+        PlayerQuest modifiedPlayerQuest = gson.fromJson(completeQuestReader, PlayerQuest.class);
+        completeQuestReader.close();
+
+        if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
+            FileWriter completeQuestWriter = new FileWriter(file);
+            modifiedPlayerQuest.setCompleted(true);
+            gson.toJson(modifiedPlayerQuest, completeQuestWriter);
+
+            completeQuestWriter.close();
+
+
+            giveReward(player, modifiedPlayerQuest, gson, file, userFolder, questapi);
+        }
+    }
+
+
+    public static void giveReward(Player player, PlayerQuest modifiedPlayerQuest, Gson gson, File file, Path userFolder, Path questapi) throws IOException {
+        Path completedQuest = Paths.get(userFolder.toString(), "completed-quests");
+        Path serverquests = Paths.get(questapi.toString(), "server-quests");
+
+        if (modifiedPlayerQuest.isCompleted()) {
+            for (File serverFile : serverquests.toFile().listFiles()) {
+                if (serverFile.getName().equals("id_" + modifiedPlayerQuest.getId() + ".json")) {
+
+                    FileReader serverQuestReader = new FileReader(serverFile);
+                    ServerQuest serverQuest = gson.fromJson(serverQuestReader, ServerQuest.class);
+
+                    switch (serverQuest.getReward_type()) {
+                        case "item" -> {
+                            for (int rewardIndex = 0; rewardIndex < serverQuest.getReward().size(); rewardIndex++) {
+                                String valueItem = serverQuest.getReward().get(rewardIndex);
+                                int quantity = serverQuest.getReward_quantity().get(rewardIndex);
+
+                                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
+                                ItemStack stack = new ItemStack(item, quantity);
+
+                                player.addItem(stack);
+                            }
+
+                            break;
+                        }
+
+                        case "command" -> {
+                            for (int rewardIndex = 0; rewardIndex < serverQuest.getReward().size(); rewardIndex++) {
+
+
+                            }
+
+
+                            break;
+                        }
+                    }
+
+                    Files.move(file.toPath(), Paths.get(completedQuest.toString(), file.getName()));
+                    serverQuestReader.close();
                 }
             }
         }

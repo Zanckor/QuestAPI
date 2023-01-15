@@ -8,7 +8,7 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-public class NetworkHandler {
+public class QuestNetworkHandler {
 
     private static final String PROTOCOL_VERSION = "1.0";
 

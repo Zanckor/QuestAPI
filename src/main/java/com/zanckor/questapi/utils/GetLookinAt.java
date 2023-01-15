@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = QuestApi.MOD_ID)
-public class LookinAt {
+public class GetLookinAt {
 
     public static Entity getEntityLookinAt(Entity rayTraceEntity, double distance) {
         float playerRotX = rayTraceEntity.getXRot();

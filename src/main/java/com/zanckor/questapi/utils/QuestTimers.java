@@ -6,7 +6,7 @@ import com.google.common.collect.Table;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class Timer {
+public class QuestTimers {
 
     private static final Table<UUID, String, Long> ACTIVE_COOLDOWNS_TABLE = HashBasedTable.create();
     private static final Table<UUID, String, Integer> ACTIVE_TICKERS_TABLE = HashBasedTable.create();

@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zanckor.questapi.QuestApi;
 import com.zanckor.questapi.createQuest.PlayerQuest;
-import com.zanckor.questapi.utils.Timer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
@@ -48,7 +47,7 @@ public class QuestTimers {
 
                         if (playerQuest.completed) return;
 
-                        if (playerQuest.hasTimeLimit && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+                        if (playerQuest.hasTimeLimit && com.zanckor.questapi.utils.QuestTimers.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
                             FileWriter writer = new FileWriter(file);
                             playerQuest.setCompleted(true);
 

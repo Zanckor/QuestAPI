@@ -63,6 +63,35 @@ public class PlayerQuest {
         return playerQuest;
     }
 
+
+    public static PlayerQuest incrementProgress(PlayerQuest abstractQuest, int position, int times) {
+        PlayerQuest playerQuest = new PlayerQuest();
+
+        playerQuest.setId(abstractQuest.getId());
+        playerQuest.setTitle(abstractQuest.getTitle());
+        playerQuest.setQuest_type(abstractQuest.getQuest_type());
+        playerQuest.setQuest_target(new ArrayList<>(abstractQuest.getQuest_target()));
+        playerQuest.setTarget_quantity(new ArrayList<>(abstractQuest.getTarget_quantity()));
+
+        playerQuest.setTarget_current_quantity(new ArrayList<>(abstractQuest.getTarget_current_quantity()));
+        playerQuest.increaseTarget_current_quantity(abstractQuest.target_current_quantity, position, times);
+
+        playerQuest.setHasTimeLimit(abstractQuest.isHasTimeLimit());
+        playerQuest.setTimeLimitInSeconds(abstractQuest.getTimeLimitInSeconds());
+
+        playerQuest.setCompleted(false);
+
+        for (int i = 0; i < playerQuest.getQuest_target().size(); i++) {
+            if(i == playerQuest.getQuest_target().size()) playerQuest.setCompleted(true);
+
+            if (!(playerQuest.getTarget_current_quantity().get(i) >= playerQuest.getTarget_quantity().get(i))) {
+                break;
+            }
+        }
+
+        return playerQuest;
+    }
+
     public static PlayerQuest setProgress(PlayerQuest abstractQuest, int position, int quantity) {
         PlayerQuest playerQuest = new PlayerQuest();
 
@@ -150,6 +179,10 @@ public class PlayerQuest {
 
     public void increaseTarget_current_quantity(List<Integer> currentList, int position) {
         this.target_current_quantity.set(position, currentList.get(position) + 1);
+    }
+
+    public void increaseTarget_current_quantity(List<Integer> currentList, int position, int times) {
+        this.target_current_quantity.set(position, currentList.get(position) + times);
     }
 
     public void setTarget_current_quantity(int quantity, int position) {
