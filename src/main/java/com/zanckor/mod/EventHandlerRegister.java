@@ -1,7 +1,7 @@
-package com.zanckor.questapi;
+package com.zanckor.mod;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.zanckor.questapi.commands.QuestCommands;
+import com.zanckor.mod.commands.QuestCommands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,8 +10,8 @@ import net.minecraftforge.server.command.ConfigCommand;
 
 import java.io.IOException;
 
-@Mod.EventBusSubscriber(modid = QuestApi.MOD_ID)
-public class QuestEventHandlerRegister {
+@Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID)
+public class EventHandlerRegister {
 
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent e) {
@@ -26,7 +26,7 @@ public class QuestEventHandlerRegister {
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
                                                         IntegerArgumentType.getInteger(context, "questID"));
                                             } catch (IOException ex) {
-                                                QuestApi.LOGGER.error("File reader error");
+                                                QuestApiMain.LOGGER.error("File reader error");
 
                                                 return 0;
                                             }
@@ -42,7 +42,7 @@ public class QuestEventHandlerRegister {
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
                                                         IntegerArgumentType.getInteger(context, "questID"));
                                             } catch (IOException ex) {
-                                                QuestApi.LOGGER.error("File reader error");
+                                                QuestApiMain.LOGGER.error("File reader error");
 
                                                 return 0;
                                             }

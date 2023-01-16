@@ -1,5 +1,7 @@
 package com.zanckor.questapi.createQuest;
 
+import com.zanckor.api.quest_register.QuestTemplate;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +17,7 @@ public class PlayerQuest {
     public int timeLimitInSeconds;
     public boolean completed;
 
-    public static PlayerQuest createQuest(ServerQuest abstractQuest) {
+    public static PlayerQuest createQuest(QuestTemplate abstractQuest) {
         PlayerQuest playerQuest = new PlayerQuest();
 
         playerQuest.setId(abstractQuest.getId());

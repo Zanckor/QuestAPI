@@ -1,8 +1,8 @@
-package com.zanckor.questapi.createQuest;
+package com.zanckor.api.quest_register;
 
 import java.util.List;
 
-public class ServerQuest {
+public class QuestTemplate {
     public int id;
     public String title;
 
@@ -22,24 +22,31 @@ public class ServerQuest {
     public List<Integer> reward_quantity;
 
 
-    public static ServerQuest createQuest(ServerQuest abstractQuest){
-        ServerQuest playerQuest = new ServerQuest();
+    public static QuestTemplate createQuest(
+            int id, String title,
+            Enum quest_type,
+            List<String> quest_target, List<Integer> target_quantity,
+            boolean hasTimeLimit, int timeLimitInSeconds,
+            Enum requirements_type, int requirements_min, int requirements_max,
+            Enum reward_type, List<String> reward, List<Integer> reward_quantity){
 
-        playerQuest.setId(abstractQuest.getId());
-        playerQuest.setTitle(abstractQuest.getTitle());
-        playerQuest.setQuest_type(abstractQuest.getQuest_type());
-        playerQuest.setQuest_target(abstractQuest.getQuest_target());
-        playerQuest.setTarget_quantity(abstractQuest.getTarget_quantity());
-        playerQuest.setHasTimeLimit(abstractQuest.isHasTimeLimit());
-        playerQuest.setTimeLimitInSeconds(abstractQuest.getTimeLimitInSeconds());
-        playerQuest.setRequirements_type(abstractQuest.getRequirements_type());
-        playerQuest.setRequirements_min(abstractQuest.getRequirements_min());
-        playerQuest.setRequirements_max(abstractQuest.getRequirements_max());
-        playerQuest.setReward_type(abstractQuest.getReward_type());
-        playerQuest.setReward(abstractQuest.getReward());
-        playerQuest.setReward_quantity(abstractQuest.getReward_quantity());
+        QuestTemplate questTemplate = new QuestTemplate();
 
-        return playerQuest;
+        questTemplate.setId(id);
+        questTemplate.setTitle(title);
+        questTemplate.setQuest_type(quest_type.name());
+        questTemplate.setQuest_target(quest_target);
+        questTemplate.setTarget_quantity(target_quantity);
+        questTemplate.setHasTimeLimit(hasTimeLimit);
+        questTemplate.setTimeLimitInSeconds(timeLimitInSeconds);
+        questTemplate.setRequirements_type(requirements_type.name());
+        questTemplate.setRequirements_min(requirements_min);
+        questTemplate.setRequirements_max(requirements_max);
+        questTemplate.setReward_type(reward_type.name());
+        questTemplate.setReward(reward);
+        questTemplate.setReward_quantity(reward_quantity);
+
+        return questTemplate;
     }
 
 

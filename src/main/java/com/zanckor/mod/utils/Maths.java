@@ -1,4 +1,4 @@
-package com.zanckor.questapi.utils;
+package com.zanckor.mod.utils;
 
 import org.apache.commons.lang3.Range;
 

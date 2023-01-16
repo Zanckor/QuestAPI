@@ -1,8 +1,8 @@
-package com.zanckor.questapi.network;
+package com.zanckor.mod.network;
 
-import com.zanckor.questapi.QuestApi;
-import com.zanckor.questapi.network.messages.QuestData;
-import com.zanckor.questapi.network.messages.QuestTimers;
+import com.zanckor.mod.QuestApiMain;
+import com.zanckor.mod.network.messages.QuestData;
+import com.zanckor.mod.network.messages.QuestTimers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -13,7 +13,7 @@ public class QuestNetworkHandler {
     private static final String PROTOCOL_VERSION = "1.0";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(QuestApi.MOD_ID, "questapinetwork"),
+            new ResourceLocation(QuestApiMain.MOD_ID, "questapinetwork"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals

@@ -1,6 +1,6 @@
-package com.zanckor.questapi.utils;
+package com.zanckor.mod.utils;
 
-import com.zanckor.questapi.QuestApi;
+import com.zanckor.mod.QuestApiMain;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = QuestApi.MOD_ID)
+@Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID)
 public class GetLookinAt {
 
     public static Entity getEntityLookinAt(Entity rayTraceEntity, double distance) {

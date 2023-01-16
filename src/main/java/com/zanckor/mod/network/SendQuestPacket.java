@@ -1,4 +1,4 @@
-package com.zanckor.questapi.network;
+package com.zanckor.mod.network;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

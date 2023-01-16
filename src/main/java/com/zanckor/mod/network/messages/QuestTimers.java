@@ -1,8 +1,8 @@
-package com.zanckor.questapi.network.messages;
+package com.zanckor.mod.network.messages;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zanckor.questapi.QuestApi;
+import com.zanckor.mod.QuestApiMain;
 import com.zanckor.questapi.createQuest.PlayerQuest;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -47,7 +47,7 @@ public class QuestTimers {
 
                         if (playerQuest.completed) return;
 
-                        if (playerQuest.hasTimeLimit && com.zanckor.questapi.utils.QuestTimers.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+                        if (playerQuest.hasTimeLimit && com.zanckor.mod.utils.QuestTimers.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
                             FileWriter writer = new FileWriter(file);
                             playerQuest.setCompleted(true);
 
@@ -55,7 +55,7 @@ public class QuestTimers {
                         }
 
                     } catch (IOException exception) {
-                        QuestApi.LOGGER.error("File reader/writer error");
+                        QuestApiMain.LOGGER.error("File reader/writer error");
                     }
                 }
             }

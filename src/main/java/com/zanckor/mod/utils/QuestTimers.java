@@ -1,4 +1,4 @@
-package com.zanckor.questapi.utils;
+package com.zanckor.mod.utils;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
