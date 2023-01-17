@@ -1,8 +1,8 @@
 package com.zanckor.mod.network;
 
 import com.zanckor.mod.QuestApiMain;
-import com.zanckor.mod.network.messages.QuestData;
-import com.zanckor.mod.network.messages.QuestTimers;
+import com.zanckor.mod.network.message.QuestDataPacket;
+import com.zanckor.mod.network.message.TimerPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -22,12 +22,12 @@ public class QuestNetworkHandler {
     public static void register() {
         int index = 0;
 
-        CHANNEL.messageBuilder(QuestData.class, index++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(QuestData::encodeBuffer).decoder(QuestData::new)
-                .consumerNetworkThread(QuestData::handle).add();
+        CHANNEL.messageBuilder(QuestDataPacket.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(QuestDataPacket::encodeBuffer).decoder(QuestDataPacket::new)
+                .consumerNetworkThread(QuestDataPacket::handler).add();
 
-        CHANNEL.messageBuilder(QuestTimers.class, index++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(QuestTimers::encodeBuffer).decoder(QuestTimers::new)
-                .consumerNetworkThread(QuestTimers::handle).add();
+        CHANNEL.messageBuilder(TimerPacket.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(TimerPacket::encodeBuffer).decoder(TimerPacket::new)
+                .consumerNetworkThread(TimerPacket::handle).add();
     }
 }

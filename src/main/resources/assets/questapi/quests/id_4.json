@@ -1,0 +1,25 @@
+{
+  "id": 4,
+  "title": "Protect entity",
+  "quest_type": "PROTECT_ENTITY",
+  "quest_target": [
+    "entity.minecraft.pig"
+  ],
+  "target_quantity": [
+    1
+  ],
+  "hasTimeLimit": false,
+  "timeLimitInSeconds": 60,
+  "requirements_type": "xp",
+  "requirements_min": 0,
+  "requirements_max": 0,
+  "reward_type": "ITEM",
+  "reward": [
+    "minecraft:coal",
+    "minecraft:gold_ingot"
+  ],
+  "reward_quantity": [
+    64,
+    16
+  ]
+}

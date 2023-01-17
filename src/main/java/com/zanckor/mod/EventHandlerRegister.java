@@ -1,7 +1,7 @@
 package com.zanckor.mod;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.zanckor.mod.commands.QuestCommands;
+import com.zanckor.mod.command.QuestCommand;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,7 +21,7 @@ public class EventHandlerRegister {
                                 .then(net.minecraft.commands.Commands.argument("questID", IntegerArgumentType.integer())
                                         .executes((context) -> {
                                             try {
-                                                return QuestCommands.addQuest(
+                                                return QuestCommand.addQuest(
                                                         context,
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
                                                         IntegerArgumentType.getInteger(context, "questID"));
@@ -37,7 +37,7 @@ public class EventHandlerRegister {
                                 .then(net.minecraft.commands.Commands.argument("questID", IntegerArgumentType.integer())
                                         .executes((context) -> {
                                             try {
-                                                return QuestCommands.removeQuest(
+                                                return QuestCommand.removeQuest(
                                                         context,
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
                                                         IntegerArgumentType.getInteger(context, "questID"));

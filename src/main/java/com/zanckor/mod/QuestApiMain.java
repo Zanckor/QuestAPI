@@ -1,7 +1,7 @@
 package com.zanckor.mod;
 
 import com.mojang.logging.LogUtils;
-import com.zanckor.example.QuestApi;
+import com.zanckor.example.ModExample;
 import com.zanckor.mod.network.QuestNetworkHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Mod(QuestApiMain.MOD_ID)
 public class QuestApiMain {
@@ -18,14 +19,20 @@ public class QuestApiMain {
 
     public QuestApiMain() {
         QuestNetworkHandler.register();
-        QuestApi.initialize();
+        ModExample.initialize();
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
 
-    public static Path getActiveQuest(Path playerData) {
-        Path activeQuest = Paths.get(playerData.toString(), "active-quests");
+    public static Path getUserFolder(UUID playerUUID) {
+        Path userFolder = Paths.get(playerData.toString(), playerUUID.toString());
+
+        return userFolder;
+    }
+
+    public static Path getActiveQuest(Path userFolder) {
+        Path activeQuest = Paths.get(userFolder.toString(), "active-quests");
 
         return activeQuest;
     }
