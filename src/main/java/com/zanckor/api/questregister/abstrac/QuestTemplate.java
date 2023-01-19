@@ -1,4 +1,4 @@
-package com.zanckor.api.questregister;
+package com.zanckor.api.questregister.abstrac;
 
 import java.util.List;
 

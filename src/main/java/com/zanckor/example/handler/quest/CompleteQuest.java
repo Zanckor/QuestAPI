@@ -1,13 +1,14 @@
-package com.zanckor.example.messagehandler;
+package com.zanckor.example.handler.quest;
 
 import com.google.gson.Gson;
-import com.zanckor.mod.PlayerQuest;
-import com.zanckor.api.questregister.QuestTemplate;
-import net.minecraft.resources.ResourceLocation;
+import com.zanckor.api.EnumQuestReward;
+import com.zanckor.api.questregister.abstrac.AbstractReward;
+import com.zanckor.api.questregister.abstrac.PlayerQuest;
+import com.zanckor.api.questregister.abstrac.QuestTemplate;
+import com.zanckor.api.questregister.register.TemplateRegistry;
+import com.zanckor.mod.network.SendQuestPacket;
+import com.zanckor.mod.network.message.ToastPacket;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
 import java.io.FileReader;
@@ -28,18 +29,18 @@ public class CompleteQuest {
         PlayerQuest modifiedPlayerQuest = gson.fromJson(completeQuestReader, PlayerQuest.class);
         completeQuestReader.close();
 
+
         if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
             FileWriter completeQuestWriter = new FileWriter(file);
             modifiedPlayerQuest.setCompleted(true);
             gson.toJson(modifiedPlayerQuest, completeQuestWriter);
 
             completeQuestWriter.close();
-
             giveReward(player, modifiedPlayerQuest, gson, file, userFolder);
+
+            SendQuestPacket.TO_CLIENT(player, new ToastPacket(modifiedPlayerQuest.getTitle()));
         }
     }
-
-
 
 
     public static void giveReward(Player player, PlayerQuest modifiedPlayerQuest, Gson gson, File file, Path userFolder) throws IOException {
@@ -49,32 +50,9 @@ public class CompleteQuest {
 
                     FileReader serverQuestReader = new FileReader(serverFile);
                     QuestTemplate serverQuest = gson.fromJson(serverQuestReader, QuestTemplate.class);
+                    AbstractReward reward = TemplateRegistry.getQuestReward(EnumQuestReward.valueOf(serverQuest.getReward_type()));
 
-                    switch (serverQuest.getReward_type()) {
-                        case "ITEM" -> {
-                            for (int rewardIndex = 0; rewardIndex < serverQuest.getReward().size(); rewardIndex++) {
-                                String valueItem = serverQuest.getReward().get(rewardIndex);
-                                int quantity = serverQuest.getReward_quantity().get(rewardIndex);
-
-                                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
-                                ItemStack stack = new ItemStack(item, quantity);
-
-                                player.addItem(stack);
-                            }
-
-                            break;
-                        }
-
-                        case "COMMAND" -> {
-                            for (int rewardIndex = 0; rewardIndex < serverQuest.getReward().size(); rewardIndex++) {
-
-
-                            }
-
-
-                            break;
-                        }
-                    }
+                    reward.handler(player, serverQuest);
 
                     Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
                     serverQuestReader.close();

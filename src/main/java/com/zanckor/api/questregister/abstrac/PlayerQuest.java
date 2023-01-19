@@ -1,6 +1,4 @@
-package com.zanckor.mod;
-
-import com.zanckor.api.questregister.QuestTemplate;
+package com.zanckor.api.questregister.abstrac;
 
 import java.util.ArrayList;
 import java.util.Collections;

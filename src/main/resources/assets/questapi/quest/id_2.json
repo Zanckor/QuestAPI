@@ -1,20 +1,20 @@
 {
-  "id": 0,
+  "id": 2,
   "title": "Recollect items",
-  "quest_type": "RECOLLECT",
+  "quest_type": "INTERACT_ENTITY",
   "quest_target": [
-    "minecraft:iron_ingot",
-    "minecraft:gold_ingot"
+    "entity.minecraft.pig",
+    "entity.minecraft.cow"
   ],
   "target_quantity": [
     1,
     2
   ],
-  "hasTimeLimit": false,
-  "timeLimitInSeconds": 0,
-  "requirements_type": "xp",
-  "requirements_min": 0,
-  "requirements_max": 0,
+  "hasTimeLimit": true,
+  "timeLimitInSeconds": 60,
+  "requirements_type": "XP",
+  "requirements_min": 20,
+  "requirements_max": 30,
   "reward_type": "ITEM",
   "reward": [
     "minecraft:coal",

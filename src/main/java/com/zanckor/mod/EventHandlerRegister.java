@@ -26,7 +26,7 @@ public class EventHandlerRegister {
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
                                                         IntegerArgumentType.getInteger(context, "questID"));
                                             } catch (IOException ex) {
-                                                QuestApiMain.LOGGER.error("File reader error");
+                                                QuestApiMain.LOGGER.error(ex.getMessage());
 
                                                 return 0;
                                             }
@@ -42,7 +42,7 @@ public class EventHandlerRegister {
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
                                                         IntegerArgumentType.getInteger(context, "questID"));
                                             } catch (IOException ex) {
-                                                QuestApiMain.LOGGER.error("File reader error");
+                                                QuestApiMain.LOGGER.error(ex.getMessage());
 
                                                 return 0;
                                             }

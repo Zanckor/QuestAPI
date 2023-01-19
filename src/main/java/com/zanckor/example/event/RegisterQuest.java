@@ -1,6 +1,6 @@
 package com.zanckor.example.event;
 
-import com.zanckor.api.questregister.QuestRegistry;
+import com.zanckor.api.questregister.register.QuestRegistry;
 import com.zanckor.mod.QuestApiMain;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

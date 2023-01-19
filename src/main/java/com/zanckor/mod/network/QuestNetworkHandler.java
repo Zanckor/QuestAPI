@@ -3,6 +3,7 @@ package com.zanckor.mod.network;
 import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.network.message.QuestDataPacket;
 import com.zanckor.mod.network.message.TimerPacket;
+import com.zanckor.mod.network.message.ToastPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -28,6 +29,11 @@ public class QuestNetworkHandler {
 
         CHANNEL.messageBuilder(TimerPacket.class, index++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(TimerPacket::encodeBuffer).decoder(TimerPacket::new)
-                .consumerNetworkThread(TimerPacket::handle).add();
+                .consumerNetworkThread(TimerPacket::handler).add();
+
+
+        CHANNEL.messageBuilder(ToastPacket.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(ToastPacket::encodeBuffer).decoder(ToastPacket::new)
+                .consumerNetworkThread(ToastPacket::handler).add();
     }
 }

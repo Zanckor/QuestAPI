@@ -9,10 +9,10 @@
     1
   ],
   "hasTimeLimit": false,
-  "timeLimitInSeconds": 60,
-  "requirements_type": "xp",
-  "requirements_min": 0,
-  "requirements_max": 0,
+  "timeLimitInSeconds": 5,
+  "requirements_type": "XP",
+  "requirements_min": 40,
+  "requirements_max": 50,
   "reward_type": "ITEM",
   "reward": [
     "minecraft:coal",

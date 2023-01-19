@@ -1,9 +1,9 @@
-package com.zanckor.example.messagehandler;
+package com.zanckor.example.handler.quest;
 
 import com.google.gson.Gson;
-import com.zanckor.api.questregister.AbstractQuest;
+import com.zanckor.api.questregister.abstrac.AbstractQuest;
 import com.zanckor.mod.util.MCUtil;
-import com.zanckor.mod.PlayerQuest;
+import com.zanckor.api.questregister.abstrac.PlayerQuest;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;

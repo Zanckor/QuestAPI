@@ -1,10 +1,10 @@
 {
-  "id": 1,
-  "title": "Kill entities",
-  "quest_type": "KILL",
+  "id": 0,
+  "title": "Recollect items",
+  "quest_type": "RECOLLECT",
   "quest_target": [
-    "entity.minecraft.pig",
-    "entity.minecraft.cow"
+    "minecraft:iron_ingot",
+    "minecraft:gold_ingot"
   ],
   "target_quantity": [
     1,
@@ -12,9 +12,9 @@
   ],
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,
-  "requirements_type": "xp",
+  "requirements_type": "XP",
   "requirements_min": 0,
-  "requirements_max": 0,
+  "requirements_max": 10,
   "reward_type": "ITEM",
   "reward": [
     "minecraft:coal",

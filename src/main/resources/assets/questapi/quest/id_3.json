@@ -1,0 +1,29 @@
+{
+  "id": 3,
+  "title": "Locate coord",
+  "quest_type": "MOVE_TO",
+  "quest_target": [
+    "100",
+    "110",
+    "100"
+  ],
+  "target_quantity": [
+    1,
+    1,
+    1
+  ],
+  "hasTimeLimit": false,
+  "timeLimitInSeconds": 0,
+  "requirements_type": "XP",
+  "requirements_min": 30,
+  "requirements_max": 40,
+  "reward_type": "ITEM",
+  "reward": [
+    "minecraft:coal",
+    "minecraft:gold_ingot"
+  ],
+  "reward_quantity": [
+    64,
+    16
+  ]
+}

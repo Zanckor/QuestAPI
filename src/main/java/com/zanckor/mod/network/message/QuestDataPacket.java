@@ -2,9 +2,9 @@ package com.zanckor.mod.network.message;
 
 import com.google.gson.Gson;
 import com.zanckor.api.EnumQuestType;
-import com.zanckor.api.questregister.AbstractQuest;
-import com.zanckor.api.questregister.TemplateRegistry;
-import com.zanckor.mod.PlayerQuest;
+import com.zanckor.api.questregister.abstrac.AbstractQuest;
+import com.zanckor.api.questregister.register.TemplateRegistry;
+import com.zanckor.api.questregister.abstrac.PlayerQuest;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
@@ -24,6 +24,8 @@ public class QuestDataPacket {
     EnumQuestType quest;
 
     public QuestDataPacket(EnumQuestType quest) {
+        //System.out.println("QUEST: " + quest);
+
         this.quest = quest;
     }
 

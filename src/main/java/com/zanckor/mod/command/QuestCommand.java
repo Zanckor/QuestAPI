@@ -3,8 +3,11 @@ package com.zanckor.mod.command;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.zanckor.mod.PlayerQuest;
-import com.zanckor.api.questregister.QuestTemplate;
+import com.zanckor.api.EnumQuestRequirement;
+import com.zanckor.api.questregister.abstrac.AbstractRequirement;
+import com.zanckor.api.questregister.abstrac.PlayerQuest;
+import com.zanckor.api.questregister.abstrac.QuestTemplate;
+import com.zanckor.api.questregister.register.TemplateRegistry;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.zanckor.api.EnumQuestType.PROTECT_ENTITY;
 import static com.zanckor.mod.QuestApiMain.*;
 
 public class QuestCommand {
@@ -50,55 +54,28 @@ public class QuestCommand {
 
             if (file.getName().equals(quest)) {
                 FileReader reader = new FileReader(file);
-                QuestTemplate abstractQuest = gson.fromJson(reader, QuestTemplate.class);
+                QuestTemplate serverQuest = gson.fromJson(reader, QuestTemplate.class);
                 reader.close();
 
-                /*
-                switch (abstractQuest.getRequirements_type()) {
-                    case "xp" -> {
-                        boolean minReqs = player.experienceLevel >= abstractQuest.getRequirements_min() ? true : false;
-                        boolean maxReqs = player.experienceLevel <= abstractQuest.getRequirements_max() ? true : false;
+                AbstractRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
 
-                        if (!minReqs || !maxReqs) {
-                            context.getSource().sendFailure(Component.literal( "Player " + player.getName() + " doesn't have the requirements to access to this quest"));
-                            writer.close();
-                            return 0;
-                        }
-
-
-                        break;
-                    }
+                if (!requirement.handler(player, serverQuest)) {
+                    context.getSource().sendFailure(Component.literal("Player " + player.getScoreboardName() + " doesn't have the requirements to access to this quest"));
+                    return 0;
                 }
-                 */
 
                 FileWriter writer = new FileWriter(path.toFile());
-                PlayerQuest playerQuest = PlayerQuest.createQuest(abstractQuest);
+                PlayerQuest playerQuest = PlayerQuest.createQuest(serverQuest);
                 gson.toJson(playerQuest, writer);
                 writer.close();
+
 
                 if (playerQuest.hasTimeLimit) {
                     Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
                 }
 
-                if (playerQuest.getQuest_type().equals("protect_entity")) {
-                    EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
-
-                    Entity entity = entityType.create(level);
-                    entity.setPos(player.getPosition(0));
-
-                    level.addFreshEntity(entity);
-
-                    FileWriter protectEntityWriter = new FileWriter(path.toFile());
-                    PlayerQuest protectEntityPlayerQuest = PlayerQuest.createQuest(abstractQuest);
-                    List<String> list = new ArrayList<>();
-
-                    list.add(entity.getUUID().toString());
-
-                    protectEntityPlayerQuest.setQuest_target(list);
-                    gson.toJson(protectEntityPlayerQuest, protectEntityWriter);
-                    protectEntityWriter.close();
-
-                    Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
+                if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {
+                    protectEntityQuest(playerQuest, level, player, serverQuest, path, gson, questID);
                 }
 
                 break;
@@ -108,6 +85,29 @@ public class QuestCommand {
         return 1;
     }
 
+    private static int protectEntityQuest(PlayerQuest playerQuest, ServerLevel level, Player player, QuestTemplate serverQuest, Path path, Gson gson, int questID) throws IOException {
+        EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
+        UUID playerUUID = player.getUUID();
+
+        Entity entity = entityType.create(level);
+        entity.setPos(player.getPosition(0));
+
+        level.addFreshEntity(entity);
+
+        FileWriter protectEntityWriter = new FileWriter(path.toFile());
+        PlayerQuest protectEntityPlayerQuest = PlayerQuest.createQuest(serverQuest);
+        List<String> list = new ArrayList<>();
+
+        list.add(entity.getUUID().toString());
+
+        protectEntityPlayerQuest.setQuest_target(list);
+        gson.toJson(protectEntityPlayerQuest, protectEntityWriter);
+        protectEntityWriter.close();
+
+        Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
+
+        return 1;
+    }
 
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
         Path userFolder = Paths.get(playerData.toString(), playerUUID.toString());

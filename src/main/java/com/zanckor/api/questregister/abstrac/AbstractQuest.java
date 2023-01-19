@@ -1,7 +1,6 @@
-package com.zanckor.api.questregister;
+package com.zanckor.api.questregister.abstrac;
 
 import com.google.gson.Gson;
-import com.zanckor.mod.PlayerQuest;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.File;

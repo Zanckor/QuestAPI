@@ -1,7 +1,7 @@
-package com.zanckor.api.questregister;
+package com.zanckor.api.questregister.register;
 
 import com.google.gson.Gson;
-import com.zanckor.mod.PlayerQuest;
+import com.zanckor.api.questregister.abstrac.QuestTemplate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -11,13 +11,13 @@ import java.io.*;
 import static com.zanckor.mod.QuestApiMain.serverQuests;
 
 public class QuestRegistry {
-    static PlayerQuest playerQuest;
+    static QuestTemplate playerQuest;
 
     public static void registerQuest(String modid) {
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
-        resourceManager.listResources("quests", (file) -> {
+        resourceManager.listResources("quest", (file) -> {
             if(file.getPath().length() > 7) {
                 String fileName = file.getPath().substring(7);
                 ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
@@ -38,17 +38,17 @@ public class QuestRegistry {
     private static void read(Gson gson, ResourceLocation resourceLocation) {
         try {
             InputStream inputStream = Minecraft.getInstance().getResourceManager().getResource(resourceLocation).get().open();
-            playerQuest = gson.fromJson(new InputStreamReader(inputStream), PlayerQuest.class);
+            playerQuest = gson.fromJson(new InputStreamReader(inputStream), QuestTemplate.class);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void write(Gson gson, PlayerQuest playerQuest, String fileName) {
+    private static void write(Gson gson, QuestTemplate questTemplate, String fileName) {
         try {
             FileWriter writer = new FileWriter(new File(serverQuests.toFile(), fileName));
-            writer.write(gson.toJson(playerQuest));
+            writer.write(gson.toJson(questTemplate));
             writer.flush();
             writer.close();
 

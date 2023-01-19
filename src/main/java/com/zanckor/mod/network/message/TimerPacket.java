@@ -3,7 +3,7 @@ package com.zanckor.mod.network.message;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zanckor.mod.QuestApiMain;
-import com.zanckor.mod.PlayerQuest;
+import com.zanckor.api.questregister.abstrac.PlayerQuest;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +31,7 @@ public class TimerPacket {
     }
 
 
-    public static void handle(TimerPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handler(TimerPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             for (Player player : ctx.get().getSender().level.players()) {
                 Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
@@ -54,7 +54,7 @@ public class TimerPacket {
                         }
 
                     } catch (IOException exception) {
-                        QuestApiMain.LOGGER.error("File reader/writer error");
+                        QuestApiMain.LOGGER.error(exception.getMessage());
                     }
                 }
             }
