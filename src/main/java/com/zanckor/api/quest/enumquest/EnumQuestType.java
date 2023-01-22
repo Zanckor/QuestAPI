@@ -1,4 +1,4 @@
-package com.zanckor.api;
+package com.zanckor.api.quest.enumquest;
 
 public enum EnumQuestType {
     INTERACT_ENTITY,

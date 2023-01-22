@@ -1,30 +1,30 @@
-package com.zanckor.api.questregister.register;
+package com.zanckor.api.dialog.register;
 
 import com.google.gson.Gson;
-import com.zanckor.api.questregister.abstrac.QuestTemplate;
+import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.*;
 
-import static com.zanckor.mod.QuestApiMain.serverQuests;
+import static com.zanckor.mod.QuestApiMain.serverDialogs;
 
-public class QuestRegistry {
-    static QuestTemplate playerQuest;
+public class DialogRegistry {
+    static DialogTemplate dialogTemplate;
 
-    public static void registerQuest(String modid) {
+    public static void registerDialog(String modid) {
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
-        resourceManager.listResources("quest", (file) -> {
-            if(file.getPath().length() > 7) {
+        resourceManager.listResources("dialog", (file) -> {
+            if (file.getPath().length() > 7) {
                 String fileName = file.getPath().substring(7);
                 ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
 
                 if (file.getPath().endsWith(".json")) {
                     read(gson, resourceLocation);
-                    write(gson, playerQuest, fileName);
+                    write(gson, dialogTemplate, fileName);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
                 }
@@ -38,23 +38,24 @@ public class QuestRegistry {
     private static void read(Gson gson, ResourceLocation resourceLocation) {
         try {
             InputStream inputStream = Minecraft.getInstance().getResourceManager().getResource(resourceLocation).get().open();
-            playerQuest = gson.fromJson(new InputStreamReader(inputStream), QuestTemplate.class);
+            dialogTemplate = gson.fromJson(new InputStreamReader(inputStream), DialogTemplate.class);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void write(Gson gson, QuestTemplate questTemplate, String fileName) {
+    private static void write(Gson gson, DialogTemplate dialogTemplate, String fileName) {
         try {
-            FileWriter writer = new FileWriter(new File(serverQuests.toFile(), fileName));
-            writer.write(gson.toJson(questTemplate));
+            File file = new File(serverDialogs.toFile(), fileName);
+
+            FileWriter writer = new FileWriter(file);
+            writer.write(gson.toJson(dialogTemplate));
             writer.flush();
             writer.close();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

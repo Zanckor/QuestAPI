@@ -1,11 +1,16 @@
 package com.zanckor.mod.network.message;
 
 import com.google.gson.Gson;
-import com.zanckor.api.EnumQuestType;
-import com.zanckor.api.questregister.abstrac.AbstractQuest;
-import com.zanckor.api.questregister.register.TemplateRegistry;
-import com.zanckor.api.questregister.abstrac.PlayerQuest;
+import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
+import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.api.database.LocateQuest;
+import com.zanckor.api.quest.enumquest.EnumQuestType;
+import com.zanckor.api.quest.abstracquest.AbstractQuest;
+import com.zanckor.api.quest.register.TemplateRegistry;
+import com.zanckor.mod.client.screen.DialogScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -13,19 +18,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.function.Supplier;
 
-import static com.zanckor.mod.QuestApiMain.getActiveQuest;
-import static com.zanckor.mod.QuestApiMain.playerData;
+import static com.zanckor.mod.util.MCUtil.getJsonQuest;
 
 public class QuestDataPacket {
 
     EnumQuestType quest;
 
     public QuestDataPacket(EnumQuestType quest) {
-        //System.out.println("QUEST: " + quest);
-
         this.quest = quest;
     }
 
@@ -56,12 +58,13 @@ public class QuestDataPacket {
 
         if (quest == null) return;
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-        Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
-        for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
-            FileReader initialReader = new FileReader(file);
-            PlayerQuest playerQuest = gson.fromJson(initialReader, PlayerQuest.class);
-            initialReader.close();
+        List<Path> questTypeLocation = LocateQuest.getQuestTypeLocation(questType);
+
+        for (Path path : questTypeLocation) {
+            File file = path.toFile();
+            ClientQuestBase playerQuest = getJsonQuest(file, gson);
+            if(playerQuest == null) return;
 
             if (playerQuest.getQuest_type().equals(questType.toString())) {
                 quest.handler(player, gson, file, playerQuest);

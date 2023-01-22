@@ -2,15 +2,15 @@ package com.zanckor.mod.network.message;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.mod.QuestApiMain;
-import com.zanckor.api.questregister.abstrac.PlayerQuest;
+import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,13 +40,11 @@ public class TimerPacket {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
                     try {
-                        FileReader reader = new FileReader(file);
-                        PlayerQuest playerQuest = gson.fromJson(reader, PlayerQuest.class);
-                        reader.close();
+                        ClientQuestBase playerQuest = MCUtil.getJsonQuest(file, gson);
 
-                        if (playerQuest.completed) return;
+                        if (playerQuest.isCompleted()) return;
 
-                        if (playerQuest.hasTimeLimit && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+                        if (playerQuest.isHasTimeLimit() && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
                             FileWriter writer = new FileWriter(file);
                             playerQuest.setCompleted(true);
 

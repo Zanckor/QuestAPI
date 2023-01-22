@@ -1,22 +1,28 @@
-package com.zanckor.api.questregister.abstrac;
+package com.zanckor.api.quest;
 
+import com.zanckor.api.quest.enumquest.EnumQuestType;
+
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PlayerQuest {
-    public int id;
-    public String title;
-    public String quest_type;
-    public List<String> quest_target;
-    public List<Integer> target_quantity;
-    public List<Integer> target_current_quantity;
-    public boolean hasTimeLimit;
-    public int timeLimitInSeconds;
-    public boolean completed;
+import static com.zanckor.api.database.LocateQuest.registerQuestByID;
+import static com.zanckor.api.database.LocateQuest.registerQuestTypeLocation;
 
-    public static PlayerQuest createQuest(QuestTemplate abstractQuest) {
-        PlayerQuest playerQuest = new PlayerQuest();
+public class ClientQuestBase {
+    private int id;
+    private String title;
+    private String quest_type;
+    private List<String> quest_target;
+    private List<Integer> target_quantity;
+    private List<Integer> target_current_quantity;
+    private boolean hasTimeLimit;
+    private int timeLimitInSeconds;
+    private boolean completed;
+
+    public static ClientQuestBase createQuest(ServerQuestBase abstractQuest, Path path) {
+        ClientQuestBase playerQuest = new ClientQuestBase();
 
         playerQuest.setId(abstractQuest.getId());
         playerQuest.setTitle(abstractQuest.getTitle());
@@ -31,12 +37,15 @@ public class PlayerQuest {
 
         playerQuest.setCompleted(false);
 
+        registerQuestTypeLocation(EnumQuestType.valueOf(playerQuest.getQuest_type()), path);
+        registerQuestByID(playerQuest.getId(), path);
+
         return playerQuest;
     }
 
 
-    public static PlayerQuest incrementProgress(PlayerQuest abstractQuest, int position) {
-        PlayerQuest playerQuest = new PlayerQuest();
+    public static ClientQuestBase incrementProgress(ClientQuestBase abstractQuest, int position) {
+        ClientQuestBase playerQuest = new ClientQuestBase();
 
         playerQuest.setId(abstractQuest.getId());
         playerQuest.setTitle(abstractQuest.getTitle());
@@ -64,8 +73,8 @@ public class PlayerQuest {
     }
 
 
-    public static PlayerQuest incrementProgress(PlayerQuest abstractQuest, int position, int times) {
-        PlayerQuest playerQuest = new PlayerQuest();
+    public static ClientQuestBase incrementProgress(ClientQuestBase abstractQuest, int position, int times) {
+        ClientQuestBase playerQuest = new ClientQuestBase();
 
         playerQuest.setId(abstractQuest.getId());
         playerQuest.setTitle(abstractQuest.getTitle());
@@ -92,8 +101,8 @@ public class PlayerQuest {
         return playerQuest;
     }
 
-    public static PlayerQuest setProgress(PlayerQuest abstractQuest, int position, int quantity) {
-        PlayerQuest playerQuest = new PlayerQuest();
+    public static ClientQuestBase setProgress(ClientQuestBase abstractQuest, int position, int quantity) {
+        ClientQuestBase playerQuest = new ClientQuestBase();
 
         playerQuest.setId(abstractQuest.getId());
         playerQuest.setTitle(abstractQuest.getTitle());
@@ -119,7 +128,6 @@ public class PlayerQuest {
 
         return playerQuest;
     }
-
 
     public int getId() {
         return id;

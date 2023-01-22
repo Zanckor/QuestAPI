@@ -1,5 +1,6 @@
 package com.zanckor.mod.network;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkDirection;
@@ -24,6 +25,8 @@ public class SendQuestPacket {
     }
 
     public static void TO_SERVER(Object packet) {
+        if(net.minecraft.client.Minecraft.getInstance().getConnection() == null) return;
+
         QuestNetworkHandler.CHANNEL.sendToServer(packet);
     }
 

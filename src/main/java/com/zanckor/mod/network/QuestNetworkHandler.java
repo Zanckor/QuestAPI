@@ -4,6 +4,10 @@ import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.network.message.QuestDataPacket;
 import com.zanckor.mod.network.message.TimerPacket;
 import com.zanckor.mod.network.message.ToastPacket;
+import com.zanckor.mod.network.message.dialog.AddQuest;
+import com.zanckor.mod.network.message.dialog.CloseDialog;
+import com.zanckor.mod.network.message.DialogRequestPacket;
+import com.zanckor.mod.network.message.dialog.DisplayDialog;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -32,8 +36,26 @@ public class QuestNetworkHandler {
                 .consumerNetworkThread(TimerPacket::handler).add();
 
 
+        CHANNEL.messageBuilder(DialogRequestPacket.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(DialogRequestPacket::encodeBuffer).decoder(DialogRequestPacket::new)
+                .consumerNetworkThread(DialogRequestPacket::handler).add();
+
+        CHANNEL.messageBuilder(AddQuest.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(AddQuest::encodeBuffer).decoder(AddQuest::new)
+                .consumerNetworkThread(AddQuest::handler).add();
+
+
         CHANNEL.messageBuilder(ToastPacket.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(ToastPacket::encodeBuffer).decoder(ToastPacket::new)
                 .consumerNetworkThread(ToastPacket::handler).add();
+
+
+        CHANNEL.messageBuilder(DisplayDialog.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(DisplayDialog::encodeBuffer).decoder(DisplayDialog::new)
+                .consumerNetworkThread(DisplayDialog::handler).add();
+
+        CHANNEL.messageBuilder(CloseDialog.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(CloseDialog::encodeBuffer).decoder(CloseDialog::new)
+                .consumerNetworkThread(CloseDialog::handler).add();
     }
 }

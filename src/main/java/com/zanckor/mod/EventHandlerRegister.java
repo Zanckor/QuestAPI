@@ -3,6 +3,7 @@ package com.zanckor.mod;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.zanckor.mod.command.QuestCommand;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

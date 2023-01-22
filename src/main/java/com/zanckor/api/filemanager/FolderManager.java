@@ -21,10 +21,12 @@ public class FolderManager {
         Path serverDirectory = e.getServer().getServerDirectory().toPath();
 
         File questApi = new File(serverDirectory.toString(), "quest-api");
+        File dataBase = new File(questApi.toString(), "data-base");
         File playerData = new File(questApi.toString(), "player-data");
         File serverQuests = new File(questApi.toString(), "server-quests");
+        File serverDialogs = new File(questApi.toString(), "server-dialogs");
 
-        File[] paths = {questApi, playerData, serverQuests};
+        File[] paths = {dataBase, questApi, playerData, serverQuests, serverDialogs};
 
         for (File file : paths) {
             if (!file.exists()) {
@@ -36,6 +38,7 @@ public class FolderManager {
         QuestApiMain.questApi = questApi.toPath();
         QuestApiMain.playerData = playerData.toPath();
         QuestApiMain.serverQuests = serverQuests.toPath();
+        QuestApiMain.serverDialogs = serverDialogs.toPath();
     }
 
 
@@ -49,6 +52,7 @@ public class FolderManager {
             getActiveQuest(userFolder).toFile().mkdirs();
             getCompletedQuest(userFolder).toFile().mkdirs();
             getUncompletedQuest(userFolder).toFile().mkdirs();
+            getReadDialogs(userFolder).toFile().mkdirs();
         }
     }
 }

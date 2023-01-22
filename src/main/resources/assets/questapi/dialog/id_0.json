@@ -2,115 +2,69 @@
   "global_id": 0,
   "dialog": [
     {
-      "id": 1,
-      "name": "D. 1 - Inicio",
-      "text": "Buenas aventurero, necesito ayuda con una tarea, ¿me ayudarías?",
-      "requirement": {
+      "id": 0,
+      "dialogTitle": "D. 1 - Inicio",
+      "dialogText": "Buenas aventurero, necesito ayuda con una tarea, me ayudarias?",
+      "requirements": {
         "type": "quest",
+        "global_id": 0,
         "id": 1,
         "requirement_status": "not_obtained"
       },
       "options": [
         {
           "text": "Claro, dime que necesitas",
-          "type": "dialog",
-          "dialog": 2
+          "type": "OPEN_DIALOG",
+          "global_id": 0,
+          "dialog": 1,
+          "quest_id": null
         },
         {
           "text": "No, lo siento, no tengo tiempo",
-          "type": "close"
+          "type": "OPEN_DIALOG",
+          "global_id": 0,
+          "dialog": 2,
+          "quest_id": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "dialogTitle": "D. 1 - Acceptar",
+      "dialogText": "Gracias, necesito 2 lingotes de oro y 1 de hierro",
+      "requirements": {
+        "type": "OPEN_DIALOG",
+        "global_id": 0,
+        "id": 1,
+        "requirement_status": "read"
+      },
+      "options": [
+        {
+          "text": "Ahora mismo empiezo",
+          "type": "ADD_QUEST",
+          "global_id": 0,
+          "dialog": 0,
+          "quest_id": 1
         }
       ]
     },
     {
       "id": 2,
-      "name": "D. 2 - Aceptar mision",
-      "text": "Gracias, necesito que me traigas 2 lingotes de oro y 1 de hierro",
-      "requirement": {
-        "type": "empty"
-      },
-      "options": [
-        {
-          "text": "Claro, ahora mismo voy a por ello",
-          "type": "quest",
-          "quest_id": 0
-        },
-        {
-          "text": "Lo siento, no tengo tiempo",
-          "type": "close"
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "name": "D. 3 - Rechazar mision",
-      "text": "Esta bien, cuando tengas tiempo puedes ayudarme, te daré algo a cambio",
-      "requirement": {
-        "type": "empty"
-      },
-      "options": [
-        {
-          "text": "Bien, hasta luego",
-          "type": "close"
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "name": "D. 3.1 - Tras rechazar mision",
-      "text": "¿Has cambiado de opinion?",
-      "requirement": {
-        "type": "dialog",
+      "dialogTitle": "D. 1 - Rechazar",
+      "dialogText": "Ya veo, no importa, cambias de opinion seguiré aqui",
+      "requirements": {
+        "type": "OPEN_DIALOG",
         "global_id": 0,
-        "id": 3,
+        "id": 1,
         "requirement_status": "read"
       },
       "options": [
         {
-          "text": "Si, dime que debo hacer",
-          "type": "dialog",
-          "dialog": 2
-        },
-        {
-          "text": "No, lo siento, adios",
-          "type": "close"
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "name": "D. 4 - Intermedio con mision",
-      "text": "Hola aventurero, ¿como va la tarea que te encomendé?",
-      "requirement": {
-        "type": "quest",
-        "id": 1,
-        "requirement_status": "in_progress"
-      },
-      "options": [
-        {
-          "text": "Voy bien, no tardaré mucho",
-          "type": "close"
-        },
-        {
-          "text": "Lo siento, no tengo tiempo, no podré completar la misión",
-          "type": "remove_quest",
+          "text": "Entiendo",
+          "type": "CLOSE_DIALOG",
+          "global_id": 0,
+          "dialog": 0,
           "quest_id": 0
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "name": "D. 5 - Mision completada",
-      "text": "Muchas gracias aventurero, si no fuera por ti no podria haber conseguido los materiales",
-      "requirement": {
-        "type": "quest",
-        "id": 1,
-        "requirement_status": "completed"
-      },
-      "options": [
-        {
-          "text": "No es nada, me alegra ayudar",
-          "type": "close"
         }
       ]
     }

@@ -3,11 +3,12 @@ package com.zanckor.mod.command;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.zanckor.api.EnumQuestRequirement;
-import com.zanckor.api.questregister.abstrac.AbstractRequirement;
-import com.zanckor.api.questregister.abstrac.PlayerQuest;
-import com.zanckor.api.questregister.abstrac.QuestTemplate;
-import com.zanckor.api.questregister.register.TemplateRegistry;
+import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.api.database.LocateQuest;
+import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
+import com.zanckor.api.quest.abstracquest.AbstractRequirement;
+import com.zanckor.api.quest.ServerQuestBase;
+import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.zanckor.api.EnumQuestType.PROTECT_ENTITY;
+import static com.zanckor.api.quest.enumquest.EnumQuestType.PROTECT_ENTITY;
 import static com.zanckor.mod.QuestApiMain.*;
 
 public class QuestCommand {
@@ -51,10 +52,9 @@ public class QuestCommand {
             Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-
             if (file.getName().equals(quest)) {
                 FileReader reader = new FileReader(file);
-                QuestTemplate serverQuest = gson.fromJson(reader, QuestTemplate.class);
+                ServerQuestBase serverQuest = gson.fromJson(reader, ServerQuestBase.class);
                 reader.close();
 
                 AbstractRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
@@ -65,12 +65,11 @@ public class QuestCommand {
                 }
 
                 FileWriter writer = new FileWriter(path.toFile());
-                PlayerQuest playerQuest = PlayerQuest.createQuest(serverQuest);
+                ClientQuestBase playerQuest = ClientQuestBase.createQuest(serverQuest, path);
                 gson.toJson(playerQuest, writer);
                 writer.close();
 
-
-                if (playerQuest.hasTimeLimit) {
+                if (playerQuest.isHasTimeLimit()) {
                     Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
                 }
 
@@ -82,10 +81,11 @@ public class QuestCommand {
             }
         }
 
+
         return 1;
     }
 
-    private static int protectEntityQuest(PlayerQuest playerQuest, ServerLevel level, Player player, QuestTemplate serverQuest, Path path, Gson gson, int questID) throws IOException {
+    private static int protectEntityQuest(ClientQuestBase playerQuest, ServerLevel level, Player player, ServerQuestBase serverQuest, Path path, Gson gson, int questID) throws IOException {
         EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
         UUID playerUUID = player.getUUID();
 
@@ -95,7 +95,7 @@ public class QuestCommand {
         level.addFreshEntity(entity);
 
         FileWriter protectEntityWriter = new FileWriter(path.toFile());
-        PlayerQuest protectEntityPlayerQuest = PlayerQuest.createQuest(serverQuest);
+        ClientQuestBase protectEntityPlayerQuest = ClientQuestBase.createQuest(serverQuest, path);
         List<String> list = new ArrayList<>();
 
         list.add(entity.getUUID().toString());
@@ -110,25 +110,11 @@ public class QuestCommand {
     }
 
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
-        Path userFolder = Paths.get(playerData.toString(), playerUUID.toString());
+        Path path = LocateQuest.getQuestByID(questID);
 
-        for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
-            if (file.getName().equals("id_" + questID + ".json")) {
-                file.delete();
-            }
-        }
+        File file = path.toFile();
+        file.delete();
 
-        for (File file : getCompletedQuest(userFolder).toFile().listFiles()) {
-            if (file.getName().equals("id_" + questID + ".json")) {
-                file.delete();
-            }
-        }
-
-        for (File file : getUncompletedQuest(userFolder).toFile().listFiles()) {
-            if (file.getName().equals("id_" + questID + ".json")) {
-                file.delete();
-            }
-        }
 
         return 1;
     }

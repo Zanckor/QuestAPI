@@ -2,12 +2,16 @@ package com.zanckor.example.event;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zanckor.api.questregister.abstrac.AbstractQuest;
-import com.zanckor.api.questregister.abstrac.PlayerQuest;
-import com.zanckor.api.questregister.register.TemplateRegistry;
+import com.zanckor.api.database.LocateQuest;
+import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
+import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.api.quest.abstracquest.AbstractQuest;
+import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.network.SendQuestPacket;
+import com.zanckor.mod.network.message.dialog.DisplayDialog;
 import com.zanckor.mod.network.message.QuestDataPacket;
+import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Mathematic;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.world.InteractionHand;
@@ -21,18 +25,19 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
 
-import static com.zanckor.api.EnumQuestType.*;
-import static com.zanckor.mod.QuestApiMain.playerData;
+import static com.zanckor.api.quest.enumquest.EnumQuestType.*;
+import static com.zanckor.mod.util.MCUtil.getJsonQuest;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class QuestEvent {
+    //TODO Cambiar donde se almacena el dato
+    public static HashMap<Player, Integer> currentDialog = new HashMap<>();
+    public static HashMap<Player, Integer> currentGlobalDialog = new HashMap<>();
 
     @SubscribeEvent
     public static void killQuest(LivingDeathEvent e) {
@@ -42,9 +47,20 @@ public class QuestEvent {
 
 
     @SubscribeEvent
-    public static void recollectPickUpQuest(PlayerEvent.ItemPickupEvent e) {
+    public static void recollectPickUpQuest(PlayerEvent.ItemPickupEvent e) throws IOException {
         if (e.getEntity().level.isClientSide) return;
         SendQuestPacket.TO_SERVER(new QuestDataPacket(RECOLLECT));
+
+        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+        Path path = DialogTemplate.getDialogLocation(0);
+
+        File dialogFile = path.toFile();
+        DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
+
+        currentDialog.put(e.getEntity(), 0);
+        currentGlobalDialog.put(e.getEntity(), dialog.getGlobal_id());
+
+        SendQuestPacket.TO_CLIENT(e.getEntity(), new DisplayDialog(dialog, 0, e.getEntity()));
     }
 
     @SubscribeEvent
@@ -71,16 +87,15 @@ public class QuestEvent {
         if (e.getEntity().level.isClientSide) return;
 
         for (Player player : e.getEntity().getServer().getPlayerList().getPlayers()) {
-            Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
-            Path activeQuest = Paths.get(userFolder.toString(), "active-quests");
+            List<Path> protectEntityQuests = LocateQuest.getQuestTypeLocation(PROTECT_ENTITY);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            for (File file : activeQuest.toFile().listFiles()) {
+            if (protectEntityQuests == null) return;
+
+            for (Path path : protectEntityQuests) {
                 try {
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-                    FileReader reader = new FileReader(file);
-                    PlayerQuest playerQuest = gson.fromJson(reader, PlayerQuest.class);
-                    reader.close();
+                    File file = path.toFile();
+                    ClientQuestBase playerQuest = getJsonQuest(file, gson);
 
                     if (playerQuest == null || !playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) return;
                     AbstractQuest quest = TemplateRegistry.getQuestTemplate(PROTECT_ENTITY);
@@ -99,29 +114,44 @@ public class QuestEvent {
     }
 
     @SubscribeEvent
-    public static void eventQuests(TickEvent.PlayerTickEvent e) throws IOException {
+    public static void protectEntityQuest(TickEvent.PlayerTickEvent e) throws IOException {
         if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide)
             return;
 
-        Path userFolder = Paths.get(playerData.toString(), e.player.getUUID().toString());
-        Path activeQuest = Paths.get(userFolder.toString(), "active-quests");
-        Path uncompletedQuest = Paths.get(userFolder.toString(), "uncompleted-quests");
+        List<Path> protectEntityQuests = LocateQuest.getQuestTypeLocation(PROTECT_ENTITY);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        for (File file : activeQuest.toFile().listFiles()) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        if (protectEntityQuests == null) return;
+        for (Path path : protectEntityQuests) {
+            File file = path.toFile();
+            ClientQuestBase playerQuest = getJsonQuest(file, gson);
+            if (playerQuest == null) return;
 
-            FileReader reader = new FileReader(file);
-            PlayerQuest playerQuest = gson.fromJson(reader, PlayerQuest.class);
-            reader.close();
+            protectEntity(playerQuest, e.player);
+        }
+    }
 
-            if (playerQuest != null) {
-                protectEntity(playerQuest, e.player);
+
+    @SubscribeEvent
+    public static void moveToQuest(TickEvent.PlayerTickEvent e) throws IOException {
+        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide)
+            return;
+
+        List<Path> moveToQuests = LocateQuest.getQuestTypeLocation(MOVE_TO);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        if (moveToQuests != null) {
+            for (Path path : moveToQuests) {
+                File file = path.toFile();
+                ClientQuestBase playerQuest = getJsonQuest(file, gson);
+                if (playerQuest == null) continue;
+
                 moveTo(playerQuest, e.player);
             }
         }
     }
 
-    public static void moveTo(PlayerQuest playerQuest, Player player) {
+    public static void moveTo(ClientQuestBase playerQuest, Player player) {
         if (!playerQuest.getQuest_type().equals(MOVE_TO.toString()))
             return;
 
@@ -135,7 +165,7 @@ public class QuestEvent {
         }
     }
 
-    public static void protectEntity(PlayerQuest playerQuest, Player player) {
+    public static void protectEntity(ClientQuestBase playerQuest, Player player) {
         if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString()) && !playerQuest.getQuest_target().contains("entity")) {
             if (Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
                 SendQuestPacket.TO_SERVER(new QuestDataPacket(PROTECT_ENTITY));

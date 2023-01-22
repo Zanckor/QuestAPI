@@ -15,7 +15,7 @@ import java.util.UUID;
 public class QuestApiMain {
     public static final String MOD_ID = "questapi";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static Path serverDirectory, questApi, playerData, serverQuests;
+    public static Path serverDirectory, questApi, playerData, serverQuests, serverDialogs;
 
     public QuestApiMain() {
         QuestNetworkHandler.register();
@@ -47,5 +47,13 @@ public class QuestApiMain {
         Path uncompletedQuest = Paths.get(userFolder.toString(), "uncompleted-quests");
 
         return uncompletedQuest;
+    }
+
+
+
+    public static Path getReadDialogs(Path userFolder) {
+        Path readDialogs = Paths.get(userFolder.toString(), "read-dialogs");
+
+        return readDialogs;
     }
 }

@@ -1,13 +1,16 @@
 package com.zanckor.example.handler.quest;
 
 import com.google.gson.Gson;
-import com.zanckor.api.EnumQuestReward;
-import com.zanckor.api.questregister.abstrac.AbstractReward;
-import com.zanckor.api.questregister.abstrac.PlayerQuest;
-import com.zanckor.api.questregister.abstrac.QuestTemplate;
-import com.zanckor.api.questregister.register.TemplateRegistry;
+import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.api.database.LocateQuest;
+import com.zanckor.api.quest.enumquest.EnumQuestReward;
+import com.zanckor.api.quest.abstracquest.AbstractReward;
+import com.zanckor.api.quest.ServerQuestBase;
+import com.zanckor.api.quest.enumquest.EnumQuestType;
+import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
 import com.zanckor.mod.network.message.ToastPacket;
+import com.zanckor.mod.util.MCUtil;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.File;
@@ -24,10 +27,7 @@ public class CompleteQuest {
 
     public static void completeQuest(Player player, Gson gson, File file) throws IOException {
         Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
-
-        FileReader completeQuestReader = new FileReader(file);
-        PlayerQuest modifiedPlayerQuest = gson.fromJson(completeQuestReader, PlayerQuest.class);
-        completeQuestReader.close();
+        ClientQuestBase modifiedPlayerQuest = MCUtil.getJsonQuest(file, gson);
 
 
         if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
@@ -43,19 +43,20 @@ public class CompleteQuest {
     }
 
 
-    public static void giveReward(Player player, PlayerQuest modifiedPlayerQuest, Gson gson, File file, Path userFolder) throws IOException {
+    public static void giveReward(Player player, ClientQuestBase modifiedPlayerQuest, Gson gson, File file, Path userFolder) throws IOException {
         if (modifiedPlayerQuest.isCompleted()) {
             for (File serverFile : serverQuests.toFile().listFiles()) {
                 if (serverFile.getName().equals("id_" + modifiedPlayerQuest.getId() + ".json")) {
 
                     FileReader serverQuestReader = new FileReader(serverFile);
-                    QuestTemplate serverQuest = gson.fromJson(serverQuestReader, QuestTemplate.class);
+                    ServerQuestBase serverQuest = gson.fromJson(serverQuestReader, ServerQuestBase.class);
                     AbstractReward reward = TemplateRegistry.getQuestReward(EnumQuestReward.valueOf(serverQuest.getReward_type()));
 
                     reward.handler(player, serverQuest);
-
-                    Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
                     serverQuestReader.close();
+
+                    LocateQuest.movePathQuest(modifiedPlayerQuest.getId(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
+                    Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
                 }
             }
         }

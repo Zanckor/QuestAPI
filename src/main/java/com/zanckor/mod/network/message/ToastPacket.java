@@ -1,6 +1,5 @@
 package com.zanckor.mod.network.message;
 
-import com.zanckor.api.EnumQuestType;
 import com.zanckor.mod.network.ClientHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;

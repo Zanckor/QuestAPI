@@ -1,26 +1,23 @@
 package com.zanckor.example.handler.quest;
 
 import com.google.gson.Gson;
-import com.zanckor.api.questregister.abstrac.AbstractQuest;
+import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.mod.util.MCUtil;
-import com.zanckor.api.questregister.abstrac.PlayerQuest;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class InteractEntityHandler extends AbstractQuest {
 
-    public void handler(Player player, Gson gson, File file, PlayerQuest playerQuest) throws IOException {
+    public void handler(Player player, Gson gson, File file, ClientQuestBase playerQuest) throws IOException {
 
         for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
-            FileReader interactReader = new FileReader(file);
-            PlayerQuest interactPlayerQuest = gson.fromJson(interactReader, PlayerQuest.class);
-            interactReader.close();
+            ClientQuestBase interactPlayerQuest = MCUtil.getJsonQuest(file, gson);
 
             Entity entityLookinAt = MCUtil.getEntityLookinAt(player, player.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
 

@@ -1,28 +1,28 @@
-package com.zanckor.api.questregister.abstrac;
+package com.zanckor.api.quest;
 
 import java.util.List;
 
-public class QuestTemplate {
-    public int id;
-    public String title;
+public class ServerQuestBase {
+    private int id;
+    private String title;
 
-    public String quest_type;
-    public List<String> quest_target;
-    public List<Integer> target_quantity;
+    private String quest_type;
+    private List<String> quest_target;
+    private List<Integer> target_quantity;
 
-    public boolean hasTimeLimit;
-    public int timeLimitInSeconds;
+    private boolean hasTimeLimit;
+    private int timeLimitInSeconds;
 
-    public String requirements_type;
-    public int requirements_min;
-    public int requirements_max;
+    private String requirements_type;
+    private int requirements_min;
+    private int requirements_max;
 
-    public String reward_type;
-    public List<String> reward;
-    public List<Integer> reward_quantity;
+    private String reward_type;
+    private List<String> reward;
+    private List<Integer> reward_quantity;
 
 
-    public static QuestTemplate createQuest(
+    public static ServerQuestBase createQuest(
             int id, String title,
             Enum quest_type,
             List<String> quest_target, List<Integer> target_quantity,
@@ -30,7 +30,7 @@ public class QuestTemplate {
             Enum requirements_type, int requirements_min, int requirements_max,
             Enum reward_type, List<String> reward, List<Integer> reward_quantity){
 
-        QuestTemplate questTemplate = new QuestTemplate();
+        ServerQuestBase questTemplate = new ServerQuestBase();
 
         questTemplate.setId(id);
         questTemplate.setTitle(title);

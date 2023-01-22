@@ -1,6 +1,14 @@
 package com.zanckor.mod.util;
 
+import com.google.gson.Gson;
+import com.zanckor.api.dialog.abstractdialog.DialogReadTemplate;
+import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
+import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.example.event.QuestEvent;
 import com.zanckor.mod.QuestApiMain;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -11,7 +19,18 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.common.Mod;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static com.zanckor.mod.QuestApiMain.getReadDialogs;
+import static com.zanckor.mod.QuestApiMain.playerData;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID)
 public class MCUtil {
@@ -77,5 +96,106 @@ public class MCUtil {
         double d0 = player.getReachDistance() * multiplier;
         Vec3 vec31 = vec3.add((double) f6 * d0, (double) f5 * d0, (double) f7 * d0);
         return level.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+    }
+
+
+    public static ClientQuestBase getJsonQuest(File file, Gson gson) throws IOException {
+        if (!file.exists()) return null;
+
+        FileReader reader = new FileReader(file);
+        ClientQuestBase playerQuest = gson.fromJson(reader, ClientQuestBase.class);
+        reader.close();
+
+        return playerQuest;
+    }
+
+    public static DialogTemplate getJsonDialog(File file, Gson gson) throws IOException {
+        if (!file.exists()) return null;
+
+        FileReader reader = new FileReader(file);
+        DialogTemplate dialog = gson.fromJson(reader, DialogTemplate.class);
+        reader.close();
+
+        return dialog;
+    }
+
+
+    public static void writeDialogRead(Player player, int dialogID) throws IOException {
+        Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
+        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+
+        Path path = Paths.get(getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
+        File file = path.toFile();
+
+        DialogReadTemplate.GlobalID dialog = null;
+
+        if(file.exists()) {
+            FileReader reader = new FileReader(file);
+            dialog = gson.fromJson(reader, DialogReadTemplate.GlobalID.class);
+            reader.close();
+        }
+
+
+
+        List<DialogReadTemplate.DialogID> dialogIDList;
+        if (dialog == null) {
+            dialogIDList = new ArrayList<>();
+        } else {
+            dialogIDList = dialog.getDialog_id();
+
+            for(int i = 0; i < dialogIDList.size(); i++){
+                if(dialogIDList.get(i).getDialog_id() == dialogID){
+                    return;
+                }
+            }
+        }
+
+        dialogIDList.add(new DialogReadTemplate.DialogID(dialogID));
+        DialogReadTemplate.GlobalID globalIDClass = new DialogReadTemplate.GlobalID(QuestEvent.currentDialog.get(player), dialogIDList);
+
+        FileWriter writer = new FileWriter(file);
+        writer.write(gson.toJson(globalIDClass));
+        writer.flush();
+        writer.close();
+    }
+
+    public static boolean canReadDialog(Player player, int dialogID) throws IOException {
+        Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
+        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+
+        Path path = Paths.get(getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
+        File file = path.toFile();
+
+        DialogReadTemplate.GlobalID dialog = null;
+
+        if(file.exists()) {
+            FileReader reader = new FileReader(file);
+            dialog = gson.fromJson(reader, DialogReadTemplate.GlobalID.class);
+            reader.close();
+        } else {
+            return true;
+        }
+
+
+        List<DialogReadTemplate.DialogID> dialogIDList;
+        if (dialog != null) {
+            dialogIDList = dialog.getDialog_id();
+
+            for (int i = 0; i < dialogIDList.size(); i++) {
+                if (dialogIDList.get(i).getDialog_id() == dialogID) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static List<List<FormattedCharSequence>> splitText(String text, Font font) {
+        final List<List<FormattedCharSequence>> textBlocks = new ArrayList<>();
+
+        textBlocks.add(font.split(Component.literal(text), 340));
+
+        return textBlocks;
     }
 }
