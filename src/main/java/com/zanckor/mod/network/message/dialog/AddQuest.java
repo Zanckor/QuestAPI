@@ -1,6 +1,7 @@
 package com.zanckor.mod.network.message.dialog;
 
 import com.google.gson.Gson;
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.AbstractDialog;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.dialog.enumdialog.EnumOptionType;
@@ -45,9 +46,10 @@ public class AddQuest {
     public static void handler(AddQuest msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Player player = ctx.get().getSender();
+            int dialogGlobalID = LocateHash.currentGlobalDialog.get(player);
 
             Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-            Path path = DialogTemplate.getDialogLocation(QuestEvent.currentGlobalDialog.get(player));
+            Path path = DialogTemplate.getDialogLocation(dialogGlobalID);
             File dialogFile = path.toFile();
             AbstractDialog dialogTemplate = TemplateRegistry.getDialogTemplate(msg.optionType);
 

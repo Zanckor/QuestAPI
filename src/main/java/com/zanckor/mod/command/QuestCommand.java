@@ -1,14 +1,18 @@
 package com.zanckor.mod.command;
 
+import ca.weblite.objc.Client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.zanckor.api.quest.ClientQuestBase;
-import com.zanckor.api.database.LocateQuest;
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
 import com.zanckor.api.quest.abstracquest.AbstractRequirement;
 import com.zanckor.api.quest.ServerQuestBase;
+import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
+import com.zanckor.mod.network.SendQuestPacket;
+import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -34,6 +38,30 @@ import static com.zanckor.api.quest.enumquest.EnumQuestType.PROTECT_ENTITY;
 import static com.zanckor.mod.QuestApiMain.*;
 
 public class QuestCommand {
+
+    public static int trackedQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
+        ServerLevel level = context.getSource().getLevel();
+        Player player = level.getPlayerByUUID(playerUUID);
+        String quest = "id_" + questID + ".json";
+        Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
+
+        for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
+            Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+            if (file.getName().equals(quest)) {
+                FileReader reader = new FileReader(file);
+                ClientQuestBase clientQuestBase = gson.fromJson(reader, ClientQuestBase.class);
+                reader.close();
+
+                SendQuestPacket.TO_CLIENT(player, clientQuestBase);
+            }
+        }
+
+        return 1;
+    }
+
+
 
     public static int addQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
         ServerLevel level = context.getSource().getLevel();
@@ -110,11 +138,17 @@ public class QuestCommand {
     }
 
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
-        Path path = LocateQuest.getQuestByID(questID);
+        Path path = LocateHash.getQuestByID(questID);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         File file = path.toFile();
         file.delete();
 
+        FileReader reader = new FileReader(file);
+        ServerQuestBase serverQuest = gson.fromJson(reader, ServerQuestBase.class);
+        reader.close();
+
+        LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(serverQuest.getQuest_type()));
 
         return 1;
     }

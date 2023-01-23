@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.zanckor.api.database.LocateQuest.registerQuestByID;
-import static com.zanckor.api.database.LocateQuest.registerQuestTypeLocation;
+import static com.zanckor.api.database.LocateHash.registerQuestByID;
+import static com.zanckor.api.database.LocateHash.registerQuestTypeLocation;
 
 public class ClientQuestBase {
     private int id;

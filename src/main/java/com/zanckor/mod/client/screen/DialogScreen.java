@@ -17,6 +17,8 @@ import java.util.List;
 public class DialogScreen extends Screen {
     int dialogID;
     String text;
+    int textDisplayDelay;
+    int textDisplaySize;
     int optionSize;
     HashMap<Integer, List<Integer>> optionIntegers;
     HashMap<Integer, List<String>> optionStrings;
@@ -53,11 +55,40 @@ public class DialogScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+
+        if (textDisplaySize < text.length()) {
+            if (textDisplayDelay == 0) {
+                MCUtil.playTextSound();
+                textDisplaySize++;
+
+                if (textDisplaySize < text.length()) {
+                    switch (Character.toString(text.charAt(textDisplaySize))) {
+                        case ".", "?", "!" -> {
+                            textDisplayDelay = 9;
+
+                            break;
+                        }
+
+                        case "," -> {
+                            textDisplayDelay = 5;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                textDisplayDelay--;
+            }
+        }
+    }
+
+    @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         poseStack.pushPose();
         int yPosition = (int) (height / 1.5);
 
-        for (List<FormattedCharSequence> textBlock : MCUtil.splitText(text, font)) {
+        for (List<FormattedCharSequence> textBlock : MCUtil.splitText(text.substring(0, textDisplaySize), font, (int) (width / 1.9))) {
             for (FormattedCharSequence line : textBlock) {
                 font.draw(poseStack, line, (float) (width / 4), yPosition, 0);
 
@@ -65,27 +96,37 @@ public class DialogScreen extends Screen {
             }
         }
 
-
         poseStack.popPose();
+
+
         super.render(poseStack, mouseX, mouseY, partialTicks);
     }
 
     private void button(int optionID, int dialogID) {
         EnumOptionType optionType = EnumOptionType.valueOf(optionStrings.get(optionID).get(1));
 
-        if(optionType.equals(EnumOptionType.CLOSE_DIALOG) || optionType.equals(EnumOptionType.OPEN_DIALOG)) {
-            SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, dialogID, optionID));
-        }
+        switch (optionType) {
+            case OPEN_DIALOG, CLOSE_DIALOG -> {
+                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, dialogID, optionID));
+                break;
+            }
 
+            case ADD_QUEST -> {
+                SendQuestPacket.TO_SERVER(new AddQuest(optionType, dialogID, optionID));
+                break;
+            }
 
-        if(optionType.equals(EnumOptionType.ADD_QUEST)) {
-            SendQuestPacket.TO_SERVER(new AddQuest(optionType, dialogID, optionID));
+            case REMOVE_QUEST -> {
+                break;
+            }
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int pTick) {
-        return super.mouseClicked(mouseX, mouseY, pTick);
+    public boolean mouseClicked(double xPosition, double yPosition, int button) {
+        textDisplaySize = text.length();
+
+        return super.mouseClicked(xPosition, yPosition, button);
     }
 
     @Override

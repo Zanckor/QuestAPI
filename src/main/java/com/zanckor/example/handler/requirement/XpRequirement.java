@@ -9,11 +9,9 @@ import java.io.IOException;
 public class XpRequirement extends AbstractRequirement {
     @Override
     public boolean handler(Player player, ServerQuestBase serverQuest) throws IOException {
-        boolean minReqs = player.experienceLevel >= serverQuest.getRequirements_min() ? true : false;
-        boolean maxReqs = player.experienceLevel <= serverQuest.getRequirements_max() ? true : false;
+        boolean minReqs = player.experienceLevel >= serverQuest.getRequirements_min();
+        boolean maxReqs = player.experienceLevel <= serverQuest.getRequirements_max();
 
-        if (!minReqs || !maxReqs) return false;
-
-        return true;
+        return (minReqs && maxReqs);
     }
 }

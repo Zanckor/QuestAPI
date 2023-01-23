@@ -2,7 +2,7 @@ package com.zanckor.mod.event;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zanckor.api.database.LocateQuest;
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
@@ -23,8 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.zanckor.api.database.LocateQuest.registerQuestByID;
-import static com.zanckor.api.database.LocateQuest.registerQuestTypeLocation;
+import static com.zanckor.api.database.LocateHash.registerQuestByID;
+import static com.zanckor.api.database.LocateHash.registerQuestTypeLocation;
 import static com.zanckor.mod.QuestApiMain.playerData;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -65,7 +65,7 @@ public class ServerEvent {
             writer.close();
 
             Files.move(file.toPath(), Paths.get(uncompletedQuest.toString(), file.getName()));
-            LocateQuest.movePathQuest(player.getId(), Paths.get(uncompletedQuest.toString(), file.getName()), EnumQuestType.valueOf(playerQuest.getQuest_type()));
+            LocateHash.removeQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
         }
     }
 
@@ -83,7 +83,7 @@ public class ServerEvent {
         for (Path path : paths) {
             for (File file : path.toFile().listFiles()) {
                 ClientQuestBase playerQuest = MCUtil.getJsonQuest(file, gson);
-                if(playerQuest == null) continue;
+                if (playerQuest == null) continue;
 
                 registerQuestTypeLocation(EnumQuestType.valueOf(playerQuest.getQuest_type()), file.toPath().toAbsolutePath());
                 registerQuestByID(playerQuest.getId(), file.toPath().toAbsolutePath());
@@ -91,7 +91,7 @@ public class ServerEvent {
         }
 
 
-        for(File file : QuestApiMain.serverDialogs.toFile().listFiles()){
+        for (File file : QuestApiMain.serverDialogs.toFile().listFiles()) {
             FileReader reader = new FileReader(file);
             DialogTemplate dialogTemplate = gson.fromJson(reader, DialogTemplate.class);
             reader.close();

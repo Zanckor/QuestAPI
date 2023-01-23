@@ -1,6 +1,7 @@
 package com.zanckor.mod.network.message.dialog;
 
 import com.google.gson.Gson;
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.DialogReadTemplate;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.example.event.QuestEvent;
@@ -41,10 +42,7 @@ public class DisplayDialog {
         this.dialogTemplate = dialogTemplate;
         this.dialogID = dialogID;
 
-        QuestEvent.currentDialog.put(player, dialogID);
-
-        //System.out.println(MCUtil.canReadDialog(player, dialogID));
-
+        LocateHash.currentDialog.put(player, dialogID);
         MCUtil.writeDialogRead(player, dialogID);
     }
 

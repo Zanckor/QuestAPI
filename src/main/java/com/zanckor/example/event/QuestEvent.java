@@ -2,15 +2,15 @@ package com.zanckor.example.event;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zanckor.api.database.LocateQuest;
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.network.SendQuestPacket;
-import com.zanckor.mod.network.message.dialog.DisplayDialog;
 import com.zanckor.mod.network.message.QuestDataPacket;
+import com.zanckor.mod.network.message.dialog.DisplayDialog;
 import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Mathematic;
 import com.zanckor.mod.util.Timer;
@@ -27,7 +27,6 @@ import net.minecraftforge.fml.common.Mod;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.zanckor.api.quest.enumquest.EnumQuestType.*;
@@ -35,10 +34,6 @@ import static com.zanckor.mod.util.MCUtil.getJsonQuest;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class QuestEvent {
-    //TODO Cambiar donde se almacena el dato
-    public static HashMap<Player, Integer> currentDialog = new HashMap<>();
-    public static HashMap<Player, Integer> currentGlobalDialog = new HashMap<>();
-
     @SubscribeEvent
     public static void killQuest(LivingDeathEvent e) {
         if (e.getEntity().level.isClientSide || !(e.getSource().getEntity() instanceof Player)) return;
@@ -57,8 +52,13 @@ public class QuestEvent {
         File dialogFile = path.toFile();
         DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
 
-        currentDialog.put(e.getEntity(), 0);
-        currentGlobalDialog.put(e.getEntity(), dialog.getGlobal_id());
+        for (int i = dialog.getDialog().size(); i > 0; i--) {
+            if(MCUtil.canReadDialog(e.getEntity(), i)) {
+
+                LocateHash.currentDialog.put(e.getEntity(), i);
+                LocateHash.currentGlobalDialog.put(e.getEntity(), dialog.getGlobal_id());
+            }
+        }
 
         SendQuestPacket.TO_CLIENT(e.getEntity(), new DisplayDialog(dialog, 0, e.getEntity()));
     }
@@ -87,7 +87,7 @@ public class QuestEvent {
         if (e.getEntity().level.isClientSide) return;
 
         for (Player player : e.getEntity().getServer().getPlayerList().getPlayers()) {
-            List<Path> protectEntityQuests = LocateQuest.getQuestTypeLocation(PROTECT_ENTITY);
+            List<Path> protectEntityQuests = LocateHash.getQuestTypeLocation(PROTECT_ENTITY);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             if (protectEntityQuests == null) return;
@@ -118,7 +118,7 @@ public class QuestEvent {
         if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide)
             return;
 
-        List<Path> protectEntityQuests = LocateQuest.getQuestTypeLocation(PROTECT_ENTITY);
+        List<Path> protectEntityQuests = LocateHash.getQuestTypeLocation(PROTECT_ENTITY);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         if (protectEntityQuests == null) return;
@@ -137,7 +137,7 @@ public class QuestEvent {
         if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide)
             return;
 
-        List<Path> moveToQuests = LocateQuest.getQuestTypeLocation(MOVE_TO);
+        List<Path> moveToQuests = LocateHash.getQuestTypeLocation(MOVE_TO);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         if (moveToQuests != null) {

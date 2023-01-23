@@ -1,11 +1,11 @@
 package com.zanckor.example.handler.quest;
 
 import com.google.gson.Gson;
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.quest.ClientQuestBase;
-import com.zanckor.api.database.LocateQuest;
-import com.zanckor.api.quest.enumquest.EnumQuestReward;
-import com.zanckor.api.quest.abstracquest.AbstractReward;
 import com.zanckor.api.quest.ServerQuestBase;
+import com.zanckor.api.quest.abstracquest.AbstractReward;
+import com.zanckor.api.quest.enumquest.EnumQuestReward;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
@@ -55,7 +55,7 @@ public class CompleteQuest {
                     reward.handler(player, serverQuest);
                     serverQuestReader.close();
 
-                    LocateQuest.movePathQuest(modifiedPlayerQuest.getId(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
+                    LocateHash.removeQuest(modifiedPlayerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
                     Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
                 }
             }

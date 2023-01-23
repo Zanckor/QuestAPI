@@ -47,7 +47,25 @@ public class EventHandlerRegister {
 
                                                 return 0;
                                             }
+                                        }))))
+
+                .then(net.minecraft.commands.Commands.literal("tracked")
+                        .then(net.minecraft.commands.Commands.argument("player", EntityArgument.player())
+                                .then(net.minecraft.commands.Commands.argument("questID", IntegerArgumentType.integer())
+                                        .executes((context) -> {
+                                            try {
+                                                return QuestCommand.trackedQuest(
+                                                        context,
+                                                        EntityArgument.getPlayer(context, "player").getUUID(),
+                                                        IntegerArgumentType.getInteger(context, "questID"));
+                                            } catch (IOException ex) {
+                                                QuestApiMain.LOGGER.error(ex.getMessage());
+
+                                                return 0;
+                                            }
                                         })))));
+
+
 
         ConfigCommand.register(e.getDispatcher());
     }

@@ -1,9 +1,9 @@
 package com.zanckor.example.handler.quest;
 
 import com.google.gson.Gson;
-import com.zanckor.api.database.LocateQuest;
-import com.zanckor.api.quest.abstracquest.AbstractQuest;
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.world.entity.Entity;
@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static com.zanckor.mod.QuestApiMain.*;
+import static com.zanckor.mod.QuestApiMain.playerData;
 
 public class ProtectEntityHandler extends AbstractQuest {
 
@@ -37,6 +37,7 @@ public class ProtectEntityHandler extends AbstractQuest {
             protectEntityWriter.flush();
             protectEntityWriter.close();
 
+            CompleteQuest.completeQuest(player, gson, file);
         } else if (!entity.isAlive()) {
             playerQuest.setCompleted(true);
             gson.toJson(playerQuest, protectEntityWriter);
@@ -44,9 +45,8 @@ public class ProtectEntityHandler extends AbstractQuest {
             protectEntityWriter.flush();
             protectEntityWriter.close();
             Files.move(file.toPath(), Paths.get(uncompletedQuest.toString(), file.getName()));
-            LocateQuest.movePathQuest(playerQuest.getId(), Paths.get(getUncompletedQuest(userFolder).toString(), file.getName()), EnumQuestType.valueOf(playerQuest.getQuest_type()));
-        }
 
-        CompleteQuest.completeQuest(player, gson, file);
+            LocateHash.removeQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
+        }
     }
 }

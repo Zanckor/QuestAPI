@@ -1,5 +1,6 @@
 package com.zanckor.example.handler.dialog;
 
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.AbstractDialog;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.dialog.enumdialog.EnumOptionType;
@@ -14,7 +15,7 @@ public class CloseDialogHandler extends AbstractDialog {
 
     @Override
     public void handler(Player player, DialogTemplate dialog, int optionID) throws IOException {
-        int currentDialog = QuestEvent.currentDialog.get(player);
+        int currentDialog = LocateHash.currentDialog.get(player);
 
         DialogTemplate.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(optionID);
 

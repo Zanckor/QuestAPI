@@ -1,15 +1,20 @@
 package com.zanckor.mod.util;
 
 import com.google.gson.Gson;
+import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.DialogReadTemplate;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.quest.ClientQuestBase;
-import com.zanckor.example.event.QuestEvent;
 import com.zanckor.mod.QuestApiMain;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -121,6 +126,8 @@ public class MCUtil {
 
 
     public static void writeDialogRead(Player player, int dialogID) throws IOException {
+        int currentDialog = LocateHash.currentDialog.get(player);
+
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
@@ -129,12 +136,11 @@ public class MCUtil {
 
         DialogReadTemplate.GlobalID dialog = null;
 
-        if(file.exists()) {
+        if (file.exists()) {
             FileReader reader = new FileReader(file);
             dialog = gson.fromJson(reader, DialogReadTemplate.GlobalID.class);
             reader.close();
         }
-
 
 
         List<DialogReadTemplate.DialogID> dialogIDList;
@@ -143,15 +149,15 @@ public class MCUtil {
         } else {
             dialogIDList = dialog.getDialog_id();
 
-            for(int i = 0; i < dialogIDList.size(); i++){
-                if(dialogIDList.get(i).getDialog_id() == dialogID){
+            for (int i = 0; i < dialogIDList.size(); i++) {
+                if (dialogIDList.get(i).getDialog_id() == dialogID) {
                     return;
                 }
             }
         }
 
         dialogIDList.add(new DialogReadTemplate.DialogID(dialogID));
-        DialogReadTemplate.GlobalID globalIDClass = new DialogReadTemplate.GlobalID(QuestEvent.currentDialog.get(player), dialogIDList);
+        DialogReadTemplate.GlobalID globalIDClass = new DialogReadTemplate.GlobalID(currentDialog, dialogIDList);
 
         FileWriter writer = new FileWriter(file);
         writer.write(gson.toJson(globalIDClass));
@@ -168,7 +174,7 @@ public class MCUtil {
 
         DialogReadTemplate.GlobalID dialog = null;
 
-        if(file.exists()) {
+        if (file.exists()) {
             FileReader reader = new FileReader(file);
             dialog = gson.fromJson(reader, DialogReadTemplate.GlobalID.class);
             reader.close();
@@ -191,11 +197,18 @@ public class MCUtil {
         return true;
     }
 
-    public static List<List<FormattedCharSequence>> splitText(String text, Font font) {
+    public static List<List<FormattedCharSequence>> splitText(String text, Font font, int textSize) {
         final List<List<FormattedCharSequence>> textBlocks = new ArrayList<>();
 
-        textBlocks.add(font.split(Component.literal(text), 340));
+        textBlocks.add(font.split(Component.literal(text), textSize));
 
         return textBlocks;
+    }
+
+
+    public static void playTextSound() {
+        SoundManager soundManager = Minecraft.getInstance().getSoundManager();
+
+        soundManager.play(SimpleSoundInstance.forUI(SoundEvents.LEVER_CLICK, Mth.randomBetween(RandomSource.create(), 0.975f, 1.025f)));
     }
 }

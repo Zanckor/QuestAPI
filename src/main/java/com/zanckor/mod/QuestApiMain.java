@@ -4,7 +4,9 @@ import com.mojang.logging.LogUtils;
 import com.zanckor.example.ModExample;
 import com.zanckor.mod.network.QuestNetworkHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -18,10 +20,12 @@ public class QuestApiMain {
     public static Path serverDirectory, questApi, playerData, serverQuests, serverDialogs;
 
     public QuestApiMain() {
+        MinecraftForge.EVENT_BUS.register(this);
+
         QuestNetworkHandler.register();
+
         ModExample.initialize();
 
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
 
@@ -48,7 +52,6 @@ public class QuestApiMain {
 
         return uncompletedQuest;
     }
-
 
 
     public static Path getReadDialogs(Path userFolder) {

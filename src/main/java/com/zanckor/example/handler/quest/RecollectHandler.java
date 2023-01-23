@@ -46,6 +46,20 @@ public class RecollectHandler extends AbstractQuest {
             }
         }
 
+        ClientQuestBase modifiedPlayerQuest = MCUtil.getJsonQuest(file, gson);
+
+        if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
+            for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
+                String valueItem = modifiedPlayerQuest.getQuest_target().get(targetIndex);
+                Item itemTarget = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
+
+                if (player.getInventory().contains(itemTarget.getDefaultInstance())) {
+                    int itemSlot = player.getInventory().findSlotMatchingItem(itemTarget.getDefaultInstance());
+
+                    player.getInventory().removeItem(itemSlot, modifiedPlayerQuest.getTarget_quantity().get(targetIndex));
+                }
+            }
+        }
 
         CompleteQuest.completeQuest(player, gson, file);
     }
