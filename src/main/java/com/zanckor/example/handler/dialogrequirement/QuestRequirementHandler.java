@@ -63,7 +63,6 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
                 }
             }
         }
-
         return false;
     }
 
@@ -71,9 +70,6 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
     private void displayDialog(Player player, int dialog_id, DialogTemplate dialog) throws IOException {
         LocateHash.currentDialog.put(player, dialog_id);
         LocateHash.currentGlobalDialog.put(player, dialog.getGlobal_id());
-
-        System.out.println(MCUtil.isReadDialog(player, dialog_id));
-        System.out.println(dialog.getDialog().get(dialog_id).getDialogTitle());
 
         SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, dialog_id, player));
     }

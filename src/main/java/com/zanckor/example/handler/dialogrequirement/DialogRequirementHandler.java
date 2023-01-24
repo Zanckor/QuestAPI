@@ -26,7 +26,11 @@ public class DialogRequirementHandler extends AbstractDialogRequirement {
         if (requirement.equals(EnumRequirementType.DIALOG.toString())) {
             EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getRequirement_status());
 
+            System.out.println(requirementStatus + " " + dialog_id);
+            System.out.println(MCUtil.isReadDialog(player, dialog_id));
+
             switch (requirementStatus) {
+
                 case READ -> {
                     if (MCUtil.isReadDialog(player, dialog_id)) {
                         displayDialog(player, dialog_id, dialog);

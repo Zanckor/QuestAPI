@@ -53,7 +53,7 @@ public class QuestEvent {
         File dialogFile = path.toFile();
         DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
 
-        for (int dialog_id = dialog.getDialog().size() - 1; dialog_id > 0; dialog_id--) {
+        for (int dialog_id = dialog.getDialog().size() - 1; dialog_id >= 0; dialog_id--) {
             EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
             AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
 
