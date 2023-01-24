@@ -1,13 +1,16 @@
 package com.zanckor.example;
 
 import com.zanckor.api.dialog.enumdialog.EnumOptionType;
+import com.zanckor.api.dialog.enumdialog.EnumRequirementType;
 import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
 import com.zanckor.api.quest.enumquest.EnumQuestReward;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
-import com.zanckor.example.handler.dialog.AddQuestHandler;
-import com.zanckor.example.handler.dialog.CloseDialogHandler;
-import com.zanckor.example.handler.dialog.OpenDialogHandler;
+import com.zanckor.example.handler.dialogoption.AddQuestHandler;
+import com.zanckor.example.handler.dialogoption.CloseDialogHandler;
+import com.zanckor.example.handler.dialogoption.OpenDialogHandler;
+import com.zanckor.example.handler.dialogrequirement.DialogRequirementHandler;
+import com.zanckor.example.handler.dialogrequirement.QuestRequirementHandler;
 import com.zanckor.example.handler.quest.*;
 import com.zanckor.example.handler.requirement.XpRequirement;
 import com.zanckor.example.handler.reward.ItemReward;
@@ -26,6 +29,9 @@ public class ModExample {
         TemplateRegistry.registerDialogTemplate(EnumOptionType.ADD_QUEST, new AddQuestHandler());
 
         TemplateRegistry.registerReward(EnumQuestReward.ITEM, new ItemReward());
-        TemplateRegistry.registerRequirement(EnumQuestRequirement.XP, new XpRequirement());
+        TemplateRegistry.registerQuestRequirement(EnumQuestRequirement.XP, new XpRequirement());
+
+        TemplateRegistry.registerDialogRequirement(EnumRequirementType.DIALOG, new DialogRequirementHandler());
+        TemplateRegistry.registerDialogRequirement(EnumRequirementType.QUEST, new QuestRequirementHandler());
     }
 }

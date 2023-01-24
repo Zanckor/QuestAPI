@@ -1,4 +1,4 @@
-package com.zanckor.mod.network.message;
+package com.zanckor.mod.network.message.screen;
 
 import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.mod.network.ClientHandler;

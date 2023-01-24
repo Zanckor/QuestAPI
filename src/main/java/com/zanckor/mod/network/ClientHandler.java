@@ -49,4 +49,8 @@ public class ClientHandler {
         trackedHasTimeLimit = hasTimeLimit;
         trackedTimeLimitInSeconds = timeLimitInSeconds;
     }
+
+    public static void questUpdateTracked(List<Integer> target_current_quantity){
+        trackedTarget_current_quantity = target_current_quantity;
+    }
 }

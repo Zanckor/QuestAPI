@@ -1,9 +1,9 @@
-package com.zanckor.example.handler.dialog;
+package com.zanckor.example.handler.dialogoption;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zanckor.api.database.LocateHash;
-import com.zanckor.api.dialog.abstractdialog.AbstractDialog;
+import com.zanckor.api.dialog.abstractdialog.AbstractDialogOption;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.dialog.enumdialog.EnumOptionType;
 import com.zanckor.api.quest.ClientQuestBase;
@@ -11,12 +11,10 @@ import com.zanckor.api.quest.ServerQuestBase;
 import com.zanckor.api.quest.abstracquest.AbstractRequirement;
 import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
 import com.zanckor.api.quest.register.TemplateRegistry;
-import com.zanckor.example.event.QuestEvent;
 import com.zanckor.mod.network.ClientHandler;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +38,7 @@ import static com.zanckor.api.quest.enumquest.EnumQuestType.PROTECT_ENTITY;
 import static com.zanckor.mod.QuestApiMain.*;
 import static com.zanckor.mod.QuestApiMain.getUncompletedQuest;
 
-public class AddQuestHandler extends AbstractDialog {
+public class AddQuestHandler extends AbstractDialogOption {
 
 
     @Override

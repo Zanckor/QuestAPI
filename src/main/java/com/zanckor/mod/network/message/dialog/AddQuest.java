@@ -2,11 +2,10 @@ package com.zanckor.mod.network.message.dialog;
 
 import com.google.gson.Gson;
 import com.zanckor.api.database.LocateHash;
-import com.zanckor.api.dialog.abstractdialog.AbstractDialog;
+import com.zanckor.api.dialog.abstractdialog.AbstractDialogOption;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.dialog.enumdialog.EnumOptionType;
 import com.zanckor.api.quest.register.TemplateRegistry;
-import com.zanckor.example.event.QuestEvent;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -15,8 +14,6 @@ import net.minecraftforge.network.NetworkEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
 import java.util.function.Supplier;
 
 public class AddQuest {
@@ -51,7 +48,7 @@ public class AddQuest {
             Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
             Path path = DialogTemplate.getDialogLocation(dialogGlobalID);
             File dialogFile = path.toFile();
-            AbstractDialog dialogTemplate = TemplateRegistry.getDialogTemplate(msg.optionType);
+            AbstractDialogOption dialogTemplate = TemplateRegistry.getDialogTemplate(msg.optionType);
 
             try {
                 DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);

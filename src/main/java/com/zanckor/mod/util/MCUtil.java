@@ -165,7 +165,7 @@ public class MCUtil {
         writer.close();
     }
 
-    public static boolean canReadDialog(Player player, int dialogID) throws IOException {
+    public static boolean isReadDialog(Player player, int dialogID) throws IOException {
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
@@ -179,7 +179,7 @@ public class MCUtil {
             dialog = gson.fromJson(reader, DialogReadTemplate.GlobalID.class);
             reader.close();
         } else {
-            return true;
+            return false;
         }
 
 

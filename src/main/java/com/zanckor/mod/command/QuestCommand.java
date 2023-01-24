@@ -1,6 +1,5 @@
 package com.zanckor.mod.command;
 
-import ca.weblite.objc.Client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -12,7 +11,7 @@ import com.zanckor.api.quest.ServerQuestBase;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
-import com.zanckor.mod.util.MCUtil;
+import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -54,7 +53,7 @@ public class QuestCommand {
                 ClientQuestBase clientQuestBase = gson.fromJson(reader, ClientQuestBase.class);
                 reader.close();
 
-                SendQuestPacket.TO_CLIENT(player, clientQuestBase);
+                SendQuestPacket.TO_CLIENT(player, new QuestTracked(clientQuestBase));
             }
         }
 

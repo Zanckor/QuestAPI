@@ -16,7 +16,7 @@ public class ClientEventHandlerRegister {
             Player player = Minecraft.getInstance().player;
 
             if (player != null && !player.isDeadOrDying()) {
-                QuestTracker.renderQuestTracker(poseStack, width, 0);
+                QuestTracker.renderQuestTracker(poseStack, width, height, 0);
             }
         });
     }

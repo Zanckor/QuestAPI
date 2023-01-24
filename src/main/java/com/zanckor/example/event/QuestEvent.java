@@ -3,14 +3,15 @@ package com.zanckor.example.event;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zanckor.api.database.LocateHash;
+import com.zanckor.api.dialog.abstractdialog.AbstractDialogRequirement;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
+import com.zanckor.api.dialog.enumdialog.EnumRequirementType;
 import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.network.SendQuestPacket;
 import com.zanckor.mod.network.message.QuestDataPacket;
-import com.zanckor.mod.network.message.dialog.DisplayDialog;
 import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Mathematic;
 import com.zanckor.mod.util.Timer;
@@ -52,15 +53,14 @@ public class QuestEvent {
         File dialogFile = path.toFile();
         DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
 
-        for (int i = dialog.getDialog().size(); i > 0; i--) {
-            if(MCUtil.canReadDialog(e.getEntity(), i)) {
+        for (int dialog_id = dialog.getDialog().size() - 1; dialog_id > 0; dialog_id--) {
+            EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
+            AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
 
-                LocateHash.currentDialog.put(e.getEntity(), i);
-                LocateHash.currentGlobalDialog.put(e.getEntity(), dialog.getGlobal_id());
+            if (dialogRequirement != null && dialogRequirement.handler(e.getEntity(), dialog, dialog_id)) {
+                return;
             }
         }
-
-        SendQuestPacket.TO_CLIENT(e.getEntity(), new DisplayDialog(dialog, 0, e.getEntity()));
     }
 
     @SubscribeEvent
