@@ -52,15 +52,13 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
 
 
                     case COMPLETED -> {
-                        if (playerQuest.isCompleted()) {
+                        if (questFile.exists() && playerQuest.isCompleted()) {
                             displayDialog(player, dialog_id, dialog);
                             return true;
                         }
                     }
                 }
             } else {
-                System.out.println("A");
-
                 switch (requirementStatus) {
                     case NOT_OBTAINED -> {
                         displayDialog(player, dialog_id, dialog);
