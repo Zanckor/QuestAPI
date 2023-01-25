@@ -37,11 +37,10 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
 
                 if (questFile.exists()) {
                     playerQuest = MCUtil.getJsonClientQuest(questFile, gson);
+                    System.out.println(playerQuest.isCompleted());
+                    System.out.println(requirementStatus);
+                    System.out.println(dialog_id);
                 }
-
-                System.out.println(playerQuest.isCompleted());
-                System.out.println(requirementStatus);
-                System.out.println(dialog_id);
 
                 switch (requirementStatus) {
                     case IN_PROGRESS -> {
