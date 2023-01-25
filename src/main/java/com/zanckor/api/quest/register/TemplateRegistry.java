@@ -62,6 +62,7 @@ public class TemplateRegistry {
         }
     }
 
+
     public static void registerDialogRequirement(Enum key, AbstractDialogRequirement requirement) {
         dialog_requirement.put(key, requirement);
     }

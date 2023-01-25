@@ -1,4 +1,4 @@
-package com.zanckor.mod.network.message;
+package com.zanckor.mod.network.message.quest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -40,7 +40,7 @@ public class TimerPacket {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
                     try {
-                        ClientQuestBase playerQuest = MCUtil.getJsonQuest(file, gson);
+                        ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file, gson);
 
                         if (playerQuest.isCompleted()) return;
 

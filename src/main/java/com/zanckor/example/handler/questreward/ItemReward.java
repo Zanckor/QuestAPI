@@ -1,4 +1,4 @@
-package com.zanckor.example.handler.reward;
+package com.zanckor.example.handler.questreward;
 
 import com.zanckor.api.quest.abstracquest.AbstractReward;
 import com.zanckor.api.quest.ServerQuestBase;

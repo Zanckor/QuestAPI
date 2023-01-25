@@ -8,7 +8,7 @@ import com.zanckor.api.dialog.enumdialog.EnumRequirementStatusType;
 import com.zanckor.api.dialog.enumdialog.EnumRequirementType;
 import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.mod.network.SendQuestPacket;
-import com.zanckor.mod.network.message.dialog.DisplayDialog;
+import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.world.entity.player.Player;
 
@@ -21,48 +21,55 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
 
     @Override
     public boolean handler(Player player, DialogTemplate dialog, int dialog_id) throws IOException {
+        EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getRequirement_status());
         String requirement = dialog.getDialog().get(dialog_id).getRequirements().getType();
         Path questPath = LocateHash.getQuestByID(dialog.getDialog().get(dialog_id).getRequirements().getId());
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
-        File questFile = questPath.toFile();
+        File questFile;
         ClientQuestBase playerQuest = null;
 
-        if (questFile.exists()) {
-            playerQuest = MCUtil.getJsonQuest(questFile, gson);
-        }
-
         if (requirement.equals(EnumRequirementType.QUEST.toString())) {
-            EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getRequirement_status());
+            if (questPath != null) {
+                questFile = questPath.toFile();
 
-            switch (requirementStatus) {
-                case NOT_OBTAINED -> {
-                    if (!questFile.exists()) {
-                        displayDialog(player, dialog_id, dialog);
-                        return true;
-                    }
-
-                    break;
+                if (questFile.exists()) {
+                    playerQuest = MCUtil.getJsonClientQuest(questFile, gson);
                 }
 
-                case IN_PROGRESS -> {
-                    if (questFile.exists() && !playerQuest.isCompleted()) {
-                        displayDialog(player, dialog_id, dialog);
-                        return true;
+                System.out.println(playerQuest.isCompleted());
+                System.out.println(requirementStatus);
+                System.out.println(dialog_id);
+
+                switch (requirementStatus) {
+                    case IN_PROGRESS -> {
+                        if (questFile.exists() && !playerQuest.isCompleted()) {
+                            displayDialog(player, dialog_id, dialog);
+                            return true;
+                        }
                     }
 
-                    break;
+
+                    case COMPLETED -> {
+                        if (playerQuest.isCompleted()) {
+                            displayDialog(player, dialog_id, dialog);
+                            return true;
+                        }
+                    }
                 }
+            } else {
+                System.out.println("A");
 
-
-                case COMPLETED -> {
-                    if (playerQuest.isCompleted()) {
+                switch (requirementStatus) {
+                    case NOT_OBTAINED -> {
                         displayDialog(player, dialog_id, dialog);
                         return true;
                     }
                 }
             }
         }
+
+
         return false;
     }
 

@@ -6,15 +6,11 @@ import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.dialog.enumdialog.EnumRequirementStatusType;
 import com.zanckor.api.dialog.enumdialog.EnumRequirementType;
 import com.zanckor.mod.network.SendQuestPacket;
-import com.zanckor.mod.network.message.dialog.DisplayDialog;
+import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static com.zanckor.mod.QuestApiMain.playerData;
 
 public class DialogRequirementHandler extends AbstractDialogRequirement {
 
@@ -25,19 +21,15 @@ public class DialogRequirementHandler extends AbstractDialogRequirement {
 
         if (requirement.equals(EnumRequirementType.DIALOG.toString())) {
             EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getRequirement_status());
-
-            System.out.println(requirementStatus + " " + dialog_id);
-            System.out.println(MCUtil.isReadDialog(player, dialog_id));
+            int dialog_requirement = dialog.getDialog().get(dialog_id).getRequirements().getId();
 
             switch (requirementStatus) {
 
                 case READ -> {
-                    if (MCUtil.isReadDialog(player, dialog_id)) {
+                    if (MCUtil.isReadDialog(player, dialog_requirement)) {
                         displayDialog(player, dialog_id, dialog);
                         return true;
                     }
-
-                    break;
                 }
 
                 case NOT_READ -> {
@@ -45,8 +37,6 @@ public class DialogRequirementHandler extends AbstractDialogRequirement {
                         displayDialog(player, dialog_id, dialog);
                         return true;
                     }
-
-                    break;
                 }
             }
         }
@@ -58,9 +48,6 @@ public class DialogRequirementHandler extends AbstractDialogRequirement {
     private void displayDialog(Player player, int dialog_id, DialogTemplate dialog) throws IOException {
         LocateHash.currentDialog.put(player, dialog_id);
         LocateHash.currentGlobalDialog.put(player, dialog.getGlobal_id());
-
-        System.out.println(MCUtil.isReadDialog(player, dialog_id));
-        System.out.println(dialog.getDialog().get(dialog_id).getDialogTitle());
 
         SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, dialog_id, player));
     }

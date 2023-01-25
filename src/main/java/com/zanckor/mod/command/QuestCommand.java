@@ -12,6 +12,7 @@ import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
 import com.zanckor.mod.network.message.screen.QuestTracked;
+import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -63,6 +64,7 @@ public class QuestCommand {
 
 
     public static int addQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         ServerLevel level = context.getSource().getLevel();
         Player player = level.getPlayerByUUID(playerUUID);
         String quest = "id_" + questID + ".json";
@@ -77,17 +79,12 @@ public class QuestCommand {
 
         for (File file : serverQuests.toFile().listFiles()) {
             Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             if (file.getName().equals(quest)) {
-                FileReader reader = new FileReader(file);
-                ServerQuestBase serverQuest = gson.fromJson(reader, ServerQuestBase.class);
-                reader.close();
-
+                ServerQuestBase serverQuest = MCUtil.getJsonServerQuest(file, gson);
                 AbstractRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
 
                 if (!requirement.handler(player, serverQuest)) {
-                    context.getSource().sendFailure(Component.literal("Player " + player.getScoreboardName() + " doesn't have the requirements to access to this quest"));
                     return 0;
                 }
 
@@ -104,6 +101,7 @@ public class QuestCommand {
                     protectEntityQuest(playerQuest, level, player, serverQuest, path, gson, questID);
                 }
 
+                LocateHash.registerQuestByID(questID, path);
                 break;
             }
         }

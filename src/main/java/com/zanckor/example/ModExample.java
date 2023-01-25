@@ -11,9 +11,9 @@ import com.zanckor.example.handler.dialogoption.CloseDialogHandler;
 import com.zanckor.example.handler.dialogoption.OpenDialogHandler;
 import com.zanckor.example.handler.dialogrequirement.DialogRequirementHandler;
 import com.zanckor.example.handler.dialogrequirement.QuestRequirementHandler;
-import com.zanckor.example.handler.quest.*;
-import com.zanckor.example.handler.requirement.XpRequirement;
-import com.zanckor.example.handler.reward.ItemReward;
+import com.zanckor.example.handler.questtype.*;
+import com.zanckor.example.handler.questrequirement.XpRequirement;
+import com.zanckor.example.handler.questreward.ItemReward;
 
 public class ModExample {
 

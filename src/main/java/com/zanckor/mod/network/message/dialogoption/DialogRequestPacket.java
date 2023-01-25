@@ -1,4 +1,4 @@
-package com.zanckor.mod.network.message;
+package com.zanckor.mod.network.message.dialogoption;
 
 import com.google.gson.Gson;
 import com.zanckor.api.database.LocateHash;

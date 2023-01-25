@@ -12,8 +12,8 @@ import com.zanckor.api.quest.abstracquest.AbstractRequirement;
 import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.ClientHandler;
+import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -36,21 +36,20 @@ import java.util.UUID;
 
 import static com.zanckor.api.quest.enumquest.EnumQuestType.PROTECT_ENTITY;
 import static com.zanckor.mod.QuestApiMain.*;
-import static com.zanckor.mod.QuestApiMain.getUncompletedQuest;
 
 public class AddQuestHandler extends AbstractDialogOption {
 
 
     @Override
     public void handler(Player player, DialogTemplate dialog, int optionID) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         int currentDialog = LocateHash.currentDialog.get(player);
+        DialogTemplate.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(optionID);
+        String quest = "id_" + option.getQuest_id() + ".json";
+
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
-        DialogTemplate.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(optionID);
-
         if (option.getType().equals(EnumOptionType.ADD_QUEST.toString())) {
-            String quest = "id_" + option.getQuest_id() + ".json";
-
             if (Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getUncompletedQuest(userFolder).toString(), quest))) {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.closeDialog());
 
@@ -60,21 +59,16 @@ public class AddQuestHandler extends AbstractDialogOption {
 
             for (File file : serverQuests.toFile().listFiles()) {
                 Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
                 if (file.getName().equals(quest)) {
-                    FileReader reader = new FileReader(file);
-                    ServerQuestBase serverQuest = gson.fromJson(reader, ServerQuestBase.class);
-                    reader.close();
-
+                    ServerQuestBase serverQuest = MCUtil.getJsonServerQuest(file, gson);
                     AbstractRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
 
                     if (!requirement.handler(player, serverQuest)) {
-                        player.sendSystemMessage(Component.literal("Player " + player.getScoreboardName() + " doesn't have the requirements to access to this quest"));
                         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.closeDialog());
-
                         return;
                     }
+
 
                     FileWriter writer = new FileWriter(path.toFile());
                     ClientQuestBase playerQuest = ClientQuestBase.createQuest(serverQuest, path);
@@ -89,6 +83,7 @@ public class AddQuestHandler extends AbstractDialogOption {
                         protectEntityQuest(playerQuest, player.level, player, serverQuest, path, gson, option.getQuest_id());
                     }
 
+                    LocateHash.registerQuestByID(option.getQuest_id(), path);
                     break;
                 }
             }

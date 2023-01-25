@@ -5,6 +5,7 @@ import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.DialogReadTemplate;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.api.quest.ServerQuestBase;
 import com.zanckor.mod.QuestApiMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -104,7 +105,7 @@ public class MCUtil {
     }
 
 
-    public static ClientQuestBase getJsonQuest(File file, Gson gson) throws IOException {
+    public static ClientQuestBase getJsonClientQuest(File file, Gson gson) throws IOException {
         if (!file.exists()) return null;
 
         FileReader reader = new FileReader(file);
@@ -112,6 +113,16 @@ public class MCUtil {
         reader.close();
 
         return playerQuest;
+    }
+
+    public static ServerQuestBase getJsonServerQuest(File file, Gson gson) throws IOException {
+        if (!file.exists()) return null;
+
+        FileReader reader = new FileReader(file);
+        ServerQuestBase serverQuest = gson.fromJson(reader, ServerQuestBase.class);
+        reader.close();
+
+        return serverQuest;
     }
 
     public static DialogTemplate getJsonDialog(File file, Gson gson) throws IOException {
@@ -126,7 +137,8 @@ public class MCUtil {
 
 
     public static void writeDialogRead(Player player, int dialogID) throws IOException {
-        int currentDialog = LocateHash.currentDialog.get(player);
+        int globalDialog = LocateHash.currentGlobalDialog.get(player);
+
 
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
@@ -157,7 +169,7 @@ public class MCUtil {
         }
 
         dialogIDList.add(new DialogReadTemplate.DialogID(dialogID));
-        DialogReadTemplate.GlobalID globalIDClass = new DialogReadTemplate.GlobalID(currentDialog, dialogIDList);
+        DialogReadTemplate.GlobalID globalIDClass = new DialogReadTemplate.GlobalID(globalDialog, dialogIDList);
 
         FileWriter writer = new FileWriter(file);
         writer.write(gson.toJson(globalIDClass));
@@ -171,8 +183,8 @@ public class MCUtil {
 
         Path path = Paths.get(getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
         File file = path.toFile();
+        DialogReadTemplate.GlobalID dialog;
 
-        DialogReadTemplate.GlobalID dialog = null;
 
         if (file.exists()) {
             FileReader reader = new FileReader(file);
@@ -189,12 +201,12 @@ public class MCUtil {
 
             for (int i = 0; i < dialogIDList.size(); i++) {
                 if (dialogIDList.get(i).getDialog_id() == dialogID) {
-                    return false;
+                    return true;
                 }
             }
         }
 
-        return true;
+        return false;
     }
 
     public static List<List<FormattedCharSequence>> splitText(String text, Font font, int textSize) {

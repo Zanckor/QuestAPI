@@ -3,8 +3,8 @@ package com.zanckor.mod.client.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zanckor.api.dialog.enumdialog.EnumOptionType;
 import com.zanckor.mod.network.SendQuestPacket;
-import com.zanckor.mod.network.message.DialogRequestPacket;
-import com.zanckor.mod.network.message.dialog.AddQuest;
+import com.zanckor.mod.network.message.dialogoption.DialogRequestPacket;
+import com.zanckor.mod.network.message.dialogoption.AddQuest;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -104,7 +104,6 @@ public class DialogScreen extends Screen {
 
     private void button(int optionID, int dialogID) {
         EnumOptionType optionType = EnumOptionType.valueOf(optionStrings.get(optionID).get(1));
-
         switch (optionType) {
             case OPEN_DIALOG, CLOSE_DIALOG -> {
                 SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, dialogID, optionID));

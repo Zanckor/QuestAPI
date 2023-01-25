@@ -1,4 +1,4 @@
-package com.zanckor.example.handler.quest;
+package com.zanckor.example.handler.questtype;
 
 import com.google.gson.Gson;
 import com.zanckor.api.database.LocateHash;
@@ -9,7 +9,7 @@ import com.zanckor.api.quest.enumquest.EnumQuestReward;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
-import com.zanckor.mod.network.message.ToastPacket;
+import com.zanckor.mod.network.message.quest.ToastPacket;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.world.entity.player.Player;
 
@@ -27,7 +27,7 @@ public class CompleteQuest {
 
     public static void completeQuest(Player player, Gson gson, File file) throws IOException {
         Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
-        ClientQuestBase modifiedPlayerQuest = MCUtil.getJsonQuest(file, gson);
+        ClientQuestBase modifiedPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
 
 
         if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
@@ -55,8 +55,8 @@ public class CompleteQuest {
                     reward.handler(player, serverQuest);
                     serverQuestReader.close();
 
-                    LocateHash.removeQuest(modifiedPlayerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
                     Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
+                    LocateHash.movePathQuest(modifiedPlayerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
                 }
             }
         }

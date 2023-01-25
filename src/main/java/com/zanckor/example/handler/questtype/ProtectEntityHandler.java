@@ -1,4 +1,4 @@
-package com.zanckor.example.handler.quest;
+package com.zanckor.example.handler.questtype;
 
 import com.google.gson.Gson;
 import com.zanckor.api.database.LocateHash;
@@ -46,7 +46,7 @@ public class ProtectEntityHandler extends AbstractQuest {
             protectEntityWriter.close();
             Files.move(file.toPath(), Paths.get(uncompletedQuest.toString(), file.getName()));
 
-            LocateHash.removeQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
+            LocateHash.movePathQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
         }
     }
 }

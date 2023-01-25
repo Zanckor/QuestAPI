@@ -1,4 +1,4 @@
-package com.zanckor.example.handler.quest;
+package com.zanckor.example.handler.questtype;
 
 import com.google.gson.Gson;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
@@ -15,7 +15,7 @@ public class MoveToHandler extends AbstractQuest {
     public void handler(Player player, Gson gson, File file, ClientQuestBase playerQuest) throws IOException {
 
         for (int i = 0; i < 3; i++) {
-            ClientQuestBase moveToPlayerQuest = MCUtil.getJsonQuest(file, gson);
+            ClientQuestBase moveToPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
 
             FileWriter moveToCoordWriter = new FileWriter(file);
             gson.toJson(playerQuest.setProgress(moveToPlayerQuest, i, 1), moveToCoordWriter);

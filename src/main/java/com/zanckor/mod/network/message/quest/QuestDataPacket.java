@@ -1,4 +1,4 @@
-package com.zanckor.mod.network.message;
+package com.zanckor.mod.network.message.quest;
 
 import com.google.gson.Gson;
 import com.zanckor.api.quest.ClientQuestBase;
@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.zanckor.mod.util.MCUtil.getJsonQuest;
+import static com.zanckor.mod.util.MCUtil.getJsonClientQuest;
 
 public class QuestDataPacket {
 
@@ -59,7 +59,7 @@ public class QuestDataPacket {
         for (int i = 0; i < questTypeLocation.size(); i++) {
             Path path = questTypeLocation.get(i).toAbsolutePath();
             File file = path.toFile();
-            ClientQuestBase playerQuest = getJsonQuest(file, gson);
+            ClientQuestBase playerQuest = getJsonClientQuest(file, gson);
 
             if(playerQuest == null || playerQuest.isCompleted()) continue;
 

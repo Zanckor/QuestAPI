@@ -33,10 +33,10 @@
       "dialogTitle": "D. 1 - Acceptar",
       "dialogText": "Gracias, necesito 2 lingotes de oro y 1 de hierro",
       "requirements": {
-        "type": "DIALOG",
+        "type": null,
         "global_id": 0,
-        "id": 1,
-        "requirement_status": "READ"
+        "id": 0,
+        "requirement_status": null
       },
       "options": [
         {
@@ -53,10 +53,10 @@
       "dialogTitle": "D. 2 - Rechazar",
       "dialogText": "Ya veo, no importa, cambias de opinion seguiré aqui",
       "requirements": {
-        "type": "DIALOG",
+        "type": null,
         "global_id": 0,
-        "id": 1,
-        "requirement_status": "READ"
+        "id": 0,
+        "requirement_status": null
       },
       "options": [
         {
@@ -111,6 +111,26 @@
           "type": "OPEN_DIALOG",
           "global_id": 0,
           "dialog": 1,
+          "quest_id": null
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "dialogTitle": "D. 4 - Finalizar",
+      "dialogText": "Muchas gracias por ayudarme viajero",
+      "requirements": {
+        "type": "QUEST",
+        "global_id": 0,
+        "id": 0,
+        "requirement_status": "COMPLETED"
+      },
+      "options": [
+        {
+          "text": "No es nada",
+          "type": "CLOSE_DIALOG",
+          "global_id": 0,
+          "dialog": 0,
           "quest_id": null
         }
       ]

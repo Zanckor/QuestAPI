@@ -1,4 +1,4 @@
-package com.zanckor.mod.network.message;
+package com.zanckor.mod.network.message.quest;
 
 import com.zanckor.mod.network.ClientHandler;
 import net.minecraft.network.FriendlyByteBuf;

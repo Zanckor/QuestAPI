@@ -1,4 +1,4 @@
-package com.zanckor.example.handler.quest;
+package com.zanckor.example.handler.questtype;
 
 import com.google.gson.Gson;
 import com.zanckor.api.quest.ClientQuestBase;
@@ -15,7 +15,7 @@ public class KillHandler extends AbstractQuest {
     public void handler(Player player, Gson gson, File file, ClientQuestBase playerQuest) throws IOException {
 
         for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
-            ClientQuestBase killPlayerQuest = MCUtil.getJsonQuest(file, gson);
+            ClientQuestBase killPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
 
             if (killPlayerQuest.getTarget_current_quantity().get(targetIndex) >= killPlayerQuest.getTarget_quantity().get(targetIndex) || !(killPlayerQuest.getQuest_target().get(targetIndex).equals(player.getLastHurtMob().getType().getDescriptionId()))) {
                 continue;

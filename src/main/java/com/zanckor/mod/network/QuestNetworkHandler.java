@@ -1,13 +1,13 @@
 package com.zanckor.mod.network;
 
 import com.zanckor.mod.QuestApiMain;
-import com.zanckor.mod.network.message.DialogRequestPacket;
-import com.zanckor.mod.network.message.QuestDataPacket;
-import com.zanckor.mod.network.message.TimerPacket;
-import com.zanckor.mod.network.message.ToastPacket;
-import com.zanckor.mod.network.message.dialog.AddQuest;
-import com.zanckor.mod.network.message.dialog.CloseDialog;
-import com.zanckor.mod.network.message.dialog.DisplayDialog;
+import com.zanckor.mod.network.message.dialogoption.DialogRequestPacket;
+import com.zanckor.mod.network.message.quest.QuestDataPacket;
+import com.zanckor.mod.network.message.quest.TimerPacket;
+import com.zanckor.mod.network.message.quest.ToastPacket;
+import com.zanckor.mod.network.message.dialogoption.AddQuest;
+import com.zanckor.mod.network.message.dialogoption.CloseDialog;
+import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.network.message.screen.QuestTracked;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;

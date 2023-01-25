@@ -1,4 +1,4 @@
-package com.zanckor.example.handler.quest;
+package com.zanckor.example.handler.questtype;
 
 import com.google.gson.Gson;
 import com.zanckor.api.quest.ClientQuestBase;
@@ -17,12 +17,12 @@ public class InteractEntityHandler extends AbstractQuest {
     public void handler(Player player, Gson gson, File file, ClientQuestBase playerQuest) throws IOException {
 
         for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
-            ClientQuestBase interactPlayerQuest = MCUtil.getJsonQuest(file, gson);
-
+            ClientQuestBase interactPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
             Entity entityLookinAt = MCUtil.getEntityLookinAt(player, player.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
 
             if (interactPlayerQuest.getQuest_target().get(targetIndex).equals(entityLookinAt.getType().getDescriptionId())
                     && interactPlayerQuest.getTarget_current_quantity().get(targetIndex) < interactPlayerQuest.getTarget_quantity().get(targetIndex)) {
+
                 FileWriter interactWriter = new FileWriter(file);
                 gson.toJson(interactPlayerQuest.incrementProgress(interactPlayerQuest, targetIndex), interactWriter);
                 interactWriter.flush();

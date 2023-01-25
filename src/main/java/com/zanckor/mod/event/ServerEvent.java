@@ -42,7 +42,7 @@ public class ServerEvent {
 
 
         for (File file : activeQuest.toFile().listFiles()) {
-            ClientQuestBase playerQuest = MCUtil.getJsonQuest(file, gson);
+            ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file, gson);
 
             if (playerQuest != null) {
                 timer(playerQuest, e.player, file, gson, uncompletedQuest);
@@ -65,7 +65,7 @@ public class ServerEvent {
             writer.close();
 
             Files.move(file.toPath(), Paths.get(uncompletedQuest.toString(), file.getName()));
-            LocateHash.removeQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
+            LocateHash.movePathQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
         }
     }
 
@@ -82,7 +82,7 @@ public class ServerEvent {
 
         for (Path path : paths) {
             for (File file : path.toFile().listFiles()) {
-                ClientQuestBase playerQuest = MCUtil.getJsonQuest(file, gson);
+                ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file, gson);
                 if (playerQuest == null) continue;
 
                 registerQuestTypeLocation(EnumQuestType.valueOf(playerQuest.getQuest_type()), file.toPath().toAbsolutePath());

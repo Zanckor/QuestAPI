@@ -1,10 +1,7 @@
-package com.zanckor.mod.network.message.dialog;
+package com.zanckor.mod.network.message.dialogoption;
 
-import com.google.gson.Gson;
 import com.zanckor.api.database.LocateHash;
-import com.zanckor.api.dialog.abstractdialog.DialogReadTemplate;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
-import com.zanckor.example.event.QuestEvent;
 import com.zanckor.mod.network.ClientHandler;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,18 +10,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
-
-import static com.zanckor.mod.QuestApiMain.getReadDialogs;
-import static com.zanckor.mod.QuestApiMain.playerData;
 
 public class DisplayDialog {
 
