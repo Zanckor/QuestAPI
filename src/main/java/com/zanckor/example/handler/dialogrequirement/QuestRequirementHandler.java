@@ -26,6 +26,8 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
         Path questPath = LocateHash.getQuestByID(dialog.getDialog().get(dialog_id).getRequirements().getId());
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
+        System.out.println(LocateHash.getQuestByID(1));
+
         File questFile;
         ClientQuestBase playerQuest = null;
 
