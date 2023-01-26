@@ -14,7 +14,11 @@ import static com.zanckor.api.quest.enumquest.EnumQuestType.INTERACT_ENTITY;
 public class InteractWEntityEvent {
 
 
-    //TODO Fixear, se ejecuta demasiadas veces
+    /*TODO
+     * Fixear, se ejecuta demasiadas veces
+     * Esto se produce porque el interact es cada tick, no como el InputEvent que es al pulsar y soltar
+     * Por lo que tengo que idear una forma de que solo se ejecute 1 vez
+     */
 
     @SubscribeEvent
     public static void interactWithNPC(PlayerInteractEvent.EntityInteract e) {
