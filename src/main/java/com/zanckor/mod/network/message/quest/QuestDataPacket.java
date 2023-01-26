@@ -1,11 +1,15 @@
 package com.zanckor.mod.network.message.quest;
 
 import com.google.gson.Gson;
-import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.database.LocateHash;
-import com.zanckor.api.quest.enumquest.EnumQuestType;
+import com.zanckor.api.dialog.abstractdialog.AbstractDialogRequirement;
+import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
+import com.zanckor.api.dialog.enumdialog.EnumRequirementType;
+import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
+import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
+import com.zanckor.mod.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
@@ -51,22 +55,45 @@ public class QuestDataPacket {
         AbstractQuest quest = TemplateRegistry.getQuestTemplate(questType);
         Player player = ctx.get().getSender();
 
+        loadDialog(player, 0);
+
         if (quest == null) return;
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-
         List<Path> questTypeLocation = LocateHash.getQuestTypeLocation(questType);
 
         for (int i = 0; i < questTypeLocation.size(); i++) {
+
             Path path = questTypeLocation.get(i).toAbsolutePath();
             File file = path.toFile();
             ClientQuestBase playerQuest = getJsonClientQuest(file, gson);
 
-            if(playerQuest == null || playerQuest.isCompleted()) continue;
+            if (playerQuest == null || playerQuest.isCompleted()) continue;
 
 
             if (playerQuest.getQuest_type().equals(questType.toString())) {
                 quest.handler(player, gson, file, playerQuest);
             }
+        }
+    }
+
+
+    //TODO Change this
+    public static void loadDialog(Player player, int globalDialogID) throws IOException {
+        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+        Path path = DialogTemplate.getDialogLocation(globalDialogID);
+
+        File dialogFile = path.toFile();
+        DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
+
+
+        for (int dialog_id = dialog.getDialog().size() - 1; dialog_id >= 0; dialog_id--) {
+            if (dialog.getDialog().get(dialog_id).getRequirements().getType() == null) continue;
+
+            EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
+            AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
+
+
+            if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id)) return;
         }
     }
 }

@@ -10,7 +10,10 @@ import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.mod.network.SendQuestPacket;
 import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.util.MCUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,26 +24,25 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
 
     @Override
     public boolean handler(Player player, DialogTemplate dialog, int dialog_id) throws IOException {
+        if(player.level.isClientSide) return false;
+
         EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getRequirement_status());
         String requirement = dialog.getDialog().get(dialog_id).getRequirements().getType();
         Path questPath = LocateHash.getQuestByID(dialog.getDialog().get(dialog_id).getRequirements().getId());
         Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
-        System.out.println(LocateHash.getQuestByID(1));
-
         File questFile;
         ClientQuestBase playerQuest = null;
 
         if (requirement.equals(EnumRequirementType.QUEST.toString())) {
+
             if (questPath != null) {
                 questFile = questPath.toFile();
 
                 if (questFile.exists()) {
                     playerQuest = MCUtil.getJsonClientQuest(questFile, gson);
-                    System.out.println(playerQuest.isCompleted());
-                    System.out.println(requirementStatus);
-                    System.out.println(dialog_id);
                 }
+
 
                 switch (requirementStatus) {
                     case IN_PROGRESS -> {

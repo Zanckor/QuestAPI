@@ -46,9 +46,8 @@ public class QuestEvent {
     public static void recollectPickUpQuest(PlayerEvent.ItemPickupEvent e) throws IOException {
         if (e.getEntity().level.isClientSide) return;
         SendQuestPacket.TO_SERVER(new QuestDataPacket(RECOLLECT));
-
-        loadDialog(e.getEntity(), 0);
     }
+
     @SubscribeEvent
     public static void recollectCraftQuest(PlayerEvent.ItemCraftedEvent e) {
         if (e.getEntity().level.isClientSide) return;
@@ -152,25 +151,6 @@ public class QuestEvent {
             if (Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
                 SendQuestPacket.TO_SERVER(new QuestDataPacket(PROTECT_ENTITY));
             }
-        }
-    }
-
-
-    //TODO Change this
-    public static void loadDialog(Player player, int globalDialogID) throws IOException {
-        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-        Path path = DialogTemplate.getDialogLocation(globalDialogID);
-
-        File dialogFile = path.toFile();
-        DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
-
-        for (int dialog_id = dialog.getDialog().size() - 1; dialog_id >= 0; dialog_id--) {
-            if (dialog.getDialog().get(dialog_id).getRequirements().getType() == null) continue;
-
-            EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
-            AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
-
-            if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id)) return;
         }
     }
 }

@@ -42,11 +42,11 @@ public class LocateHash {
 
     public static void movePathQuest(Integer id, Path path, EnumQuestType enumQuestType) {
         quest_by_ID_location.remove(id);
-        quest_by_ID_location.put(id, path);
+        registerQuestByID(id, path);
     }
 
 
-    public static void removeQuest(Integer id, Path path, EnumQuestType enumQuestType){
+    public static void removeQuest(Integer id, Path path, EnumQuestType enumQuestType) {
         quest_type_location.remove(enumQuestType, path);
         quest_by_ID_location.remove(id);
     }

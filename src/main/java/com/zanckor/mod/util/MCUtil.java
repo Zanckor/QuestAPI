@@ -109,6 +109,7 @@ public class MCUtil {
         if (!file.exists()) return null;
 
         FileReader reader = new FileReader(file);
+
         ClientQuestBase playerQuest = gson.fromJson(reader, ClientQuestBase.class);
         reader.close();
 

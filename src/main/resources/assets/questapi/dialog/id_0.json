@@ -108,9 +108,9 @@
       "options": [
         {
           "text": "Bien, falta poco",
-          "type": "OPEN_DIALOG",
+          "type": "CLOSE_DIALOG",
           "global_id": 0,
-          "dialog": 1,
+          "dialog": 0,
           "quest_id": null
         }
       ]
