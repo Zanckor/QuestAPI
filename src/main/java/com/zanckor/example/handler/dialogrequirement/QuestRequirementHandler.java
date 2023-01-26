@@ -1,6 +1,5 @@
 package com.zanckor.example.handler.dialogrequirement;
 
-import com.google.gson.Gson;
 import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.AbstractDialogRequirement;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
@@ -10,10 +9,7 @@ import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.mod.network.SendQuestPacket;
 import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.util.MCUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +20,11 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
 
     @Override
     public boolean handler(Player player, DialogTemplate dialog, int dialog_id) throws IOException {
-        if(player.level.isClientSide) return false;
+        if (player.level.isClientSide) return false;
 
         EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getRequirement_status());
         String requirement = dialog.getDialog().get(dialog_id).getRequirements().getType();
         Path questPath = LocateHash.getQuestByID(dialog.getDialog().get(dialog_id).getRequirements().getId());
-        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
         File questFile;
         ClientQuestBase playerQuest = null;
@@ -40,7 +35,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
                 questFile = questPath.toFile();
 
                 if (questFile.exists()) {
-                    playerQuest = MCUtil.getJsonClientQuest(questFile, gson);
+                    playerQuest = MCUtil.getJsonClientQuest(questFile, MCUtil.gson());
                 }
 
 
@@ -48,6 +43,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
                     case IN_PROGRESS -> {
                         if (questFile.exists() && !playerQuest.isCompleted()) {
                             displayDialog(player, dialog_id, dialog);
+
                             return true;
                         }
                     }
@@ -56,6 +52,15 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
                     case COMPLETED -> {
                         if (questFile.exists() && playerQuest.isCompleted()) {
                             displayDialog(player, dialog_id, dialog);
+
+                            return true;
+                        }
+                    }
+
+                    case NOT_OBTAINED -> {
+                        if (!questFile.exists()) {
+                            displayDialog(player, dialog_id, dialog);
+
                             return true;
                         }
                     }
@@ -64,6 +69,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
                 switch (requirementStatus) {
                     case NOT_OBTAINED -> {
                         displayDialog(player, dialog_id, dialog);
+
                         return true;
                     }
                 }

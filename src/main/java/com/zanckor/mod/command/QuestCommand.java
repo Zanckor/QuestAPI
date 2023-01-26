@@ -3,11 +3,11 @@ package com.zanckor.mod.command;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.database.LocateHash;
-import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
-import com.zanckor.api.quest.abstracquest.AbstractRequirement;
+import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.ServerQuestBase;
+import com.zanckor.api.quest.abstracquest.AbstractRequirement;
+import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
@@ -60,7 +60,6 @@ public class QuestCommand {
 
         return 1;
     }
-
 
 
     public static int addQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
@@ -136,16 +135,20 @@ public class QuestCommand {
 
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
         Path path = LocateHash.getQuestByID(questID);
+
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         File file = path.toFile();
-        file.delete();
 
         FileReader reader = new FileReader(file);
-        ServerQuestBase serverQuest = gson.fromJson(reader, ServerQuestBase.class);
+        ClientQuestBase clientQuest = gson.fromJson(reader, ClientQuestBase.class);
         reader.close();
 
-        LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(serverQuest.getQuest_type()));
+
+        LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(clientQuest.getQuest_type()));
+        file.delete();
+
+        System.out.println(questID);
 
         return 1;
     }

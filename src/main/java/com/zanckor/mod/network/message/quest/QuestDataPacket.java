@@ -55,23 +55,21 @@ public class QuestDataPacket {
         AbstractQuest quest = TemplateRegistry.getQuestTemplate(questType);
         Player player = ctx.get().getSender();
 
-        loadDialog(player, 0);
-
         if (quest == null) return;
-        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
         List<Path> questTypeLocation = LocateHash.getQuestTypeLocation(questType);
+
+        loadDialog(player, 0);
 
         for (int i = 0; i < questTypeLocation.size(); i++) {
 
             Path path = questTypeLocation.get(i).toAbsolutePath();
-            File file = path.toFile();
-            ClientQuestBase playerQuest = getJsonClientQuest(file, gson);
+            ClientQuestBase playerQuest = getJsonClientQuest(path.toFile(), MCUtil.gson());
 
             if (playerQuest == null || playerQuest.isCompleted()) continue;
 
 
             if (playerQuest.getQuest_type().equals(questType.toString())) {
-                quest.handler(player, gson, file, playerQuest);
+                quest.handler(player, MCUtil.gson(), path.toFile(), playerQuest);
             }
         }
     }
@@ -91,7 +89,6 @@ public class QuestDataPacket {
 
             EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
             AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
-
 
             if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id)) return;
         }

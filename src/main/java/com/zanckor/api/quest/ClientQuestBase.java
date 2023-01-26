@@ -62,7 +62,7 @@ public class ClientQuestBase {
         playerQuest.setCompleted(false);
 
         for (int i = 0; i < playerQuest.getQuest_target().size(); i++) {
-            if(i == playerQuest.getQuest_target().size()) playerQuest.setCompleted(true);
+            if (i == playerQuest.getQuest_target().size()) playerQuest.setCompleted(true);
 
             if (!(playerQuest.getTarget_current_quantity().get(i) >= playerQuest.getTarget_quantity().get(i))) {
                 break;
@@ -91,7 +91,7 @@ public class ClientQuestBase {
         playerQuest.setCompleted(false);
 
         for (int i = 0; i < playerQuest.getQuest_target().size(); i++) {
-            if(i == playerQuest.getQuest_target().size()) playerQuest.setCompleted(true);
+            if (i == playerQuest.getQuest_target().size()) playerQuest.setCompleted(true);
 
             if (!(playerQuest.getTarget_current_quantity().get(i) >= playerQuest.getTarget_quantity().get(i))) {
                 break;
@@ -119,7 +119,7 @@ public class ClientQuestBase {
         playerQuest.setCompleted(false);
 
         for (int i = 0; i < playerQuest.getQuest_target().size(); i++) {
-            if(i == playerQuest.getQuest_target().size()) playerQuest.setCompleted(true);
+            if (i == playerQuest.getQuest_target().size()) playerQuest.setCompleted(true);
 
             if (!(playerQuest.getTarget_current_quantity().get(i) >= playerQuest.getTarget_quantity().get(i))) {
                 break;

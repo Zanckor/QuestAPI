@@ -1,6 +1,7 @@
 package com.zanckor.mod.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.DialogReadTemplate;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
@@ -223,5 +224,10 @@ public class MCUtil {
         SoundManager soundManager = Minecraft.getInstance().getSoundManager();
 
         soundManager.play(SimpleSoundInstance.forUI(SoundEvents.LEVER_CLICK, Mth.randomBetween(RandomSource.create(), 0.975f, 1.025f)));
+    }
+
+
+    public static Gson gson(){
+        return new GsonBuilder().setPrettyPrinting().create();
     }
 }

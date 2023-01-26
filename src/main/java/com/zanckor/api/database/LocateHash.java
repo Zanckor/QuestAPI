@@ -13,41 +13,42 @@ public class LocateHash {
     public static HashMap<Player, Integer> currentGlobalDialog = new HashMap<>();
 
 
-    public static HashMap<Integer, Path> quest_by_ID_location = new HashMap<>();
-    public static HashMap<EnumQuestType, List<Path>> quest_type_location = new HashMap<>();
+    public static HashMap<Integer, Path> clientQuestByIDLocation = new HashMap<>();
+    public static HashMap<EnumQuestType, List<Path>> clientQuestTypeLocation = new HashMap<>();
+
 
     public static void registerQuestTypeLocation(EnumQuestType type, Path path) {
-        if (quest_type_location.get(type) == null) {
-            quest_type_location.put(type, new ArrayList<>());
+        if (clientQuestTypeLocation.get(type) == null) {
+            clientQuestTypeLocation.put(type, new ArrayList<>());
         }
 
-        List<Path> questList = quest_type_location.get(type);
+        List<Path> questList = clientQuestTypeLocation.get(type);
         questList.add(path);
 
-        quest_type_location.put(type, questList);
+        clientQuestTypeLocation.put(type, questList);
     }
 
     public static void registerQuestByID(Integer id, Path path) {
-        quest_by_ID_location.put(id, path);
+        clientQuestByIDLocation.put(id, path);
     }
 
 
     public static List<Path> getQuestTypeLocation(EnumQuestType type) {
-        return quest_type_location.get(type);
+        return clientQuestTypeLocation.get(type);
     }
 
     public static Path getQuestByID(Integer id) {
-        return quest_by_ID_location.get(id);
+        return clientQuestByIDLocation.get(id);
     }
 
     public static void movePathQuest(Integer id, Path path, EnumQuestType enumQuestType) {
-        quest_by_ID_location.remove(id);
+        clientQuestByIDLocation.remove(id);
         registerQuestByID(id, path);
     }
 
 
     public static void removeQuest(Integer id, Path path, EnumQuestType enumQuestType) {
-        quest_type_location.remove(enumQuestType, path);
-        quest_by_ID_location.remove(id);
+        clientQuestTypeLocation.remove(enumQuestType, path);
+        clientQuestByIDLocation.remove(id);
     }
 }
