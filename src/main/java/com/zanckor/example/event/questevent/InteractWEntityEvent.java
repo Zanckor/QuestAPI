@@ -13,10 +13,13 @@ import static com.zanckor.api.quest.enumquest.EnumQuestType.INTERACT_ENTITY;
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class InteractWEntityEvent {
 
+
+    //TODO Fixear, se ejecuta demasiadas veces
+
     @SubscribeEvent
     public static void interactWithNPC(PlayerInteractEvent.EntityInteract e) {
-        if (e.getHand() == InteractionHand.MAIN_HAND) return;
-        
+        if (e.getHand() == InteractionHand.OFF_HAND) return;
+
         SendQuestPacket.TO_SERVER(new QuestDataPacket(INTERACT_ENTITY));
     }
 }

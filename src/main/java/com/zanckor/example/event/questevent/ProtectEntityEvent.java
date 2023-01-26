@@ -67,6 +67,7 @@ public class ProtectEntityEvent {
 
         for (Path path : protectEntityQuests) {
             ClientQuestBase playerQuest = getJsonClientQuest(path.toFile(), MCUtil.gson());
+            if(playerQuest != null && playerQuest.isCompleted()) return;
 
             protectEntity(playerQuest, e.player);
         }

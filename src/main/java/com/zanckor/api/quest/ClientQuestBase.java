@@ -17,7 +17,7 @@ public class ClientQuestBase {
     private List<String> quest_target;
     private List<Integer> target_quantity;
     private List<Integer> target_current_quantity;
-    private boolean hasTimeLimit;
+    private boolean timeLimit;
     private int timeLimitInSeconds;
     private boolean completed;
 
@@ -32,7 +32,7 @@ public class ClientQuestBase {
         playerQuest.setTarget_quantity(new ArrayList<>(abstractQuest.getTarget_quantity()));
         playerQuest.setTarget_current_quantity(new ArrayList<>(Collections.nCopies(abstractQuest.getTarget_quantity().size(), 0)));
 
-        playerQuest.setHasTimeLimit(abstractQuest.isHasTimeLimit());
+        playerQuest.setTimeLimit(abstractQuest.isHasTimeLimit());
         playerQuest.setTimeLimitInSeconds(abstractQuest.getTimeLimitInSeconds());
 
         playerQuest.setCompleted(false);
@@ -56,7 +56,7 @@ public class ClientQuestBase {
         playerQuest.setTarget_current_quantity(new ArrayList<>(abstractQuest.getTarget_current_quantity()));
         playerQuest.increaseTarget_current_quantity(abstractQuest.target_current_quantity, position);
 
-        playerQuest.setHasTimeLimit(abstractQuest.isHasTimeLimit());
+        playerQuest.setTimeLimit(abstractQuest.hasTimeLimit());
         playerQuest.setTimeLimitInSeconds(abstractQuest.getTimeLimitInSeconds());
 
         playerQuest.setCompleted(false);
@@ -85,7 +85,7 @@ public class ClientQuestBase {
         playerQuest.setTarget_current_quantity(new ArrayList<>(abstractQuest.getTarget_current_quantity()));
         playerQuest.increaseTarget_current_quantity(abstractQuest.target_current_quantity, position, times);
 
-        playerQuest.setHasTimeLimit(abstractQuest.isHasTimeLimit());
+        playerQuest.setTimeLimit(abstractQuest.hasTimeLimit());
         playerQuest.setTimeLimitInSeconds(abstractQuest.getTimeLimitInSeconds());
 
         playerQuest.setCompleted(false);
@@ -113,7 +113,7 @@ public class ClientQuestBase {
         playerQuest.setTarget_current_quantity(new ArrayList<>(abstractQuest.getTarget_current_quantity()));
         playerQuest.setTarget_current_quantity(quantity, position);
 
-        playerQuest.setHasTimeLimit(abstractQuest.isHasTimeLimit());
+        playerQuest.setTimeLimit(abstractQuest.hasTimeLimit());
         playerQuest.setTimeLimitInSeconds(abstractQuest.getTimeLimitInSeconds());
 
         playerQuest.setCompleted(false);
@@ -197,12 +197,12 @@ public class ClientQuestBase {
         this.target_current_quantity.set(position, quantity);
     }
 
-    public boolean isHasTimeLimit() {
-        return hasTimeLimit;
+    public boolean hasTimeLimit() {
+        return timeLimit;
     }
 
-    public void setHasTimeLimit(boolean hasTimeLimit) {
-        this.hasTimeLimit = hasTimeLimit;
+    public void setTimeLimit(boolean timeLimit) {
+        this.timeLimit = timeLimit;
     }
 
     public int getTimeLimitInSeconds() {

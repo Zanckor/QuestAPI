@@ -3,6 +3,8 @@ package com.zanckor.example.handler.questtype;
 import com.google.gson.Gson;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.api.quest.ClientQuestBase;
+import com.zanckor.mod.network.SendQuestPacket;
+import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.world.entity.player.Player;
 
@@ -21,8 +23,10 @@ public class MoveToHandler extends AbstractQuest {
             gson.toJson(playerQuest.setProgress(moveToPlayerQuest, i, 1), moveToCoordWriter);
             moveToCoordWriter.flush();
             moveToCoordWriter.close();
+
         }
 
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

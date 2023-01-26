@@ -3,6 +3,8 @@ package com.zanckor.example.handler.questtype;
 import com.google.gson.Gson;
 import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
+import com.zanckor.mod.network.SendQuestPacket;
+import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -43,6 +45,7 @@ public class RecollectHandler extends AbstractQuest {
                 gson.toJson(recollectPlayerQuest.setProgress(recollectPlayerQuest, targetIndex, itemCount), recollectWriter);
                 recollectWriter.flush();
                 recollectWriter.close();
+
             }
         }
 
@@ -61,6 +64,7 @@ public class RecollectHandler extends AbstractQuest {
             }
         }
 
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(modifiedPlayerQuest));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

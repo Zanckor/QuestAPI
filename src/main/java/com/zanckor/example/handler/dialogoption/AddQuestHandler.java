@@ -74,7 +74,7 @@ public class AddQuestHandler extends AbstractDialogOption {
                     gson.toJson(playerQuest, writer);
                     writer.close();
 
-                    if (playerQuest.isHasTimeLimit()) {
+                    if (playerQuest.hasTimeLimit()) {
                         Timer.updateCooldown(player.getUUID(), "id_" + option.getQuest_id(), playerQuest.getTimeLimitInSeconds());
                     }
 

@@ -57,7 +57,7 @@ public class ServerEvent {
             return;
         }
 
-        if (!playerQuest.isCompleted() && playerQuest.isHasTimeLimit() && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+        if (!playerQuest.isCompleted() && playerQuest.hasTimeLimit() && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
             FileWriter writer = new FileWriter(file);
             playerQuest.setCompleted(true);
 

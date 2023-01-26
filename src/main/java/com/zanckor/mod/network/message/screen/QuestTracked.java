@@ -31,7 +31,7 @@ public class QuestTracked {
         quest_target = clientQuestBase.getQuest_target();
         target_quantity = clientQuestBase.getTarget_quantity();
         target_current_quantity = clientQuestBase.getTarget_current_quantity();
-        hasTimeLimit = clientQuestBase.isHasTimeLimit();
+        hasTimeLimit = clientQuestBase.hasTimeLimit();
         timeLimitInSeconds = clientQuestBase.getTimeLimitInSeconds();
     }
 

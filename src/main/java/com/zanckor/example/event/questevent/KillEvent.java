@@ -18,6 +18,7 @@ public class KillEvent {
 
 
         if (e.getEntity().level.isClientSide) {
+
         } else {
             SendQuestPacket.TO_SERVER(new QuestDataPacket(KILL));
         }

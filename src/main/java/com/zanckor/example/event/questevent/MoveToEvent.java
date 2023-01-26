@@ -27,11 +27,7 @@ public class MoveToEvent {
     public static void moveToQuest(TickEvent.PlayerTickEvent e) throws IOException {
 
 
-        if (e.player.level.isClientSide) {
-            if (e.player.tickCount % 20 == 0) {
-
-            }
-        } else {
+        if (!e.player.level.isClientSide) {
             if (e.player == null || e.player.getServer().getTickCount() % 20 != 0)
                 return;
 
@@ -40,7 +36,7 @@ public class MoveToEvent {
             if (moveToQuests != null) {
                 for (Path path : moveToQuests) {
                     ClientQuestBase playerQuest = getJsonClientQuest(path.toFile(), MCUtil.gson());
-                    if (playerQuest == null) continue;
+                    if (playerQuest == null || playerQuest.isCompleted()) continue;
 
                     moveTo(playerQuest, e.player);
                 }

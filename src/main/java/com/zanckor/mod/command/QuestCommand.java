@@ -92,7 +92,7 @@ public class QuestCommand {
                 gson.toJson(playerQuest, writer);
                 writer.close();
 
-                if (playerQuest.isHasTimeLimit()) {
+                if (playerQuest.hasTimeLimit()) {
                     Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
                 }
 
@@ -147,8 +147,6 @@ public class QuestCommand {
 
         LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(clientQuest.getQuest_type()));
         file.delete();
-
-        System.out.println(questID);
 
         return 1;
     }

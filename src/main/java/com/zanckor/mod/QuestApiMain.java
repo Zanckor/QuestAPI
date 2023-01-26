@@ -23,9 +23,7 @@ public class QuestApiMain {
         MinecraftForge.EVENT_BUS.register(this);
 
         QuestNetworkHandler.register();
-
-        ModExample.initialize();
-
+        new ModExample();
     }
 
 

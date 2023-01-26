@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zanckor.mod.network.ClientHandler;
 import net.minecraft.client.Minecraft;
 
+import static com.zanckor.mod.network.ClientHandler.trackedHasTimeLimit;
 import static com.zanckor.mod.network.ClientHandler.trackedTitle;
 
 public class QuestTracker {

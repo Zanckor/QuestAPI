@@ -9,6 +9,8 @@ import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
+import com.zanckor.mod.network.SendQuestPacket;
+import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -58,8 +60,6 @@ public class QuestDataPacket {
         if (quest == null) return;
         List<Path> questTypeLocation = LocateHash.getQuestTypeLocation(questType);
 
-        loadDialog(player, 0);
-
         for (int i = 0; i < questTypeLocation.size(); i++) {
 
             Path path = questTypeLocation.get(i).toAbsolutePath();
@@ -73,25 +73,4 @@ public class QuestDataPacket {
             }
         }
     }
-
-
-    //TODO Change this
-    public static void loadDialog(Player player, int globalDialogID) throws IOException {
-        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
-        Path path = DialogTemplate.getDialogLocation(globalDialogID);
-
-        File dialogFile = path.toFile();
-        DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
-
-
-        for (int dialog_id = dialog.getDialog().size() - 1; dialog_id >= 0; dialog_id--) {
-            if (dialog.getDialog().get(dialog_id).getRequirements().getType() == null) continue;
-
-            EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
-            AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
-
-            if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id)) return;
-        }
-    }
 }
-
