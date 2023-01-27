@@ -19,7 +19,7 @@
           "quest_id": 0
         },
         {
-          "text": "No, sorry, I don't have time.",
+          "text": "No, sorry, I don\u0027t have time.",
           "type": "OPEN_DIALOG",
           "global_id": 0,
           "dialog": 2,
@@ -37,7 +37,7 @@
       },
       "options": [
         {
-          "text": "I'll start right now.",
+          "text": "I\u0027ll start right now.",
           "type": "ADD_QUEST",
           "global_id": 0,
           "dialog": 0,
@@ -48,7 +48,7 @@
     {
       "id": 2,
       "dialogTitle": "D. 2 - Rechazar",
-      "dialogText": "I see, it doesn't matter, if you change your mind I'll stay here.",
+      "dialogText": "I see, it doesn\u0027t matter, if you change your mind I\u0027ll stay here.",
       "requirements": {
         "global_id": 0,
         "id": 0
@@ -66,7 +66,7 @@
     {
       "id": 3,
       "dialogTitle": "D. 2.1 - Tras Rechazar",
-      "dialogText": "Hello, I see you're back, have you changed your mind?",
+      "dialogText": "Hello, I see you\u0027re back, have you changed your mind?",
       "requirements": {
         "type": "DIALOG",
         "global_id": 0,
@@ -82,7 +82,7 @@
           "quest_id": 0
         },
         {
-          "text": "No, sorry, I don't have time.",
+          "text": "No, sorry, I don\u0027t have time.",
           "type": "OPEN_DIALOG",
           "global_id": 0,
           "dialog": 2,
@@ -97,7 +97,7 @@
       "requirements": {
         "type": "QUEST",
         "global_id": 0,
-        "id": 1,
+        "id": 0,
         "requirement_status": "IN_PROGRESS"
       },
       "options": [
@@ -117,7 +117,7 @@
       "requirements": {
         "type": "QUEST",
         "global_id": 0,
-        "id": 1,
+        "id": 0,
         "requirement_status": "COMPLETED"
       },
       "options": [

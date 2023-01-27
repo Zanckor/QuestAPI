@@ -1,22 +1,15 @@
 package com.zanckor.mod.network.message.quest;
 
-import com.google.gson.Gson;
 import com.zanckor.api.database.LocateHash;
-import com.zanckor.api.dialog.abstractdialog.AbstractDialogRequirement;
-import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
-import com.zanckor.api.dialog.enumdialog.EnumRequirementType;
 import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
-import com.zanckor.mod.network.SendQuestPacket;
-import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;

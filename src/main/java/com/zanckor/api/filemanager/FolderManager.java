@@ -21,12 +21,11 @@ public class FolderManager {
         Path serverDirectory = e.getServer().getServerDirectory().toPath();
 
         File questApi = new File(serverDirectory.toString(), "quest-api");
-        File dataBase = new File(questApi.toString(), "data-base");
         File playerData = new File(questApi.toString(), "player-data");
         File serverQuests = new File(questApi.toString(), "server-quests");
         File serverDialogs = new File(questApi.toString(), "server-dialogs");
 
-        File[] paths = {dataBase, questApi, playerData, serverQuests, serverDialogs};
+        File[] paths = {questApi, playerData, serverQuests, serverDialogs};
 
         for (File file : paths) {
             if (!file.exists()) {
