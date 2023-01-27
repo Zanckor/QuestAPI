@@ -32,7 +32,7 @@ public class InteractEntityHandler extends AbstractQuest {
             }
         }
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file, gson)));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }
