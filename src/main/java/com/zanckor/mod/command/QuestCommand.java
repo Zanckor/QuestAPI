@@ -145,8 +145,6 @@ public class QuestCommand {
         LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(clientQuest.getQuest_type()));
         file.delete();
 
-        System.out.println(LocateHash.getQuestTypeLocation(EnumQuestType.valueOf(clientQuest.getQuest_type())));
-
         return 1;
     }
 }

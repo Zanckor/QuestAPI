@@ -53,6 +53,8 @@ public class QuestDataPacket {
         if (quest == null) return;
         List<Path> questTypeLocation = LocateHash.getQuestTypeLocation(questType);
 
+        System.out.println(questTypeLocation);
+
         for (int i = 0; i < questTypeLocation.size(); i++) {
 
             Path path = questTypeLocation.get(i).toAbsolutePath();

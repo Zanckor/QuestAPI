@@ -41,17 +41,16 @@ public class LocateHash {
         return clientQuestByIDLocation.get(id);
     }
 
-    public static void movePathQuest(Integer id, Path path, EnumQuestType enumQuestType) {
-        removeQuest(id, path, enumQuestType);
+    public static void movePathQuest(Integer id, Path actualPath, Path newPath, EnumQuestType enumQuestType) {
+        removeQuest(id, newPath, enumQuestType);
 
-        registerQuestTypeLocation(enumQuestType, path);
-        registerQuestByID(id, path);
+        registerQuestTypeLocation(enumQuestType, newPath);
+        registerQuestByID(id, newPath);
     }
 
 
     public static void removeQuest(Integer id, Path path, EnumQuestType enumQuestType) {
         List<Path> oldPathList = getQuestTypeLocation(enumQuestType);
-
 
         List<Path> newPathList = oldPathList;
         newPathList.remove(path);

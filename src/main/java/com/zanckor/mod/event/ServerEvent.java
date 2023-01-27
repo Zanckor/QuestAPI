@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 
 import static com.zanckor.api.database.LocateHash.registerQuestByID;
 import static com.zanckor.api.database.LocateHash.registerQuestTypeLocation;
+import static com.zanckor.mod.QuestApiMain.getCompletedQuest;
 import static com.zanckor.mod.QuestApiMain.playerData;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -57,15 +58,19 @@ public class ServerEvent {
             return;
         }
 
+        Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
+        String questName = "id_" + playerQuest.getId() + ".json";
+
         if (!playerQuest.isCompleted() && playerQuest.hasTimeLimit() && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+
             FileWriter writer = new FileWriter(file);
             playerQuest.setCompleted(true);
 
             gson.toJson(playerQuest, writer);
             writer.close();
 
+            LocateHash.movePathQuest(playerQuest.getId(), file.toPath().toAbsolutePath(),  Paths.get(getCompletedQuest(userFolder).toString(), questName), EnumQuestType.valueOf(playerQuest.getQuest_type()));
             Files.move(file.toPath(), Paths.get(uncompletedQuest.toString(), file.getName()));
-            LocateHash.movePathQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
         }
     }
 
