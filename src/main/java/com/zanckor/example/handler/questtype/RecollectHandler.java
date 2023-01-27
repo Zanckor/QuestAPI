@@ -23,7 +23,7 @@ public class RecollectHandler extends AbstractQuest {
         int itemCount;
 
         for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
-            ClientQuestBase recollectPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
+            ClientQuestBase recollectPlayerQuest = MCUtil.getJsonClientQuest(file);
 
 
             String valueItem = recollectPlayerQuest.getQuest_target().get(targetIndex);
@@ -49,7 +49,7 @@ public class RecollectHandler extends AbstractQuest {
             }
         }
 
-        ClientQuestBase modifiedPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
+        ClientQuestBase modifiedPlayerQuest = MCUtil.getJsonClientQuest(file);
 
         if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
             for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {

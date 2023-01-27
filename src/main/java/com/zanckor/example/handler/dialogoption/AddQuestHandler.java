@@ -41,7 +41,6 @@ public class AddQuestHandler extends AbstractDialogOption {
 
     @Override
     public void handler(Player player, DialogTemplate dialog, int optionID) throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         int currentDialog = LocateHash.currentDialog.get(player);
         DialogTemplate.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(optionID);
         String quest = "id_" + option.getQuest_id() + ".json";
@@ -60,7 +59,7 @@ public class AddQuestHandler extends AbstractDialogOption {
                 Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
 
                 if (file.getName().equals(quest)) {
-                    ServerQuestBase serverQuest = MCUtil.getJsonServerQuest(file, gson);
+                    ServerQuestBase serverQuest = MCUtil.getJsonServerQuest(file, MCUtil.gson());
                     AbstractRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
 
                     if (!requirement.handler(player, serverQuest)) {
@@ -71,7 +70,7 @@ public class AddQuestHandler extends AbstractDialogOption {
 
                     FileWriter writer = new FileWriter(path.toFile());
                     ClientQuestBase playerQuest = ClientQuestBase.createQuest(serverQuest, path);
-                    gson.toJson(playerQuest, writer);
+                    MCUtil.gson().toJson(playerQuest, writer);
                     writer.close();
 
                     if (playerQuest.hasTimeLimit()) {
@@ -79,7 +78,7 @@ public class AddQuestHandler extends AbstractDialogOption {
                     }
 
                     if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {
-                        protectEntityQuest(playerQuest, player.level, player, serverQuest, path, gson, option.getQuest_id());
+                        protectEntityQuest(playerQuest, player.level, player, serverQuest, path, MCUtil.gson(), option.getQuest_id());
                     }
 
                     LocateHash.registerQuestByID(option.getQuest_id(), path);

@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 
 import static com.zanckor.api.database.LocateHash.registerQuestByID;
 import static com.zanckor.api.database.LocateHash.registerQuestTypeLocation;
-import static com.zanckor.mod.QuestApiMain.playerData;
+import static com.zanckor.mod.QuestApiMain.getUserFolder;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEvent {
@@ -35,17 +35,14 @@ public class ServerEvent {
         if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide)
             return;
 
-        Path userFolder = Paths.get(playerData.toString(), e.player.getUUID().toString());
-        Path activeQuest = QuestApiMain.getActiveQuest(userFolder);
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(userFolder);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
+        Path activeQuest = QuestApiMain.getActiveQuest(getUserFolder(e.player.getUUID()));
+        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(getUserFolder(e.player.getUUID()));
 
         for (File file : activeQuest.toFile().listFiles()) {
-            ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file, gson);
+            ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file);
 
             if (playerQuest != null) {
-                timer(playerQuest, e.player, file, gson, uncompletedQuest);
+                timer(playerQuest, e.player, file, MCUtil.gson(), uncompletedQuest);
             }
         }
     }
@@ -64,10 +61,36 @@ public class ServerEvent {
             gson.toJson(playerQuest, writer);
             writer.close();
 
-            Files.move(file.toPath(), Paths.get(uncompletedQuest.toString(), file.getName()));
-            LocateHash.movePathQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
+            Path uncompletedPath = Paths.get(uncompletedQuest.toString(), file.getName());
+
+            Files.move(file.toPath(), uncompletedPath);
+            LocateHash.movePathQuest(playerQuest.getId(), uncompletedPath, EnumQuestType.valueOf(playerQuest.getQuest_type()));
         }
     }
+
+    @SubscribeEvent
+    public static void uncompletedQuestOnLogOut(PlayerEvent.PlayerLoggedOutEvent e) throws IOException {
+        Path activeQuest = QuestApiMain.getActiveQuest(getUserFolder(e.getEntity().getUUID()));
+        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(getUserFolder(e.getEntity().getUUID()));
+
+        for (File file : activeQuest.toFile().listFiles()) {
+            ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file);
+
+            if (playerQuest != null) {
+                FileWriter writer = new FileWriter(file);
+                playerQuest.setCompleted(true);
+
+                MCUtil.gson().toJson(playerQuest, writer);
+                writer.close();
+
+                Path uncompletedPath = Paths.get(uncompletedQuest.toString(), file.getName());
+
+                Files.move(file.toPath(), uncompletedPath);
+                LocateHash.movePathQuest(playerQuest.getId(), uncompletedPath, EnumQuestType.valueOf(playerQuest.getQuest_type()));
+            }
+        }
+    }
+
 
     @SubscribeEvent
     public static void loadHashMaps(PlayerEvent.PlayerLoggedInEvent e) throws IOException {
@@ -78,11 +101,9 @@ public class ServerEvent {
 
         Path[] paths = {activeQuest, completedQuest, uncompletedQuest};
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
         for (Path path : paths) {
             for (File file : path.toFile().listFiles()) {
-                ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file, gson);
+                ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file);
                 if (playerQuest == null) continue;
 
                 registerQuestTypeLocation(EnumQuestType.valueOf(playerQuest.getQuest_type()), file.toPath().toAbsolutePath());
@@ -93,7 +114,7 @@ public class ServerEvent {
 
         for (File file : QuestApiMain.serverDialogs.toFile().listFiles()) {
             FileReader reader = new FileReader(file);
-            DialogTemplate dialogTemplate = gson.fromJson(reader, DialogTemplate.class);
+            DialogTemplate dialogTemplate = MCUtil.gson().fromJson(reader, DialogTemplate.class);
             reader.close();
 
             DialogTemplate.registerDialogLocation(dialogTemplate.getGlobal_id(), file.toPath().toAbsolutePath());

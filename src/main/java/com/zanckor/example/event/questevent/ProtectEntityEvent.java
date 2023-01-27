@@ -1,7 +1,6 @@
 package com.zanckor.example.event.questevent;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.quest.ClientQuestBase;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
@@ -34,16 +33,15 @@ public class ProtectEntityEvent {
 
         for (Player player : e.getEntity().getServer().getPlayerList().getPlayers()) {
             List<Path> protectEntityQuests = LocateHash.getQuestTypeLocation(PROTECT_ENTITY);
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
             if (protectEntityQuests == null) return;
 
-            checkEntity(protectEntityQuests, gson, player, e.getEntity());
+            checkEntity(protectEntityQuests, MCUtil.gson(), player, e.getEntity());
         }
     }
 
     public static void checkEntity(List<Path> protectEntityQuests, Gson gson, Player player, Entity entity) throws IOException {
         for (Path path : protectEntityQuests) {
-            ClientQuestBase playerQuest = getJsonClientQuest(path.toFile(), gson);
+            ClientQuestBase playerQuest = getJsonClientQuest(path.toFile());
             if (playerQuest == null || !playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) return;
 
             AbstractQuest quest = TemplateRegistry.getQuestTemplate(PROTECT_ENTITY);
@@ -66,8 +64,8 @@ public class ProtectEntityEvent {
         if (protectEntityQuests == null) return;
 
         for (Path path : protectEntityQuests) {
-            ClientQuestBase playerQuest = getJsonClientQuest(path.toFile(), MCUtil.gson());
-            if(playerQuest != null && playerQuest.isCompleted()) return;
+            ClientQuestBase playerQuest = getJsonClientQuest(path.toFile());
+            if (playerQuest != null && playerQuest.isCompleted()) return;
 
             protectEntity(playerQuest, e.player);
         }

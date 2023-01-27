@@ -35,11 +35,10 @@ public class StartDialogEvent {
     }
 
     public static void loadDialog(Player player, int globalDialogID) throws IOException {
-        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
         Path path = DialogTemplate.getDialogLocation(globalDialogID);
 
         File dialogFile = path.toFile();
-        DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
+        DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, MCUtil.gson());
 
 
         for (int dialog_id = dialog.getDialog().size() - 1; dialog_id >= 0; dialog_id--) {

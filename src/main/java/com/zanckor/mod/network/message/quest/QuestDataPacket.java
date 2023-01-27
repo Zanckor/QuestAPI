@@ -53,12 +53,10 @@ public class QuestDataPacket {
         if (quest == null) return;
         List<Path> questTypeLocation = LocateHash.getQuestTypeLocation(questType);
 
-        System.out.println(questTypeLocation);
-
         for (int i = 0; i < questTypeLocation.size(); i++) {
 
             Path path = questTypeLocation.get(i).toAbsolutePath();
-            ClientQuestBase playerQuest = getJsonClientQuest(path.toFile(), MCUtil.gson());
+            ClientQuestBase playerQuest = getJsonClientQuest(path.toFile());
 
             if (playerQuest == null || playerQuest.isCompleted()) continue;
 

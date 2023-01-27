@@ -35,7 +35,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
                 questFile = questPath.toFile();
 
                 if (questFile.exists()) {
-                    playerQuest = MCUtil.getJsonClientQuest(questFile, MCUtil.gson());
+                    playerQuest = MCUtil.getJsonClientQuest(questFile);
                 }
 
 

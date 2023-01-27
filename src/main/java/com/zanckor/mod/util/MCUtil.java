@@ -106,12 +106,12 @@ public class MCUtil {
     }
 
 
-    public static ClientQuestBase getJsonClientQuest(File file, Gson gson) throws IOException {
+    public static ClientQuestBase getJsonClientQuest(File file) throws IOException {
         if (!file.exists()) return null;
 
         FileReader reader = new FileReader(file);
 
-        ClientQuestBase playerQuest = gson.fromJson(reader, ClientQuestBase.class);
+        ClientQuestBase playerQuest = MCUtil.gson().fromJson(reader, ClientQuestBase.class);
         reader.close();
 
         return playerQuest;
@@ -143,7 +143,6 @@ public class MCUtil {
 
 
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
-        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
         Path path = Paths.get(getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
         File file = path.toFile();
@@ -152,7 +151,7 @@ public class MCUtil {
 
         if (file.exists()) {
             FileReader reader = new FileReader(file);
-            dialog = gson.fromJson(reader, DialogReadTemplate.GlobalID.class);
+            dialog = gson().fromJson(reader, DialogReadTemplate.GlobalID.class);
             reader.close();
         }
 
@@ -174,14 +173,13 @@ public class MCUtil {
         DialogReadTemplate.GlobalID globalIDClass = new DialogReadTemplate.GlobalID(globalDialog, dialogIDList);
 
         FileWriter writer = new FileWriter(file);
-        writer.write(gson.toJson(globalIDClass));
+        writer.write(gson().toJson(globalIDClass));
         writer.flush();
         writer.close();
     }
 
     public static boolean isReadDialog(Player player, int dialogID) throws IOException {
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
-        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
         Path path = Paths.get(getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
         File file = path.toFile();
@@ -190,7 +188,7 @@ public class MCUtil {
 
         if (file.exists()) {
             FileReader reader = new FileReader(file);
-            dialog = gson.fromJson(reader, DialogReadTemplate.GlobalID.class);
+            dialog = gson().fromJson(reader, DialogReadTemplate.GlobalID.class);
             reader.close();
         } else {
             return false;

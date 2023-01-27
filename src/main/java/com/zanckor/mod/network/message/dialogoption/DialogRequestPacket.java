@@ -42,13 +42,12 @@ public class DialogRequestPacket {
             Player player = ctx.get().getSender();
             int globalDialogID = LocateHash.currentGlobalDialog.get(player);
 
-            Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
             Path path = DialogTemplate.getDialogLocation(globalDialogID);
             File dialogFile = path.toFile();
             AbstractDialogOption dialogTemplate = TemplateRegistry.getDialogTemplate(msg.optionType);
 
             try {
-                DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, gson);
+                DialogTemplate dialog = MCUtil.getJsonDialog(dialogFile, MCUtil.gson());
 
                 dialogTemplate.handler(ctx.get().getSender(), dialog, msg.optionID);
             } catch (IOException e) {

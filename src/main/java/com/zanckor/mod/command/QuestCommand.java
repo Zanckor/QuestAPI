@@ -46,11 +46,8 @@ public class QuestCommand {
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
         for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
-            Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
             if (file.getName().equals(quest)) {
-                SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file, gson)));
+                SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file)));
             }
         }
 
@@ -59,7 +56,6 @@ public class QuestCommand {
 
 
     public static int addQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         ServerLevel level = context.getSource().getLevel();
         Player player = level.getPlayerByUUID(playerUUID);
         String quest = "id_" + questID + ".json";
@@ -76,7 +72,7 @@ public class QuestCommand {
             Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
 
             if (file.getName().equals(quest)) {
-                ServerQuestBase serverQuest = MCUtil.getJsonServerQuest(file, gson);
+                ServerQuestBase serverQuest = MCUtil.getJsonServerQuest(file, MCUtil.gson());
                 AbstractRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
 
                 if (!requirement.handler(player, serverQuest)) {
@@ -85,7 +81,7 @@ public class QuestCommand {
 
                 FileWriter writer = new FileWriter(path.toFile());
                 ClientQuestBase playerQuest = ClientQuestBase.createQuest(serverQuest, path);
-                gson.toJson(playerQuest, writer);
+                MCUtil.gson().toJson(playerQuest, writer);
                 writer.close();
 
                 if (playerQuest.hasTimeLimit()) {
@@ -93,7 +89,7 @@ public class QuestCommand {
                 }
 
                 if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {
-                    protectEntityQuest(playerQuest, level, player, serverQuest, path, gson, questID);
+                    protectEntityQuest(playerQuest, level, player, serverQuest, path, MCUtil.gson(), questID);
                 }
 
                 LocateHash.registerQuestByID(questID, path);
@@ -132,18 +128,14 @@ public class QuestCommand {
 
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
         Path path = LocateHash.getQuestByID(questID);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        File file = path.toFile();
-
-
-        FileReader reader = new FileReader(file);
-        ClientQuestBase clientQuest = gson.fromJson(reader, ClientQuestBase.class);
+        FileReader reader = new FileReader(path.toFile());
+        ClientQuestBase clientQuest = MCUtil.gson().fromJson(reader, ClientQuestBase.class);
         reader.close();
 
 
         LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(clientQuest.getQuest_type()));
-        file.delete();
+        path.toFile().delete();
 
         return 1;
     }

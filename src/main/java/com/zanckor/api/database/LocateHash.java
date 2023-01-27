@@ -49,7 +49,7 @@ public class LocateHash {
     }
 
 
-    public static void removeQuest(Integer id, Path path, EnumQuestType enumQuestType) {
+    public static void removeQuest(Integer id, Path oldPath, EnumQuestType enumQuestType) {
         List<Path> oldPathList = getQuestTypeLocation(enumQuestType);
 
         List<Path> newPathList = oldPathList;

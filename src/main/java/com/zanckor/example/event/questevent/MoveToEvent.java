@@ -35,7 +35,7 @@ public class MoveToEvent {
 
             if (moveToQuests != null) {
                 for (Path path : moveToQuests) {
-                    ClientQuestBase playerQuest = getJsonClientQuest(path.toFile(), MCUtil.gson());
+                    ClientQuestBase playerQuest = getJsonClientQuest(path.toFile());
                     if (playerQuest == null || playerQuest.isCompleted()) continue;
 
                     moveTo(playerQuest, e.player);

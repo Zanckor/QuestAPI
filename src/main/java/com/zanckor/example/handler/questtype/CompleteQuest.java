@@ -28,7 +28,7 @@ public class CompleteQuest {
 
     public static void completeQuest(Player player, Gson gson, File file) throws IOException {
         Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
-        ClientQuestBase modifiedPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
+        ClientQuestBase modifiedPlayerQuest = MCUtil.getJsonClientQuest(file);
 
 
         if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
@@ -44,8 +44,7 @@ public class CompleteQuest {
 
         for (File activeQuestFile : getActiveQuest(userFolder).toFile().listFiles()) {
             if (activeQuestFile.exists()) {
-                SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file, gson)));
-
+                SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file)));
             }
         }
     }

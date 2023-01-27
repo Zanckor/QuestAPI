@@ -17,7 +17,7 @@ public class KillHandler extends AbstractQuest {
     public void handler(Player player, Gson gson, File file, ClientQuestBase playerQuest) throws IOException {
 
         for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
-            ClientQuestBase killPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
+            ClientQuestBase killPlayerQuest = MCUtil.getJsonClientQuest(file);
 
             if (killPlayerQuest.getTarget_current_quantity().get(targetIndex) >= killPlayerQuest.getTarget_quantity().get(targetIndex) || !(killPlayerQuest.getQuest_target().get(targetIndex).equals(player.getLastHurtMob().getType().getDescriptionId()))) {
                 continue;
@@ -29,7 +29,7 @@ public class KillHandler extends AbstractQuest {
             killWriter.close();
         }
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file)));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

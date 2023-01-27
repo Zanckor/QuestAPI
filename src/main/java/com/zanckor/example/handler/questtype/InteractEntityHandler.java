@@ -19,7 +19,7 @@ public class InteractEntityHandler extends AbstractQuest {
     public void handler(Player player, Gson gson, File file, ClientQuestBase playerQuest) throws IOException {
 
         for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
-            ClientQuestBase interactPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
+            ClientQuestBase interactPlayerQuest = MCUtil.getJsonClientQuest(file);
             Entity entityLookinAt = MCUtil.getEntityLookinAt(player, player.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
 
             if (interactPlayerQuest.getQuest_target().get(targetIndex).equals(entityLookinAt.getType().getDescriptionId())
@@ -32,7 +32,7 @@ public class InteractEntityHandler extends AbstractQuest {
             }
         }
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file, gson)));
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file)));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

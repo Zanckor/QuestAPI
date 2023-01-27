@@ -17,7 +17,7 @@ public class MoveToHandler extends AbstractQuest {
     public void handler(Player player, Gson gson, File file, ClientQuestBase playerQuest) throws IOException {
 
         for (int i = 0; i < 3; i++) {
-            ClientQuestBase moveToPlayerQuest = MCUtil.getJsonClientQuest(file, gson);
+            ClientQuestBase moveToPlayerQuest = MCUtil.getJsonClientQuest(file);
 
             FileWriter moveToCoordWriter = new FileWriter(file);
             gson.toJson(playerQuest.setProgress(moveToPlayerQuest, i, 1), moveToCoordWriter);
@@ -26,7 +26,7 @@ public class MoveToHandler extends AbstractQuest {
 
         }
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file, gson)));
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file)));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

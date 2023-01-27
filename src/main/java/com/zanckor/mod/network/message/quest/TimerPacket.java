@@ -37,10 +37,8 @@ public class TimerPacket {
                 Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
                 for (File file : userFolder.toFile().listFiles()) {
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
                     try {
-                        ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file, gson);
+                        ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file);
 
                         if (playerQuest.isCompleted()) return;
 
@@ -48,7 +46,7 @@ public class TimerPacket {
                             FileWriter writer = new FileWriter(file);
                             playerQuest.setCompleted(true);
 
-                            gson.toJson(playerQuest, writer);
+                            MCUtil.gson().toJson(playerQuest, writer);
                         }
 
                     } catch (IOException exception) {

@@ -2,6 +2,7 @@ package com.zanckor.api.dialog.register;
 
 import com.google.gson.Gson;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
+import com.zanckor.mod.util.MCUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -15,7 +16,6 @@ public class DialogRegistry {
 
     public static void registerDialog(String modid) {
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
 
         resourceManager.listResources("dialog", (file) -> {
             if (file.getPath().length() > 7) {
@@ -23,8 +23,8 @@ public class DialogRegistry {
                 ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
 
                 if (file.getPath().endsWith(".json")) {
-                    read(gson, resourceLocation);
-                    write(gson, dialogTemplate, fileName);
+                    read(MCUtil.gson(), resourceLocation);
+                    write(MCUtil.gson(), dialogTemplate, fileName);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
                 }
