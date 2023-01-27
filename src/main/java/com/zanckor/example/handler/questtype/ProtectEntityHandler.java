@@ -19,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static com.zanckor.mod.QuestApiMain.getCompletedQuest;
 import static com.zanckor.mod.QuestApiMain.playerData;
 
 public class ProtectEntityHandler extends AbstractQuest {
@@ -30,7 +29,6 @@ public class ProtectEntityHandler extends AbstractQuest {
 
         UUID entityUUID = UUID.fromString(playerQuest.getQuest_target().get(0));
         Entity entity = player.getServer().overworld().getEntity(entityUUID);
-        String questName = "id_" + playerQuest.getId() + ".json";
 
         FileWriter protectEntityWriter = new FileWriter(file);
 
@@ -48,9 +46,9 @@ public class ProtectEntityHandler extends AbstractQuest {
 
             protectEntityWriter.flush();
             protectEntityWriter.close();
-
-            LocateHash.movePathQuest(playerQuest.getId(), file.toPath().toAbsolutePath(),  Paths.get(getCompletedQuest(userFolder).toString(), questName), EnumQuestType.valueOf(playerQuest.getQuest_type()));
             Files.move(file.toPath(), Paths.get(uncompletedQuest.toString(), file.getName()));
+
+            LocateHash.movePathQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
         }
 
         playerQuest.setTimeLimitInSeconds((int) Timer.remainingTime(player.getUUID(), "id_" + playerQuest.getId() + ".json"));

@@ -65,8 +65,8 @@ public class CompleteQuest {
                     reward.handler(player, serverQuest);
                     serverQuestReader.close();
 
-                    LocateHash.movePathQuest(modifiedPlayerQuest.getId(), file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), questName), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
                     Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
+                    LocateHash.movePathQuest(modifiedPlayerQuest.getId(), Paths.get(getCompletedQuest(userFolder).toString(), questName), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
                 }
             }
         }

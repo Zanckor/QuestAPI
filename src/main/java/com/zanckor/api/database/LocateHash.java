@@ -41,7 +41,7 @@ public class LocateHash {
         return clientQuestByIDLocation.get(id);
     }
 
-    public static void movePathQuest(Integer id, Path actualPath, Path newPath, EnumQuestType enumQuestType) {
+    public static void movePathQuest(Integer id, Path newPath, EnumQuestType enumQuestType) {
         removeQuest(id, newPath, enumQuestType);
 
         registerQuestTypeLocation(enumQuestType, newPath);
@@ -53,7 +53,8 @@ public class LocateHash {
         List<Path> oldPathList = getQuestTypeLocation(enumQuestType);
 
         List<Path> newPathList = oldPathList;
-        newPathList.remove(path);
+
+        newPathList.removeIf(listId -> (listId.toString().contains("id_" + id + ".json")));
 
         clientQuestTypeLocation.replace(enumQuestType, oldPathList, newPathList);
         clientQuestByIDLocation.remove(id);
