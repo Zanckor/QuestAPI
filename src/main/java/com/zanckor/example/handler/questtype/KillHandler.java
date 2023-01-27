@@ -27,10 +27,9 @@ public class KillHandler extends AbstractQuest {
             gson.toJson(killPlayerQuest.incrementProgress(killPlayerQuest, targetIndex), killWriter);
             killWriter.flush();
             killWriter.close();
-
         }
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file, gson)));
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

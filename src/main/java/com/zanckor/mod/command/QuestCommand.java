@@ -50,11 +50,7 @@ public class QuestCommand {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             if (file.getName().equals(quest)) {
-                FileReader reader = new FileReader(file);
-                ClientQuestBase clientQuestBase = gson.fromJson(reader, ClientQuestBase.class);
-                reader.close();
-
-                SendQuestPacket.TO_CLIENT(player, new QuestTracked(clientQuestBase));
+                SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file, gson)));
             }
         }
 
@@ -101,7 +97,8 @@ public class QuestCommand {
                 }
 
                 LocateHash.registerQuestByID(questID, path);
-                break;
+                trackedQuest(context, playerUUID, questID);
+                return 1;
             }
         }
 
@@ -135,10 +132,10 @@ public class QuestCommand {
 
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
         Path path = LocateHash.getQuestByID(questID);
-
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         File file = path.toFile();
+
 
         FileReader reader = new FileReader(file);
         ClientQuestBase clientQuest = gson.fromJson(reader, ClientQuestBase.class);
@@ -147,6 +144,8 @@ public class QuestCommand {
 
         LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(clientQuest.getQuest_type()));
         file.delete();
+
+        System.out.println(LocateHash.getQuestTypeLocation(EnumQuestType.valueOf(clientQuest.getQuest_type())));
 
         return 1;
     }

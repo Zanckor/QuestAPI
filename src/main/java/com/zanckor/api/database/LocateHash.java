@@ -42,13 +42,21 @@ public class LocateHash {
     }
 
     public static void movePathQuest(Integer id, Path path, EnumQuestType enumQuestType) {
-        clientQuestByIDLocation.remove(id);
+        removeQuest(id, path, enumQuestType);
+
+        registerQuestTypeLocation(enumQuestType, path);
         registerQuestByID(id, path);
     }
 
 
     public static void removeQuest(Integer id, Path path, EnumQuestType enumQuestType) {
-        clientQuestTypeLocation.remove(enumQuestType, path);
+        List<Path> oldPathList = getQuestTypeLocation(enumQuestType);
+
+
+        List<Path> newPathList = oldPathList;
+        newPathList.remove(path);
+
+        clientQuestTypeLocation.replace(enumQuestType, oldPathList, newPathList);
         clientQuestByIDLocation.remove(id);
     }
 }

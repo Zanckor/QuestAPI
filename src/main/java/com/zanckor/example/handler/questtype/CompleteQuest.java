@@ -10,6 +10,7 @@ import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
 import com.zanckor.mod.network.message.quest.ToastPacket;
+import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.util.MCUtil;
 import net.minecraft.world.entity.player.Player;
 
@@ -39,6 +40,13 @@ public class CompleteQuest {
             giveReward(player, modifiedPlayerQuest, gson, file, userFolder);
 
             SendQuestPacket.TO_CLIENT(player, new ToastPacket(modifiedPlayerQuest.getTitle()));
+        }
+
+        for (File activeQuestFile : getActiveQuest(userFolder).toFile().listFiles()) {
+            if (activeQuestFile.exists()) {
+                SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file, gson)));
+                break;
+            }
         }
     }
 

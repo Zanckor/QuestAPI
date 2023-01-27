@@ -4,12 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.zanckor.mod.network.ClientHandler;
 import net.minecraft.client.Minecraft;
 
-import static com.zanckor.mod.network.ClientHandler.trackedHasTimeLimit;
-import static com.zanckor.mod.network.ClientHandler.trackedTitle;
+import static com.zanckor.mod.network.ClientHandler.*;
 
 public class QuestTracker {
 
     public static void renderQuestTracker(PoseStack poseStack, int width, int height, int questID) {
+        if(trackedTarget_quantity == null || trackedTarget_quantity.equals(trackedTarget_current_quantity)) return;
+
         int yPosition = 0;
 
         poseStack.pushPose();
