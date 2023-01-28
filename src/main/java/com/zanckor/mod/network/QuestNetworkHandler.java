@@ -9,6 +9,7 @@ import com.zanckor.mod.network.message.dialogoption.AddQuest;
 import com.zanckor.mod.network.message.dialogoption.CloseDialog;
 import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.network.message.screen.QuestTracked;
+import com.zanckor.mod.network.message.screen.RemovedQuest;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -62,5 +63,9 @@ public class QuestNetworkHandler {
         CHANNEL.messageBuilder(QuestTracked.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(QuestTracked::encodeBuffer).decoder(QuestTracked::new)
                 .consumerNetworkThread(QuestTracked::handler).add();
+
+        CHANNEL.messageBuilder(RemovedQuest.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(RemovedQuest::encodeBuffer).decoder(RemovedQuest::new)
+                .consumerNetworkThread(RemovedQuest::handler).add();
     }
 }

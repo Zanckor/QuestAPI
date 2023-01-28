@@ -1,7 +1,6 @@
 package com.zanckor.mod.command;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.quest.ClientQuestBase;
@@ -12,6 +11,7 @@ import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
 import com.zanckor.mod.network.message.screen.QuestTracked;
+import com.zanckor.mod.network.message.screen.RemovedQuest;
 import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.commands.CommandSourceStack;
@@ -98,7 +98,6 @@ public class QuestCommand {
             }
         }
 
-
         return 1;
     }
 
@@ -127,13 +126,16 @@ public class QuestCommand {
     }
 
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
+        ServerLevel level = context.getSource().getLevel();
+        Player player = level.getPlayerByUUID(playerUUID);
+
         Path path = LocateHash.getQuestByID(questID);
 
         FileReader reader = new FileReader(path.toFile());
         ClientQuestBase clientQuest = MCUtil.gson().fromJson(reader, ClientQuestBase.class);
         reader.close();
 
-
+        SendQuestPacket.TO_CLIENT(player, new RemovedQuest(clientQuest.getTitle()));
         LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(clientQuest.getQuest_type()));
         path.toFile().delete();
 

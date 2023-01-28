@@ -2,6 +2,7 @@ package com.zanckor.mod.network;
 
 import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.client.screen.DialogScreen;
+import com.zanckor.mod.util.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
@@ -23,34 +24,38 @@ public class ClientHandler {
     public static int trackedTimeLimitInSeconds;
 
 
-
-    public static void toastQuestCompleted(String questName){
+    public static void toastQuestCompleted(String questName) {
         SystemToast.add(Minecraft.getInstance().getToasts(),
                 SystemToast.SystemToastIds.PERIODIC_NOTIFICATION,
                 Component.literal("Quest Completed"),
                 Component.literal(questName));
     }
-    public static void displayDialog(int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings){
+
+    public static void displayDialog(int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings) {
         Minecraft.getInstance().setScreen(new DialogScreen(dialogID, text,
                 optionSize, optionIntegers, optionStrings));
     }
 
-    public static void closeDialog(){
+    public static void closeDialog() {
         Minecraft.getInstance().setScreen(null);
     }
 
 
-    public static void questTracked(String title, String quest_type, List<String> quest_target, List<Integer> target_quantity, List<Integer> target_current_quantity, boolean hasTimeLimit, int timeLimitInSeconds){
+    public static void questTracked(String title, String quest_type, List<String> quest_target, List<Integer> target_quantity, List<Integer> target_current_quantity, boolean hasTimeLimit, int timeLimitInSeconds) {
         trackedTitle = title;
         trackedQuest_type = quest_type;
         trackedQuest_target = quest_target;
         trackedTarget_quantity = target_quantity;
         trackedTarget_current_quantity = target_current_quantity;
         trackedHasTimeLimit = hasTimeLimit;
-        trackedTimeLimitInSeconds = timeLimitInSeconds;
+
+        if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle)) {
+            trackedTimeLimitInSeconds = timeLimitInSeconds;
+            Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle, trackedTimeLimitInSeconds);
+        }
     }
 
-    public static void questUpdateTracked(List<Integer> target_current_quantity){
-        trackedTarget_current_quantity = target_current_quantity;
+    public static void removeQuest(String title){
+        Timer.clearTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle);
     }
 }
