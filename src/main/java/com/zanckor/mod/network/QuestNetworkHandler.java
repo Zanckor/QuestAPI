@@ -8,6 +8,7 @@ import com.zanckor.mod.network.message.quest.ToastPacket;
 import com.zanckor.mod.network.message.dialogoption.AddQuest;
 import com.zanckor.mod.network.message.dialogoption.CloseDialog;
 import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
+import com.zanckor.mod.network.message.screen.QuestList;
 import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.network.message.screen.RemovedQuest;
 import net.minecraft.resources.ResourceLocation;
@@ -67,5 +68,9 @@ public class QuestNetworkHandler {
         CHANNEL.messageBuilder(RemovedQuest.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(RemovedQuest::encodeBuffer).decoder(RemovedQuest::new)
                 .consumerNetworkThread(RemovedQuest::handler).add();
+
+        CHANNEL.messageBuilder(QuestList.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(QuestList::encodeBuffer).decoder(QuestList::new)
+                .consumerNetworkThread(QuestList::handler).add();
     }
 }

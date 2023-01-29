@@ -13,7 +13,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -218,10 +219,10 @@ public class MCUtil {
     }
 
 
-    public static void playTextSound() {
+    public static void playSound(SoundEvent sound, float minPitch, float maxPitch) {
         SoundManager soundManager = Minecraft.getInstance().getSoundManager();
 
-        soundManager.play(SimpleSoundInstance.forUI(SoundEvents.LEVER_CLICK, Mth.randomBetween(RandomSource.create(), 0.975f, 1.025f)));
+        soundManager.play(SimpleSoundInstance.forUI(sound, Mth.randomBetween(RandomSource.create(), minPitch, maxPitch)));
     }
 
 

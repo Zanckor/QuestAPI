@@ -9,6 +9,7 @@ import com.zanckor.mod.util.MCUtil;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class DialogScreen extends Screen {
 
         if (textDisplaySize < text.length()) {
             if (textDisplayDelay == 0) {
-                MCUtil.playTextSound();
+                MCUtil.playSound(SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_ON, 0.975f, 1.025f);
                 textDisplaySize++;
 
                 if (textDisplaySize < text.length()) {

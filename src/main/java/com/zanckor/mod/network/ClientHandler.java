@@ -2,10 +2,13 @@ package com.zanckor.mod.network;
 
 import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.client.screen.DialogScreen;
+import com.zanckor.mod.client.screen.QuestListScreen;
+import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 
@@ -29,6 +32,8 @@ public class ClientHandler {
                 SystemToast.SystemToastIds.PERIODIC_NOTIFICATION,
                 Component.literal("Quest Completed"),
                 Component.literal(questName));
+
+        MCUtil.playSound(SoundEvents.NOTE_BLOCK_PLING, 1, 2);
     }
 
     public static void displayDialog(int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings) {
@@ -57,5 +62,10 @@ public class ClientHandler {
 
     public static void removeQuest(String title){
         Timer.clearTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle);
+    }
+
+
+    public static void displayQuestList(List<String> title){
+        Minecraft.getInstance().setScreen(new QuestListScreen(title));
     }
 }

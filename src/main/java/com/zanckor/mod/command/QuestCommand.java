@@ -10,6 +10,7 @@ import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.network.SendQuestPacket;
+import com.zanckor.mod.network.message.screen.QuestList;
 import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.network.message.screen.RemovedQuest;
 import com.zanckor.mod.util.MCUtil;
@@ -48,6 +49,8 @@ public class QuestCommand {
         for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
             if (file.getName().equals(quest)) {
                 SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file)));
+
+                SendQuestPacket.TO_CLIENT(player, new QuestList(playerUUID));
             }
         }
 

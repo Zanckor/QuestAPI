@@ -13,7 +13,7 @@ public class Mathematic {
         return false;
     }
 
-    public static int numberRandomizerBetween(int min, int max){
+    public static int numberRandomizerBetween(int min, int max) {
         int randomizer = (int) Mth.randomBetween(RandomSource.createNewThreadLocalInstance(), min, max);
         return randomizer;
     }
