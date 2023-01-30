@@ -2,6 +2,7 @@ package com.zanckor.mod.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.DialogReadTemplate;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
@@ -14,7 +15,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -226,7 +226,47 @@ public class MCUtil {
     }
 
 
-    public static Gson gson(){
+    public static Gson gson() {
         return new GsonBuilder().setPrettyPrinting().create();
+    }
+
+
+    public static void renderText(PoseStack poseStack, double width, double height, int scale, int textMaxLength, String text, Font font) {
+        poseStack.pushPose();
+
+        poseStack.translate(width, height, 0);
+        poseStack.scale(scale, scale, 1);
+
+        font.draw(poseStack, text, 0, 0, 0);
+
+        poseStack.popPose();
+    }
+
+    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, int scale, int textMaxLength, List<String> text, Font font) {
+        if (text == null) return;
+        float guiScale = ((float) Minecraft.getInstance().options.guiScale().get()) / 2;
+        float splitIndent = 0;
+
+        poseStack.pushPose();
+
+        poseStack.translate(width * guiScale, height * guiScale, 0);
+        poseStack.scale(scale * guiScale, scale * guiScale, 1);
+
+        for (int i = 0; i < text.size(); i++) {
+            for (List<FormattedCharSequence> textBlock : MCUtil.splitText(text.get(i), font, 5 * textMaxLength)) {
+                for (FormattedCharSequence line : textBlock) {
+                    if (splitIndent < 2) {
+                        font.draw(poseStack, line, 0, textIndent * (i + (splitIndent / 2)) * guiScale, 0);
+                        splitIndent++;
+                    }
+                }
+
+                splitIndent++;
+            }
+
+            splitIndent = 0;
+        }
+
+        poseStack.popPose();
     }
 }
