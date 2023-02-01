@@ -1,16 +1,17 @@
 package com.zanckor.mod.network;
 
 import com.zanckor.mod.QuestApiMain;
+import com.zanckor.mod.network.message.dialogoption.AddQuest;
+import com.zanckor.mod.network.message.dialogoption.CloseDialog;
 import com.zanckor.mod.network.message.dialogoption.DialogRequestPacket;
+import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.network.message.quest.QuestDataPacket;
 import com.zanckor.mod.network.message.quest.TimerPacket;
 import com.zanckor.mod.network.message.quest.ToastPacket;
-import com.zanckor.mod.network.message.dialogoption.AddQuest;
-import com.zanckor.mod.network.message.dialogoption.CloseDialog;
-import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.network.message.screen.QuestList;
 import com.zanckor.mod.network.message.screen.QuestTracked;
 import com.zanckor.mod.network.message.screen.RemovedQuest;
+import com.zanckor.mod.network.message.screen.RequestQuestTracked;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -38,6 +39,10 @@ public class QuestNetworkHandler {
                 .encoder(TimerPacket::encodeBuffer).decoder(TimerPacket::new)
                 .consumerNetworkThread(TimerPacket::handler).add();
 
+
+        CHANNEL.messageBuilder(RequestQuestTracked.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(RequestQuestTracked::encodeBuffer).decoder(RequestQuestTracked::new)
+                .consumerNetworkThread(RequestQuestTracked::handler).add();
 
         CHANNEL.messageBuilder(DialogRequestPacket.class, index++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(DialogRequestPacket::encodeBuffer).decoder(DialogRequestPacket::new)

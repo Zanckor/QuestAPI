@@ -231,21 +231,41 @@ public class MCUtil {
     }
 
 
-    public static void renderText(PoseStack poseStack, double width, double height, int scale, int textMaxLength, String text, Font font) {
+    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, String text, Font font) {
+        float guiScale = ((float) Minecraft.getInstance().options.guiScale().get()) / 2;
+        float splitIndent = 0;
+
+
         poseStack.pushPose();
 
         poseStack.translate(width, height, 0);
         poseStack.scale(scale, scale, 1);
 
-        font.draw(poseStack, text, 0, 0, 0);
+        for (List<FormattedCharSequence> textBlock : MCUtil.splitText(text, font, 5 * textMaxLength)) {
+            for (FormattedCharSequence line : textBlock) {
+                if (splitIndent < 2) {
+                    font.draw(poseStack, line, 0, textIndent * (splitIndent / 2) * guiScale, 0);
+                    splitIndent++;
+                }
+            }
+
+            splitIndent++;
+        }
 
         poseStack.popPose();
     }
 
-    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, int scale, int textMaxLength, List<String> text, Font font) {
+    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, List<String> text, Font font) {
         if (text == null) return;
         float guiScale = ((float) Minecraft.getInstance().options.guiScale().get()) / 2;
         float splitIndent = 0;
+
+        if (text.size() > 6) {
+            for (int i = 0; i < text.size() - 6; i++) {
+                scale *= 0.85;
+            }
+        }
+
 
         poseStack.pushPose();
 
@@ -259,6 +279,10 @@ public class MCUtil {
                         font.draw(poseStack, line, 0, textIndent * (i + (splitIndent / 2)) * guiScale, 0);
                         splitIndent++;
                     }
+
+                    if(textBlock.size() >= 2 && textBlock.get(textBlock.size() - 1).equals(line)){
+                        poseStack.translate(0, textIndent / 2, 0);
+                    }
                 }
 
                 splitIndent++;
@@ -266,6 +290,7 @@ public class MCUtil {
 
             splitIndent = 0;
         }
+
 
         poseStack.popPose();
     }

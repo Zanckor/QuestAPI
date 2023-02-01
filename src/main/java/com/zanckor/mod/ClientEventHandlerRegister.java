@@ -1,6 +1,6 @@
 package com.zanckor.mod;
 
-import com.zanckor.mod.client.screen.QuestTracker;
+import com.zanckor.mod.client.screen.RenderQuestTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,7 +16,7 @@ public class ClientEventHandlerRegister {
             Player player = Minecraft.getInstance().player;
 
             if (player != null && !player.isDeadOrDying()) {
-                QuestTracker.renderQuestTracker(poseStack, width, height, 0);
+                RenderQuestTracker.renderQuestTracker(poseStack, width, height, 0);
             }
         });
     }

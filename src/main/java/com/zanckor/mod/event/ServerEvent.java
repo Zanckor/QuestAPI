@@ -1,7 +1,6 @@
 package com.zanckor.mod.event;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.zanckor.api.database.LocateHash;
 import com.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import com.zanckor.api.quest.ClientQuestBase;
@@ -76,7 +75,7 @@ public class ServerEvent {
         for (File file : activeQuest.toFile().listFiles()) {
             ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file);
 
-            if (playerQuest != null) {
+            if (playerQuest != null && playerQuest.hasTimeLimit()) {
                 FileWriter writer = new FileWriter(file);
                 playerQuest.setCompleted(true);
 

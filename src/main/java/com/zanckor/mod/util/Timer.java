@@ -21,19 +21,20 @@ public class Timer {
         updateCooldown(playerUUID, cooldownKey, delayInSeconds);
         return true;
     }
+
     public static void updateCooldown(UUID playerUUID, String cooldownKey, float delayInSeconds) {
         ACTIVE_COOLDOWNS_TABLE.put(playerUUID, cooldownKey, System.currentTimeMillis() + TimeUnit.SECONDS.toMillis((long) delayInSeconds));
     }
 
-    public static long remainingTime(UUID playerUUID, String cooldownKey){
+    public static long remainingTime(UUID playerUUID, String cooldownKey) {
         Long timeInMillis = ACTIVE_COOLDOWNS_TABLE.get(playerUUID, cooldownKey);
 
-        if(timeInMillis == null) return -1;
+        if (timeInMillis == null) return -1;
 
         return calculateCooldownRemainder(timeInMillis);
     }
 
-    public static boolean existsTimer(UUID playerUUID, String cooldownKey){
+    public static boolean existsTimer(UUID playerUUID, String cooldownKey) {
         Long timeInMillis = ACTIVE_COOLDOWNS_TABLE.get(playerUUID, cooldownKey);
 
         return (timeInMillis != null);
@@ -73,7 +74,7 @@ public class Timer {
         ACTIVE_TICKERS_TABLE.row(playerUUID).clear();
     }
 
-    public static void clearTimer(UUID playerUUID, String tickerKey){
+    public static void clearTimer(UUID playerUUID, String tickerKey) {
         ACTIVE_COOLDOWNS_TABLE.remove(playerUUID, tickerKey);
         ACTIVE_TICKERS_TABLE.remove(playerUUID, tickerKey);
     }

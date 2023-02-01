@@ -5,6 +5,7 @@ import com.zanckor.api.dialog.abstractdialog.AbstractDialogRequirement;
 import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.api.quest.abstracquest.AbstractRequirement;
 import com.zanckor.api.quest.abstracquest.AbstractReward;
+import com.zanckor.api.quest.abstracquest.AbstractTargetType;
 
 import java.util.HashMap;
 
@@ -15,9 +16,12 @@ public class TemplateRegistry {
     private static HashMap<Enum, AbstractDialogRequirement> dialog_requirement = new HashMap<>();
     private static HashMap<Enum, AbstractDialogOption> dialog_template = new HashMap<>();
 
+    private static HashMap<Enum, AbstractTargetType> target_type = new HashMap<>();
+
     public static void registerQuestTemplate(Enum key, AbstractQuest quest) {
         quest_template.put(key, quest);
     }
+
     public static AbstractQuest getQuestTemplate(Enum key) {
         try {
             return quest_template.get(key);
@@ -30,6 +34,7 @@ public class TemplateRegistry {
     public static void registerDialogTemplate(Enum key, AbstractDialogOption dialog) {
         dialog_template.put(key, dialog);
     }
+
     public static AbstractDialogOption getDialogTemplate(Enum key) {
         try {
             return dialog_template.get(key);
@@ -42,6 +47,7 @@ public class TemplateRegistry {
     public static void registerReward(Enum key, AbstractReward reward) {
         quest_reward.put(key, reward);
     }
+
     public static AbstractReward getQuestReward(Enum key) {
         try {
             return quest_reward.get(key);
@@ -54,6 +60,7 @@ public class TemplateRegistry {
     public static void registerQuestRequirement(Enum key, AbstractRequirement requirement) {
         quest_requirement.put(key, requirement);
     }
+
     public static AbstractRequirement getQuestRequirement(Enum key) {
         try {
             return quest_requirement.get(key);
@@ -66,11 +73,25 @@ public class TemplateRegistry {
     public static void registerDialogRequirement(Enum key, AbstractDialogRequirement requirement) {
         dialog_requirement.put(key, requirement);
     }
+
     public static AbstractDialogRequirement getDialogRequirement(Enum key) {
         try {
             return dialog_requirement.get(key);
         } catch (NullPointerException e) {
             throw new RuntimeException("Incorrect requirement key: " + key);
+        }
+    }
+
+
+    public static void registerTargetType(Enum key, AbstractTargetType requirement) {
+        target_type.put(key, requirement);
+    }
+
+    public static AbstractTargetType getTargetType(Enum key) {
+        try {
+            return target_type.get(key);
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Incorrect target type key: " + key);
         }
     }
 }

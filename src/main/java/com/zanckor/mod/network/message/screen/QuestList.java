@@ -16,6 +16,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class QuestList {
+
+    List<Integer> id = new ArrayList<>();
     List<String> title = new ArrayList<>();
 
     int listSize;
@@ -23,9 +25,11 @@ public class QuestList {
     public QuestList(UUID playerUUID) throws IOException {
         File[] activeQuests = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(playerUUID)).toFile().listFiles();
 
-        for(File file : activeQuests){
+        for (File file : activeQuests) {
             String currentQuestTitle = MCUtil.getJsonClientQuest(file).getTitle();
+            int currentQuestID = MCUtil.getJsonClientQuest(file).getId();
 
+            id.add(currentQuestID);
             title.add(currentQuestTitle);
         }
     }
@@ -33,7 +37,8 @@ public class QuestList {
     public QuestList(FriendlyByteBuf buffer) {
         listSize = buffer.readInt();
 
-        for(int i = 0; i < listSize; i++){
+        for (int i = 0; i < listSize; i++) {
+            id.add(buffer.readInt());
             title.add(buffer.readUtf());
         }
     }
@@ -41,7 +46,8 @@ public class QuestList {
     public void encodeBuffer(FriendlyByteBuf buffer) {
         buffer.writeInt(title.size());
 
-        for(int i = 0; i < title.size(); i++){
+        for (int i = 0; i < title.size(); i++) {
+            buffer.writeInt(id.get(i));
             buffer.writeUtf(title.get(i));
         }
     }
@@ -49,7 +55,7 @@ public class QuestList {
 
     public static void handler(QuestList msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.displayQuestList(msg.title));
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.displayQuestList(msg.id, msg.title));
         });
 
         ctx.get().setPacketHandled(true);

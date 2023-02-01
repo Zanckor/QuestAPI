@@ -54,18 +54,20 @@ public class ClientHandler {
         trackedTarget_current_quantity = target_current_quantity;
         trackedHasTimeLimit = hasTimeLimit;
 
+
         if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle)) {
+
             trackedTimeLimitInSeconds = timeLimitInSeconds;
             Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle, trackedTimeLimitInSeconds);
         }
     }
 
-    public static void removeQuest(String title){
+    public static void removeQuest(String title) {
         Timer.clearTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle);
     }
 
 
-    public static void displayQuestList(List<String> title){
-        Minecraft.getInstance().setScreen(new QuestListScreen(title));
+    public static void displayQuestList(List<Integer> id, List<String> title) {
+        Minecraft.getInstance().setScreen(new QuestListScreen(id, title));
     }
 }
