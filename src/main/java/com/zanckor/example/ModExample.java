@@ -5,7 +5,6 @@ import com.zanckor.api.dialog.enumdialog.EnumRequirementType;
 import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
 import com.zanckor.api.quest.enumquest.EnumQuestReward;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
-import com.zanckor.api.quest.enumquest.EnumTargetType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.example.entity.ModEntityTypes;
 import com.zanckor.example.handler.dialogoption.AddQuestHandler;
@@ -46,7 +45,8 @@ public class ModExample {
         TemplateRegistry.registerDialogRequirement(EnumRequirementType.DIALOG, new DialogRequirementHandler());
         TemplateRegistry.registerDialogRequirement(EnumRequirementType.QUEST, new QuestRequirementHandler());
 
-        TemplateRegistry.registerTargetType(EnumTargetType.ITEM, new ItemTargetType());
-        TemplateRegistry.registerTargetType(EnumTargetType.ENTITY, new EntityTargetType());
+        TemplateRegistry.registerTargetType(EnumQuestType.RECOLLECT, new ItemTargetType());
+        TemplateRegistry.registerTargetType(EnumQuestType.KILL, new EntityTargetType());
+        TemplateRegistry.registerTargetType(EnumQuestType.INTERACT_ENTITY, new EntityTargetType());
     }
 }

@@ -3,7 +3,7 @@ package com.zanckor.mod.client.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.zanckor.api.quest.abstracquest.AbstractTargetType;
-import com.zanckor.api.quest.enumquest.EnumTargetType;
+import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.network.SendQuestPacket;
@@ -50,10 +50,12 @@ public class QuestListScreen extends Screen {
         xScreenPos = width - (imageWidth);
         yScreenPos = height / 4;
 
-        float guiScale = ((float) Minecraft.getInstance().options.guiScale().get()) / 2;
         float scale = ((float) width) / 575;
 
-        int yButtonSplitIndent = 0;
+        int buttonIndent = 16;
+        int maxLength = 22 * 5;
+        float splitIndent = 0;
+
         int xButtonPosition = (int) (xScreenPos - (imageWidth / 2.4));
         int yButtonPosition = (int) (yScreenPos * 1.6);
 
@@ -62,33 +64,37 @@ public class QuestListScreen extends Screen {
                 int buttonIndex = i + (4 * (selectedPage));
                 int index = buttonIndex;
 
-
-                int maxLength = 22 * 5;
                 int textLines = (quest.get(buttonIndex).getValue().length() * 5) / maxLength;
+                int yButtonIndent = (int) (((8 * (textLines + 1)) * i * scale) + splitIndent);
 
-                int buttonWidth = textLines < 1 ? (int) (quest.get(buttonIndex).getValue().length() * 5 * guiScale * scale) : (int) (maxLength * guiScale * scale);
+                int buttonWidth = textLines < 1 ? (int) (quest.get(buttonIndex).getValue().length() * 5 * scale) : (int) (maxLength * scale);
 
-                int yButtonIndent = (int) ((8 * (textLines + 1)) * i * guiScale * scale) + yButtonSplitIndent;
-
-                Button questSelect = new Button(
-                        xButtonPosition, yButtonPosition + yButtonIndent,
-                        buttonWidth, height / 40 * (textLines + 1),
-                        Component.literal(""), button -> {
-                    System.out.println(index);
+                Button questSelect = new Button(xButtonPosition, yButtonPosition + yButtonIndent, buttonWidth, height / 40 * (textLines + 1), Component.literal(""), button -> {
                     button(index);
                 });
 
-                yButtonSplitIndent = textLines >= 1 ? (int) (buttonIndex * 8 * scale * guiScale) : 0;
 
-                addRenderableWidget(questSelect);
+                if (index > 0) {
+                    if (textLines == 1 && ((quest.get(buttonIndex - 1).getValue().length() * 5) / maxLength) == 0) {
+                        questSelect.y -= height / 40 * (textLines + 1);
+                        yButtonPosition -= height / 40 * (textLines + 1);
+                    }
+
+                    if (textLines == 0 && ((quest.get(buttonIndex - 1).getValue().length() * 5) / maxLength) == 1) {
+                        questSelect.y += buttonIndent / 2 * scale;
+                        splitIndent += buttonIndent / 2 * scale;
+                    }
+                }
+
+                splitIndent += buttonIndent / 2 * scale;
+
+
+                addWidget(questSelect);
             }
         }
 
 
-        Button prevPage = new Button(
-                (int) (xScreenPos - (imageWidth / 8.5)), (int) (yScreenPos + imageHeight * 0.69),
-                width / 65, width / 65,
-                Component.literal(""), button -> {
+        Button prevPage = new Button((int) (xScreenPos - (imageWidth / 8.5)), (int) (yScreenPos + imageHeight * 0.69), width / 65, width / 65, Component.literal(""), button -> {
             if (selectedPage > 0) {
                 selectedPage--;
 
@@ -96,11 +102,8 @@ public class QuestListScreen extends Screen {
             }
         });
 
-        Button nextPage = new Button(
-                (int) (xScreenPos - (imageWidth / 17)), (int) (yScreenPos + imageHeight * 0.69),
-                width / 65, width / 65,
-                Component.literal(""), button -> {
-            if (selectedPage < quest.size() / 5) {
+        Button nextPage = new Button((int) (xScreenPos - (imageWidth / 17)), (int) (yScreenPos + imageHeight * 0.69), width / 65, width / 65, Component.literal(""), button -> {
+            if (selectedPage <= quest.size() / 4) {
                 selectedPage++;
 
                 init();
@@ -121,6 +124,7 @@ public class QuestListScreen extends Screen {
     public void render(PoseStack poseStack, int x, int y, float partialTicks) {
         Minecraft.getInstance().getProfiler().push("background");
         RenderSystem.setShaderTexture(0, QUEST_LOG);
+
 
         blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
@@ -151,7 +155,7 @@ public class QuestListScreen extends Screen {
         list.add("Type: " + trackedQuest_type);
 
         for (int i = 0; i < trackedQuest_target.size(); i++) {
-            AbstractTargetType targetType = getTargetType(trackedQuest_target.get(i));
+            AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(trackedQuest_type));
 
             if (targetType != null) {
                 String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)));
@@ -165,18 +169,6 @@ public class QuestListScreen extends Screen {
 
 
         MCUtil.renderText(poseStack, xScreenPos + (imageWidth / 20), yScreenPos * 1.6, 20, ((float) width) / 700, 28, list, font);
-    }
-
-    public static AbstractTargetType getTargetType(String questTarget) {
-        AbstractTargetType targetType = null;
-
-        if (questTarget.contains("entity")) {
-            targetType = TemplateRegistry.getTargetType(EnumTargetType.ENTITY);
-        } else if (questTarget.contains("item")) {
-            targetType = TemplateRegistry.getTargetType(EnumTargetType.ITEM);
-        }
-
-        return targetType;
     }
 
     @Override
