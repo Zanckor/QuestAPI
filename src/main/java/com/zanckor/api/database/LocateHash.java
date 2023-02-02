@@ -13,7 +13,7 @@ public class LocateHash {
     public static HashMap<Player, Integer> currentGlobalDialog = new HashMap<>();
 
 
-    public static HashMap<Integer, Path> clientQuestByIDLocation = new HashMap<>();
+    public static HashMap<String, Path> clientQuestByIDLocation = new HashMap<String, Path>();
     public static HashMap<EnumQuestType, List<Path>> clientQuestTypeLocation = new HashMap<>();
 
 
@@ -28,7 +28,7 @@ public class LocateHash {
         clientQuestTypeLocation.put(type, questList);
     }
 
-    public static void registerQuestByID(Integer id, Path path) {
+    public static void registerQuestByID(String id, Path path) {
         clientQuestByIDLocation.put(id, path);
     }
 
@@ -37,11 +37,11 @@ public class LocateHash {
         return clientQuestTypeLocation.get(type);
     }
 
-    public static Path getQuestByID(Integer id) {
+    public static Path getQuestByID(String id) {
         return clientQuestByIDLocation.get(id);
     }
 
-    public static void movePathQuest(Integer id, Path newPath, EnumQuestType enumQuestType) {
+    public static void movePathQuest(String id, Path newPath, EnumQuestType enumQuestType) {
         removeQuest(id, newPath, enumQuestType);
 
         registerQuestTypeLocation(enumQuestType, newPath);
@@ -49,12 +49,12 @@ public class LocateHash {
     }
 
 
-    public static void removeQuest(Integer id, Path oldPath, EnumQuestType enumQuestType) {
+    public static void removeQuest(String id, Path oldPath, EnumQuestType enumQuestType) {
         List<Path> oldPathList = getQuestTypeLocation(enumQuestType);
 
         List<Path> newPathList = oldPathList;
 
-        newPathList.removeIf(listId -> (listId.toString().contains("id_" + id + ".json")));
+        newPathList.removeIf(listId -> (listId.toString().contains(id + ".json")));
 
         clientQuestTypeLocation.replace(enumQuestType, oldPathList, newPathList);
         clientQuestByIDLocation.remove(id);

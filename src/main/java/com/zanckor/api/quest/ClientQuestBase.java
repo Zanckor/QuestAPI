@@ -11,7 +11,7 @@ import static com.zanckor.api.database.LocateHash.registerQuestByID;
 import static com.zanckor.api.database.LocateHash.registerQuestTypeLocation;
 
 public class ClientQuestBase {
-    private int id;
+    private String id;
     private String title;
     private String quest_type;
     private List<String> quest_target;
@@ -129,11 +129,11 @@ public class ClientQuestBase {
         return playerQuest;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

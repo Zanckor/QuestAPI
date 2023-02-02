@@ -13,19 +13,19 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 public class RequestQuestTracked {
-    private int questID;
+    private String questID;
 
 
-    public RequestQuestTracked(int questID) {
+    public RequestQuestTracked(String questID) {
         this.questID = questID;
     }
 
     public RequestQuestTracked(FriendlyByteBuf buffer) {
-        questID = buffer.readInt();
+        questID = buffer.readUtf();
     }
 
     public void encodeBuffer(FriendlyByteBuf buffer) {
-        buffer.writeInt(questID);
+        buffer.writeUtf(questID);
     }
 
 

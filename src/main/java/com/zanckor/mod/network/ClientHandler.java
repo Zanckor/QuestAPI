@@ -19,6 +19,7 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class ClientHandler {
 
+    public static String trackedID;
     public static String trackedTitle;
     public static String trackedQuest_type;
     public static List<String> trackedQuest_target = new ArrayList<>();
@@ -46,7 +47,8 @@ public class ClientHandler {
     }
 
 
-    public static void questTracked(String title, String quest_type, List<String> quest_target, List<Integer> target_quantity, List<Integer> target_current_quantity, boolean hasTimeLimit, int timeLimitInSeconds) {
+    public static void questTracked(String id, String title, String quest_type, List<String> quest_target, List<Integer> target_quantity, List<Integer> target_current_quantity, boolean hasTimeLimit, int timeLimitInSeconds) {
+        trackedID = id;
         trackedTitle = title;
         trackedQuest_type = quest_type;
         trackedQuest_target = quest_target;
@@ -55,19 +57,19 @@ public class ClientHandler {
         trackedHasTimeLimit = hasTimeLimit;
 
 
-        if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle)) {
-
+        if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + id) && hasTimeLimit) {
             trackedTimeLimitInSeconds = timeLimitInSeconds;
-            Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle, trackedTimeLimitInSeconds);
+
+            Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + id, trackedTimeLimitInSeconds);
         }
     }
 
-    public static void removeQuest(String title) {
-        Timer.clearTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + trackedTitle);
+    public static void removeQuest(String id) {
+        Timer.clearTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + id);
     }
 
 
-    public static void displayQuestList(List<Integer> id, List<String> title) {
+    public static void displayQuestList(List<String> id, List<String> title) {
         Minecraft.getInstance().setScreen(new QuestListScreen(id, title));
     }
 }

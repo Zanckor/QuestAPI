@@ -1,6 +1,6 @@
 {
-  "id": 2,
-  "title": "Recollect items",
+  "id": "interact_entity",
+  "title": "Interact with cow and pig",
   "quest_type": "INTERACT_ENTITY",
   "quest_target": [
     "entity.minecraft.pig",

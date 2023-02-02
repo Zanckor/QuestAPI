@@ -21,7 +21,7 @@ public class DialogRequirementHandler extends AbstractDialogRequirement {
 
         if (requirement.equals(EnumRequirementType.DIALOG.toString())) {
             EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getRequirement_status());
-            int dialog_requirement = dialog.getDialog().get(dialog_id).getRequirements().getId();
+            int dialog_requirement = dialog.getDialog().get(dialog_id).getRequirements().getDialogId();
 
             switch (requirementStatus) {
 

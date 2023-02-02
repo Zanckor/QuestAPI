@@ -1,20 +1,22 @@
 {
-  "id": 9,
-  "title": "Test Quest For Quest Log Number 5",
-  "quest_type": "RECOLLECT",
+  "id": "move_to_coords",
+  "title": "Locate coord",
+  "quest_type": "MOVE_TO",
   "quest_target": [
-    "minecraft:iron_ingot",
-    "minecraft:gold_ingot"
+    "100",
+    "110",
+    "100"
   ],
   "target_quantity": [
-    17,
-    2
+    1,
+    1,
+    1
   ],
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,
   "requirements_type": "XP",
-  "requirements_min": 0,
-  "requirements_max": 10,
+  "requirements_min": 30,
+  "requirements_max": 40,
   "reward_type": "ITEM",
   "reward": [
     "minecraft:coal",

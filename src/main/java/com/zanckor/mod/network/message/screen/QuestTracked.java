@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class QuestTracked {
+    private String id;
     private String title;
     private String quest_type;
 
@@ -26,6 +27,7 @@ public class QuestTracked {
 
 
     public QuestTracked(ClientQuestBase clientQuestBase) {
+        id = clientQuestBase.getId();
         title = clientQuestBase.getTitle();
         quest_type = clientQuestBase.getQuest_type();
         quest_target = clientQuestBase.getQuest_target();
@@ -37,6 +39,7 @@ public class QuestTracked {
 
     public QuestTracked(FriendlyByteBuf buffer) {
         title = buffer.readUtf();
+        id = buffer.readUtf();
         quest_type = buffer.readUtf();
 
         quest_target_size = buffer.readInt();
@@ -57,6 +60,7 @@ public class QuestTracked {
 
     public void encodeBuffer(FriendlyByteBuf buffer) {
         buffer.writeUtf(title);
+        buffer.writeUtf(id);
         buffer.writeUtf(quest_type);
 
         buffer.writeInt(quest_target.size());
@@ -78,7 +82,7 @@ public class QuestTracked {
 
     public static void handler(QuestTracked msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.questTracked(msg.title, msg.quest_type,
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.questTracked(msg.id, msg.title, msg.quest_type,
                     msg.quest_target, msg.target_quantity, msg.target_current_quantity,
                     msg.hasTimeLimit, msg.timeLimitInSeconds));
         });

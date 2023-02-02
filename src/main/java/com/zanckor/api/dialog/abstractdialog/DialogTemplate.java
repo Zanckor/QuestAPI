@@ -80,7 +80,8 @@ public class DialogTemplate {
     public static class DialogRequirement {
         String type;
         int global_id;
-        int id;
+        int dialog_id;
+        String quest_id;
         String requirement_status;
 
         public String getType() {
@@ -91,19 +92,24 @@ public class DialogTemplate {
             return global_id;
         }
 
-        public int getId() {
-            return id;
+        public int getDialogId() {
+            return dialog_id;
+        }
+
+        public String getQuestId() {
+            return quest_id;
         }
 
         public String getRequirement_status() {
             return requirement_status;
         }
 
-        private static DialogRequirement createRequirement(String type, int global_id, int id, String requirement_status) {
+        private static DialogRequirement createRequirement(String type, int global_id, int dialog_id, String quest_id, String requirement_status) {
             DialogRequirement requirement = new DialogRequirement();
             requirement.type = type;
             requirement.global_id = global_id;
-            requirement.id = id;
+            requirement.dialog_id = dialog_id;
+            requirement.quest_id = quest_id;
             requirement.requirement_status = requirement_status;
 
 
@@ -116,7 +122,7 @@ public class DialogTemplate {
         String type;
         int global_id;
         int dialog;
-        int quest_id;
+        String quest_id;
 
         public String getText() {
             return text;
@@ -134,11 +140,11 @@ public class DialogTemplate {
             return dialog;
         }
 
-        public int getQuest_id() {
+        public String getQuest_id() {
             return quest_id;
         }
 
-        private static DialogOption createDialogOption(String text, String type, int global_id, int dialog, int quest_id) {
+        private static DialogOption createDialogOption(String text, String type, int global_id, int dialog, String quest_id) {
             DialogOption option = new DialogOption();
 
             option.text = text;

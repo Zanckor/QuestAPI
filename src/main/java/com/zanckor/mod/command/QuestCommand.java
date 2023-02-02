@@ -40,10 +40,10 @@ import static com.zanckor.mod.QuestApiMain.*;
 
 public class QuestCommand {
 
-    public static int trackedQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
+    public static int trackedQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
         ServerLevel level = context.getSource().getLevel();
         Player player = level.getPlayerByUUID(playerUUID);
-        String quest = "id_" + questID + ".json";
+        String quest = questID + ".json";
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
         for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
@@ -58,10 +58,11 @@ public class QuestCommand {
     }
 
 
-    public static int addQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
+    public static int addQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
         ServerLevel level = context.getSource().getLevel();
         Player player = level.getPlayerByUUID(playerUUID);
-        String quest = "id_" + questID + ".json";
+        String quest = questID + ".json";
+
 
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
@@ -88,7 +89,7 @@ public class QuestCommand {
                 writer.close();
 
                 if (playerQuest.hasTimeLimit()) {
-                    Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
+                    Timer.updateCooldown(playerUUID, questID, playerQuest.getTimeLimitInSeconds());
                 }
 
                 if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {
@@ -104,7 +105,7 @@ public class QuestCommand {
         return 1;
     }
 
-    private static int protectEntityQuest(ClientQuestBase playerQuest, ServerLevel level, Player player, ServerQuestBase serverQuest, Path path, Gson gson, int questID) throws IOException {
+    private static int protectEntityQuest(ClientQuestBase playerQuest, ServerLevel level, Player player, ServerQuestBase serverQuest, Path path, Gson gson, String questID) throws IOException {
         EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
         UUID playerUUID = player.getUUID();
 
@@ -123,12 +124,12 @@ public class QuestCommand {
         gson.toJson(protectEntityPlayerQuest, protectEntityWriter);
         protectEntityWriter.close();
 
-        Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
+        Timer.updateCooldown(playerUUID, questID, playerQuest.getTimeLimitInSeconds());
 
         return 1;
     }
 
-    public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, int questID) throws IOException {
+    public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
         ServerLevel level = context.getSource().getLevel();
         Player player = level.getPlayerByUUID(playerUUID);
 
@@ -138,7 +139,7 @@ public class QuestCommand {
         ClientQuestBase clientQuest = MCUtil.gson().fromJson(reader, ClientQuestBase.class);
         reader.close();
 
-        SendQuestPacket.TO_CLIENT(player, new RemovedQuest(clientQuest.getTitle()));
+        SendQuestPacket.TO_CLIENT(player, new RemovedQuest(clientQuest.getId()));
         LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(clientQuest.getQuest_type()));
         path.toFile().delete();
 

@@ -22,16 +22,16 @@ import static com.zanckor.mod.network.ClientHandler.*;
 
 public class QuestListScreen extends Screen {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
-    List<String> list = new ArrayList<>();
+    List<String> questData = new ArrayList<>();
     int selectedPage = 0;
 
 
     double xScreenPos, yScreenPos;
     int imageWidth, imageHeight;
 
-    HashMap<Integer, Map.Entry<Integer, String>> quest = new HashMap<>();
+    HashMap<Integer, Map.Entry<String, String>> quest = new HashMap<>();
 
-    public QuestListScreen(List<Integer> id, List<String> title) {
+    public QuestListScreen(List<String> id, List<String> title) {
         super(Component.literal("questlist"));
 
         for (int i = 0; i < title.size(); i++) {
@@ -49,6 +49,7 @@ public class QuestListScreen extends Screen {
         imageHeight = width / 3;
         xScreenPos = width - (imageWidth);
         yScreenPos = height / 4;
+
 
         float scale = ((float) width) / 575;
 
@@ -150,25 +151,25 @@ public class QuestListScreen extends Screen {
     }
 
     public void renderQuestData(PoseStack poseStack) {
-        list.clear();
+        questData.clear();
 
-        list.add("Type: " + trackedQuest_type);
+        questData.add("Type: " + trackedID.substring(0, 1).toUpperCase() + trackedQuest_type.substring(1).toLowerCase());
 
         for (int i = 0; i < trackedQuest_target.size(); i++) {
             AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(trackedQuest_type));
 
             if (targetType != null) {
                 String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)));
-                list.add(I18n.get(translationKey) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
+                questData.add(I18n.get(translationKey) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
             } else {
-                list.add(trackedQuest_target.get(i) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
+                questData.add(trackedQuest_target.get(i) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
             }
         }
 
-        if (trackedHasTimeLimit) list.add("Time limit: " + trackedTimeLimitInSeconds);
+        if (trackedHasTimeLimit) questData.add("Time limit: " + trackedTimeLimitInSeconds);
 
 
-        MCUtil.renderText(poseStack, xScreenPos + (imageWidth / 20), yScreenPos * 1.6, 20, ((float) width) / 700, 28, list, font);
+        MCUtil.renderText(poseStack, xScreenPos + (imageWidth / 20), yScreenPos * 1.6, 20, ((float) width) / 700, 28, questData, font);
     }
 
     @Override

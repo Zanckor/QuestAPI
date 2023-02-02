@@ -3,7 +3,7 @@ package com.zanckor.api.quest;
 import java.util.List;
 
 public class ServerQuestBase {
-    private int id;
+    private String id;
     private String title;
 
     private String quest_type;
@@ -23,7 +23,7 @@ public class ServerQuestBase {
 
 
     public static ServerQuestBase createQuest(
-            int id, String title,
+            String id, String title,
             Enum quest_type,
             List<String> quest_target, List<Integer> target_quantity,
             boolean hasTimeLimit, int timeLimitInSeconds,
@@ -52,11 +52,11 @@ public class ServerQuestBase {
 
 
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

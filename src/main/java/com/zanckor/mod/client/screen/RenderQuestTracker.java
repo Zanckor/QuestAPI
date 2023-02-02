@@ -1,19 +1,29 @@
 package com.zanckor.mod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.zanckor.api.quest.abstracquest.AbstractTargetType;
+import com.zanckor.api.quest.enumquest.EnumQuestType;
+import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.QuestApiMain;
 import com.zanckor.mod.network.ClientHandler;
+import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.zanckor.mod.network.ClientHandler.*;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderQuestTracker {
+    static List<String> questData = new ArrayList<>();
 
     @SubscribeEvent
     public static void tickEvent(TickEvent e) {
@@ -23,8 +33,8 @@ public class RenderQuestTracker {
             return;
 
         if (mc.player.tickCount % 20 == 0) {
-            if (trackedHasTimeLimit && Timer.existsTimer(mc.player.getUUID(), "TIMER_QUEST" + trackedTitle) && trackedTimeLimitInSeconds > 0) {
-                int timer = (int) Timer.remainingTime(mc.player.getUUID(), "TIMER_QUEST" + trackedTitle) / 1000;
+            if (trackedHasTimeLimit && Timer.existsTimer(mc.player.getUUID(), "TIMER_QUEST" + trackedID) && trackedTimeLimitInSeconds > 0) {
+                int timer = (int) Timer.remainingTime(mc.player.getUUID(), "TIMER_QUEST" + trackedID) / 1000;
                 trackedTimeLimitInSeconds = timer;
             }
         }
@@ -35,33 +45,26 @@ public class RenderQuestTracker {
         if (trackedTitle == null || trackedTarget_quantity.equals(trackedTarget_current_quantity)) return;
         Minecraft mc = Minecraft.getInstance();
 
-        int yPosition = 0;
+        mc.getProfiler().push("hud_tracked");
 
-        poseStack.pushPose();
-        poseStack.translate(width / 32, height / 16, 0);
-        poseStack.scale((float) ((width / 400) / 1.5), (float) ((width / 400) / 1.5), 1);
+        questData.add("Quest: " + trackedTitle);
+        questData.add("Type: " + trackedID.substring(0, 1).toUpperCase() + trackedQuest_type.substring(1).toLowerCase());
 
+        for (int i = 0; i < trackedQuest_target.size(); i++) {
+            AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(trackedQuest_type));
 
-        mc.font.draw(poseStack, "Quest: " + trackedTitle, 0, 0, 0);
-        mc.font.draw(poseStack, "Type: " + ClientHandler.trackedQuest_type, 0, 10, 0);
-
-        for (int i = 0; i < ClientHandler.trackedQuest_target.size(); i++) {
-            mc.font.draw(poseStack, "Target: " + ClientHandler.trackedQuest_target.get(i), 0, 30 + yPosition, 0);
-            mc.font.draw(poseStack,
-                    ClientHandler.trackedTarget_current_quantity.get(i).toString() + " / " + ClientHandler.trackedTarget_quantity.get(i).toString(),
-                    ClientHandler.trackedQuest_target.get(i).length() * 5 + 50,
-                    30 + yPosition, 0);
-
-            yPosition += 10;
+            if (targetType != null) {
+                String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)));
+                questData.add(I18n.get(translationKey) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
+            } else {
+                questData.add(trackedQuest_target.get(i) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
+            }
         }
 
-        if (ClientHandler.trackedHasTimeLimit) {
-            yPosition += 10;
-            mc.font.draw(poseStack, "Time limit: " + ClientHandler.trackedTimeLimitInSeconds, 0, 30 + yPosition, 0);
-        }
+        if (trackedHasTimeLimit) questData.add("Time limit: " + trackedTimeLimitInSeconds);
 
+        MCUtil.renderText(poseStack, 0, 0, 20, ((float) width) / 575, 23, questData, mc.font);
 
-        poseStack.popPose();
         mc.getProfiler().pop();
     }
 }

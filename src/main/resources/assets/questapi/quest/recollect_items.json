@@ -1,18 +1,20 @@
 {
-  "id": 4,
-  "title": "Protect entity",
-  "quest_type": "PROTECT_ENTITY",
+  "id": "recollect_items",
+  "title": "Recollect items",
+  "quest_type": "RECOLLECT",
   "quest_target": [
-    "entity.minecraft.pig"
+    "minecraft:iron_ingot",
+    "minecraft:gold_ingot"
   ],
   "target_quantity": [
-    1
+    1,
+    2
   ],
   "hasTimeLimit": false,
-  "timeLimitInSeconds": 5,
+  "timeLimitInSeconds": 0,
   "requirements_type": "XP",
-  "requirements_min": 40,
-  "requirements_max": 50,
+  "requirements_min": 0,
+  "requirements_max": 10,
   "reward_type": "ITEM",
   "reward": [
     "minecraft:coal",

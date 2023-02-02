@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 public class QuestList {
 
-    List<Integer> id = new ArrayList<>();
+    List<String> id = new ArrayList<>();
     List<String> title = new ArrayList<>();
 
     int listSize;
@@ -27,7 +27,7 @@ public class QuestList {
 
         for (File file : activeQuests) {
             String currentQuestTitle = MCUtil.getJsonClientQuest(file).getTitle();
-            int currentQuestID = MCUtil.getJsonClientQuest(file).getId();
+            String currentQuestID = MCUtil.getJsonClientQuest(file).getId();
 
             id.add(currentQuestID);
             title.add(currentQuestTitle);
@@ -38,7 +38,7 @@ public class QuestList {
         listSize = buffer.readInt();
 
         for (int i = 0; i < listSize; i++) {
-            id.add(buffer.readInt());
+            id.add(buffer.readUtf());
             title.add(buffer.readUtf());
         }
     }
@@ -47,7 +47,7 @@ public class QuestList {
         buffer.writeInt(title.size());
 
         for (int i = 0; i < title.size(); i++) {
-            buffer.writeInt(id.get(i));
+            buffer.writeUtf(id.get(i));
             buffer.writeUtf(title.get(i));
         }
     }

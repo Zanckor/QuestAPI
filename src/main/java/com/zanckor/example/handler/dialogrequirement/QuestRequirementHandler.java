@@ -24,7 +24,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
 
         EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getRequirement_status());
         String requirement = dialog.getDialog().get(dialog_id).getRequirements().getType();
-        Path questPath = LocateHash.getQuestByID(dialog.getDialog().get(dialog_id).getRequirements().getId());
+        Path questPath = LocateHash.getQuestByID(dialog.getDialog().get(dialog_id).getRequirements().getQuestId());
 
         File questFile;
         ClientQuestBase playerQuest = null;

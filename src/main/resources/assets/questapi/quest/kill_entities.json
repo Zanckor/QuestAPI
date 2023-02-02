@@ -1,20 +1,20 @@
 {
-  "id": 6,
-  "title": "Test Quest For Quest Log Number 2",
-  "quest_type": "RECOLLECT",
+  "id": "kill_entities",
+  "title": "Kill entities",
+  "quest_type": "KILL",
   "quest_target": [
-    "minecraft:iron_ingot",
-    "minecraft:gold_ingot"
+    "entity.minecraft.pig",
+    "entity.minecraft.cow"
   ],
   "target_quantity": [
     1,
-    24
+    2
   ],
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,
   "requirements_type": "XP",
-  "requirements_min": 0,
-  "requirements_max": 10,
+  "requirements_min": 10,
+  "requirements_max": 20,
   "reward_type": "ITEM",
   "reward": [
     "minecraft:coal",

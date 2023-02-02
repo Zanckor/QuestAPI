@@ -1,6 +1,7 @@
 package com.zanckor.mod;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.zanckor.mod.command.QuestCommand;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -18,13 +19,13 @@ public class EventHandlerRegister {
         e.getDispatcher().register(net.minecraft.commands.Commands.literal("quests")
                 .then(net.minecraft.commands.Commands.literal("add")
                         .then(net.minecraft.commands.Commands.argument("player", EntityArgument.player())
-                                .then(net.minecraft.commands.Commands.argument("questID", IntegerArgumentType.integer())
+                                .then(net.minecraft.commands.Commands.argument("questID", StringArgumentType.string())
                                         .executes((context) -> {
                                             try {
                                                 return QuestCommand.addQuest(
                                                         context,
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
-                                                        IntegerArgumentType.getInteger(context, "questID"));
+                                                        StringArgumentType.getString(context, "questID"));
                                             } catch (IOException ex) {
                                                 QuestApiMain.LOGGER.error(ex.getMessage());
 
@@ -34,13 +35,13 @@ public class EventHandlerRegister {
 
                 .then(net.minecraft.commands.Commands.literal("remove")
                         .then(net.minecraft.commands.Commands.argument("player", EntityArgument.player())
-                                .then(net.minecraft.commands.Commands.argument("questID", IntegerArgumentType.integer())
+                                .then(net.minecraft.commands.Commands.argument("questID", StringArgumentType.string())
                                         .executes((context) -> {
                                             try {
                                                 return QuestCommand.removeQuest(
                                                         context,
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
-                                                        IntegerArgumentType.getInteger(context, "questID"));
+                                                        StringArgumentType.getString(context, "questID"));
                                             } catch (IOException ex) {
                                                 QuestApiMain.LOGGER.error(ex.getMessage());
 
@@ -50,13 +51,13 @@ public class EventHandlerRegister {
 
                 .then(net.minecraft.commands.Commands.literal("tracked")
                         .then(net.minecraft.commands.Commands.argument("player", EntityArgument.player())
-                                .then(net.minecraft.commands.Commands.argument("questID", IntegerArgumentType.integer())
+                                .then(net.minecraft.commands.Commands.argument("questID", StringArgumentType.string())
                                         .executes((context) -> {
                                             try {
                                                 return QuestCommand.trackedQuest(
                                                         context,
                                                         EntityArgument.getPlayer(context, "player").getUUID(),
-                                                        IntegerArgumentType.getInteger(context, "questID"));
+                                                        StringArgumentType.getString(context, "questID"));
                                             } catch (IOException ex) {
                                                 QuestApiMain.LOGGER.error(ex.getMessage());
 

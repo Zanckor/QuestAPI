@@ -1,20 +1,18 @@
 {
-  "id": 12,
-  "title": "Test Quest For Quest Log Number 8",
-  "quest_type": "RECOLLECT",
+  "id": "protect_entity",
+  "title": "Protect entity",
+  "quest_type": "PROTECT_ENTITY",
   "quest_target": [
-    "minecraft:iron_ingot",
-    "minecraft:gold_ingot"
+    "entity.minecraft.pig"
   ],
   "target_quantity": [
-    12,
-    2
+    1
   ],
   "hasTimeLimit": false,
-  "timeLimitInSeconds": 0,
+  "timeLimitInSeconds": 5,
   "requirements_type": "XP",
-  "requirements_min": 0,
-  "requirements_max": 10,
+  "requirements_min": 40,
+  "requirements_max": 50,
   "reward_type": "ITEM",
   "reward": [
     "minecraft:coal",

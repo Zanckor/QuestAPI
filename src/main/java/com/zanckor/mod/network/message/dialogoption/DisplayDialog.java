@@ -46,9 +46,9 @@ public class DisplayDialog {
 
             optionStringData.add(buffer.readUtf());
             optionStringData.add(buffer.readUtf());
+            optionStringData.add(buffer.readUtf());
 
 
-            optionIntegerData.add(buffer.readInt());
             optionIntegerData.add(buffer.readInt());
             optionIntegerData.add(buffer.readInt());
 
@@ -65,8 +65,8 @@ public class DisplayDialog {
         for (DialogTemplate.DialogOption option : dialog.getOptions()) {
             buffer.writeUtf(option.getText());
             buffer.writeUtf(option.getType());
+            buffer.writeUtf(option.getQuest_id());
             buffer.writeInt(option.getGlobal_id());
-            buffer.writeInt(option.getQuest_id());
             buffer.writeInt(option.getDialog());
         }
     }

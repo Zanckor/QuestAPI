@@ -91,7 +91,7 @@ public class AddQuestHandler extends AbstractDialogOption {
     }
 
 
-    private static void protectEntityQuest(ClientQuestBase playerQuest, Level level, Player player, ServerQuestBase serverQuest, Path path, Gson gson, int questID) throws IOException {
+    private static void protectEntityQuest(ClientQuestBase playerQuest, Level level, Player player, ServerQuestBase serverQuest, Path path, Gson gson, String questID) throws IOException {
         EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
         UUID playerUUID = player.getUUID();
 
@@ -110,6 +110,6 @@ public class AddQuestHandler extends AbstractDialogOption {
         gson.toJson(protectEntityPlayerQuest, protectEntityWriter);
         protectEntityWriter.close();
 
-        Timer.updateCooldown(playerUUID, "id_" + questID, playerQuest.getTimeLimitInSeconds());
+        Timer.updateCooldown(playerUUID, questID, playerQuest.getTimeLimitInSeconds());
     }
 }
