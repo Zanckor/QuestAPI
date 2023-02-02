@@ -103,7 +103,7 @@ public class QuestListScreen extends Screen {
         });
 
         Button nextPage = new Button((int) (xScreenPos - (imageWidth / 17)), (int) (yScreenPos + imageHeight * 0.69), width / 65, width / 65, Component.literal(""), button -> {
-            if (selectedPage <= quest.size() / 4) {
+            if (selectedPage + 1 < Math.ceil(quest.size()) / 4) {
                 selectedPage++;
 
                 init();
