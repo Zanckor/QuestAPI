@@ -49,8 +49,6 @@ public class QuestCommand {
         for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
             if (file.getName().equals(quest)) {
                 SendQuestPacket.TO_CLIENT(player, new QuestTracked(MCUtil.getJsonClientQuest(file)));
-
-                SendQuestPacket.TO_CLIENT(player, new QuestList(playerUUID));
             }
         }
 

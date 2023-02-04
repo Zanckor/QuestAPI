@@ -1,43 +1,54 @@
 package com.zanckor.example.entity.server;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.JumpGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class NPCEntity extends Zombie {
-    public NPCEntity(EntityType<? extends Zombie> entityType, Level level) {
+import java.io.IOException;
+
+import static com.zanckor.example.event.dialogevent.StartDialog.loadDialog;
+
+public class NPCEntity extends Cat {
+    private String dialogID = "collect_items_dialog";
+
+    public NPCEntity(EntityType<? extends Cat> entityType, Level level) {
         super(entityType, level);
         this.setInvulnerable(true);
+
+        this.setCustomName(Component.literal("Magic Cat"));
+        this.setCustomNameVisible(true);
     }
 
 
-    protected void registerGoals() {
-        this.goalSelector.addGoal(0, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(1, new RandomStrollGoal(this, 1D));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(4, new JumpGoal() {
-            @Override
-            public boolean canUse() {
-                return true;
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
+        if (!player.level.isClientSide && interactionHand.equals(InteractionHand.MAIN_HAND)) {
+            try {
+                loadDialog(player, dialogID);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        });
+        }
+
+        return super.mobInteract(player, interactionHand);
+    }
+
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new LookAtPlayerGoal(this, Player.class, 8.0F));
     }
 
     public static AttributeSupplier setAttributes() {
-        return Animal.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 100.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3f)
-                .add(Attributes.FOLLOW_RANGE, 24.0f).build();
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, Integer.MAX_VALUE)
+                .add(Attributes.MOVEMENT_SPEED, 0)
+                .build();
     }
 }

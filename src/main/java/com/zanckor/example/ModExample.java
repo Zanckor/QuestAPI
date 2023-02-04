@@ -6,7 +6,7 @@ import com.zanckor.api.quest.enumquest.EnumQuestRequirement;
 import com.zanckor.api.quest.enumquest.EnumQuestReward;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
-import com.zanckor.example.entity.ModEntityTypes;
+import com.zanckor.example.entity.NpcTypes;
 import com.zanckor.example.handler.dialogoption.AddQuestHandler;
 import com.zanckor.example.handler.dialogoption.CloseDialogHandler;
 import com.zanckor.example.handler.dialogoption.OpenDialogHandler;
@@ -23,7 +23,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class ModExample {
     public ModExample() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModEntityTypes.register(modEventBus);
+        NpcTypes.register(modEventBus);
 
         initialize();
     }

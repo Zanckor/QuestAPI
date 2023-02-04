@@ -75,7 +75,7 @@ public class ProtectEntityEvent {
         if (playerQuest != null &&
                 playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString()) &&
                 !playerQuest.getQuest_target().contains("entity") &&
-                Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+                Timer.canUseWithCooldown(player.getUUID(), playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
 
             SendQuestPacket.TO_SERVER(new QuestDataPacket(PROTECT_ENTITY));
         }

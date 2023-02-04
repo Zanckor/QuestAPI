@@ -5,8 +5,6 @@ import com.zanckor.api.quest.abstracquest.AbstractTargetType;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.api.quest.register.TemplateRegistry;
 import com.zanckor.mod.QuestApiMain;
-import com.zanckor.mod.network.ClientHandler;
-import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -16,14 +14,13 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.zanckor.mod.network.ClientHandler.*;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderQuestTracker {
-    static List<String> questData = new ArrayList<>();
+    static float xPosition;
+    static float yPosition;
+    static float scale;
 
     @SubscribeEvent
     public static void tickEvent(TickEvent e) {
@@ -42,29 +39,55 @@ public class RenderQuestTracker {
 
 
     public static void renderQuestTracker(PoseStack poseStack, int width, int height, int questID) {
-        if (trackedTitle == null || trackedTarget_quantity.equals(trackedTarget_current_quantity)) return;
+        if (trackedTitle == null || trackedTarget_quantity.equals(trackedTarget_current_quantity) || trackedQuest_completed) return;
         Minecraft mc = Minecraft.getInstance();
 
-        mc.getProfiler().push("hud_tracked");
+        xPosition = width / 100;
+        yPosition = width / 100;
 
-        questData.add("Quest: " + trackedTitle);
-        questData.add("Type: " + trackedID.substring(0, 1).toUpperCase() + trackedQuest_type.substring(1).toLowerCase());
+        scale = ((float) width) / 700;
+
+        mc.getProfiler().push("hud_tracked");
+        poseStack.pushPose();
+
+        poseStack.scale(scale, scale, 1);
+
+        mc.font.draw(poseStack,
+                "Quest: " + trackedTitle,
+                xPosition, yPosition, 0
+        );
+
+        yPosition += 20;
 
         for (int i = 0; i < trackedQuest_target.size(); i++) {
             AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(trackedQuest_type));
 
             if (targetType != null) {
                 String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)));
-                questData.add(I18n.get(translationKey) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
+
+
+                mc.font.draw(poseStack,
+                        I18n.get(translationKey) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i),
+                        xPosition, yPosition, 0
+                );
             } else {
-                questData.add(trackedQuest_target.get(i) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
+                mc.font.draw(poseStack,
+                        trackedQuest_target.get(i) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i),
+                        xPosition, yPosition, 0
+                );
             }
+
+            yPosition += 20;
         }
 
-        if (trackedHasTimeLimit) questData.add("Time limit: " + trackedTimeLimitInSeconds);
+        if (trackedHasTimeLimit) {
+            mc.font.draw(poseStack,
+                    "Time limit: " + trackedTimeLimitInSeconds,
+                    xPosition, yPosition, 0
+            );
+        }
 
-        MCUtil.renderText(poseStack, 0, 0, 20, ((float) width) / 575, 23, questData, mc.font);
-
+        poseStack.popPose();
         mc.getProfiler().pop();
     }
 }

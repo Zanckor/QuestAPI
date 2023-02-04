@@ -140,7 +140,7 @@ public class MCUtil {
 
 
     public static void writeDialogRead(Player player, int dialogID) throws IOException {
-        int globalDialog = LocateHash.currentGlobalDialog.get(player);
+        String globalDialog = LocateHash.currentGlobalDialog.get(player);
 
 
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());

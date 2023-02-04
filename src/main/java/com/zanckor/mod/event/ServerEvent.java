@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.zanckor.api.database.LocateHash.registerQuestByID;
 import static com.zanckor.api.database.LocateHash.registerQuestTypeLocation;
@@ -53,7 +55,7 @@ public class ServerEvent {
             return;
         }
 
-        if (!playerQuest.isCompleted() && playerQuest.hasTimeLimit() && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+        if (!playerQuest.isCompleted() && playerQuest.hasTimeLimit() && Timer.canUseWithCooldown(player.getUUID(), playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
             FileWriter writer = new FileWriter(file);
             playerQuest.setCompleted(true);
 
@@ -71,11 +73,14 @@ public class ServerEvent {
     public static void uncompletedQuestOnLogOut(PlayerEvent.PlayerLoggedOutEvent e) throws IOException {
         Path activeQuest = QuestApiMain.getActiveQuest(getUserFolder(e.getEntity().getUUID()));
         Path uncompletedQuest = QuestApiMain.getUncompletedQuest(getUserFolder(e.getEntity().getUUID()));
+        List<EnumQuestType> questWithTimer = new ArrayList<>();
+
+        questWithTimer.add(EnumQuestType.PROTECT_ENTITY);
 
         for (File file : activeQuest.toFile().listFiles()) {
             ClientQuestBase playerQuest = MCUtil.getJsonClientQuest(file);
 
-            if (playerQuest != null && playerQuest.hasTimeLimit()) {
+            if (playerQuest != null && playerQuest.hasTimeLimit() || questWithTimer.contains(EnumQuestType.valueOf(playerQuest.getQuest_type()))) {
                 FileWriter writer = new FileWriter(file);
                 playerQuest.setCompleted(true);
 
@@ -116,7 +121,7 @@ public class ServerEvent {
             DialogTemplate dialogTemplate = MCUtil.gson().fromJson(reader, DialogTemplate.class);
             reader.close();
 
-            DialogTemplate.registerDialogLocation(dialogTemplate.getGlobal_id(), file.toPath().toAbsolutePath());
+            DialogTemplate.registerDialogLocation(file.getName(), file.toPath().toAbsolutePath());
         }
     }
 }

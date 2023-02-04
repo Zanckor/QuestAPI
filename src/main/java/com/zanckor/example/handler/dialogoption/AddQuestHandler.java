@@ -43,7 +43,7 @@ public class AddQuestHandler extends AbstractDialogOption {
     public void handler(Player player, DialogTemplate dialog, int optionID) throws IOException {
         int currentDialog = LocateHash.currentDialog.get(player);
         DialogTemplate.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(optionID);
-        String quest = "id_" + option.getQuest_id() + ".json";
+        String quest = option.getQuest_id() + ".json";
 
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
@@ -74,7 +74,7 @@ public class AddQuestHandler extends AbstractDialogOption {
                     writer.close();
 
                     if (playerQuest.hasTimeLimit()) {
-                        Timer.updateCooldown(player.getUUID(), "id_" + option.getQuest_id(), playerQuest.getTimeLimitInSeconds());
+                        Timer.updateCooldown(player.getUUID(), option.getQuest_id(), playerQuest.getTimeLimitInSeconds());
                     }
 
                     if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {

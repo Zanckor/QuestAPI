@@ -47,8 +47,6 @@ public class DialogRequirementHandler extends AbstractDialogRequirement {
 
     private void displayDialog(Player player, int dialog_id, DialogTemplate dialog) throws IOException {
         LocateHash.currentDialog.put(player, dialog_id);
-        LocateHash.currentGlobalDialog.put(player, dialog.getGlobal_id());
-
         SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, dialog_id, player));
     }
 }

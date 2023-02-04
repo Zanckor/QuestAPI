@@ -16,11 +16,6 @@ public class KillEvent {
     public static void killQuest(LivingDeathEvent e) {
         if (!(e.getSource().getEntity() instanceof Player)) return;
 
-
-        if (e.getEntity().level.isClientSide) {
-
-        } else {
-            SendQuestPacket.TO_SERVER(new QuestDataPacket(KILL));
-        }
+        SendQuestPacket.TO_SERVER(new QuestDataPacket(KILL));
     }
 }

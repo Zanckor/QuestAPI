@@ -6,25 +6,25 @@
       "dialogText": "Hello adventurer, I need help with a task, would you help me?",
       "requirements": {
         "type": "QUEST",
-        "global_id": null,
+        "global_id": "",
         "dialog_id": null,
-        "quest_id": 0,
+        "quest_id": "recollect_items",
         "requirement_status": "NOT_OBTAINED"
       },
       "options": [
         {
           "text": "Sure, tell me what you need.",
           "type": "OPEN_DIALOG",
-          "global_id": 0,
+          "global_id": "collect_items_dialog",
           "dialog": 1,
-          "quest_id": 0
+          "quest_id": ""
         },
         {
           "text": "No, sorry, I don\u0027t have time.",
           "type": "OPEN_DIALOG",
-          "global_id": 0,
+          "global_id": "collect_items_dialog",
           "dialog": 2,
-          "quest_id": 0
+          "quest_id": ""
         }
       ]
     },
@@ -38,9 +38,9 @@
         {
           "text": "I\u0027ll start right now.",
           "type": "ADD_QUEST",
-          "global_id": 0,
-          "dialog": 0,
-          "quest_id": 0
+          "global_id": "",
+          "dialog": null,
+          "quest_id": "recollect_items"
         }
       ]
     },
@@ -54,9 +54,9 @@
         {
           "text": "Okay...",
           "type": "CLOSE_DIALOG",
-          "global_id": 0,
-          "dialog": 0,
-          "quest_id": 0
+          "global_id": "",
+          "dialog": null,
+          "quest_id": ""
         }
       ]
     },
@@ -66,25 +66,25 @@
       "dialogText": "Hello, I see you\u0027re back, have you changed your mind?",
       "requirements": {
         "type": "DIALOG",
-        "global_id": null,
+        "global_id": "",
         "dialog_id": 2,
-        "quest_id": null,
+          "quest_id": "",
         "requirement_status": "READ"
       },
       "options": [
         {
           "text": "Sure, tell me what you need.",
           "type": "OPEN_DIALOG",
-          "global_id": 0,
+          "global_id": "collect_items_dialog",
           "dialog": 1,
-          "quest_id": 0
+          "quest_id": ""
         },
         {
           "text": "No, sorry, I don\u0027t have time.",
           "type": "OPEN_DIALOG",
-          "global_id": 0,
+          "global_id": "collect_items_dialog",
           "dialog": 2,
-          "quest_id": 0
+          "quest_id": ""
         }
       ]
     },
@@ -94,18 +94,18 @@
       "dialogText": "Hello traveler, how are you doing on the quest?",
       "requirements": {
         "type": "QUEST",
-        "global_id": null,
+        "global_id": "",
         "dialog_id": null,
-        "quest_id": 0,
+        "quest_id": "recollect_items",
         "requirement_status": "IN_PROGRESS"
       },
       "options": [
         {
           "text": "Okay, almost there.",
           "type": "CLOSE_DIALOG",
-          "global_id": 0,
-          "dialog": 0,
-          "quest_id": 0
+          "global_id": "",
+          "dialog": null,
+          "quest_id": ""
         }
       ]
     },
@@ -115,18 +115,18 @@
       "dialogText": "Thank you very much for helping me traveler.",
       "requirements": {
         "type": "QUEST",
-        "global_id": null,
+        "global_id": "",
         "dialog_id": null,
-        "quest_id": 0,
+        "quest_id": "recollect_items",
         "requirement_status": "COMPLETED"
       },
       "options": [
         {
           "text": "No problem.",
           "type": "CLOSE_DIALOG",
-          "global_id": 0,
-          "dialog": 0,
-          "quest_id": 0
+          "global_id": "",
+          "dialog": null,
+          "quest_id": ""
         }
       ]
     }

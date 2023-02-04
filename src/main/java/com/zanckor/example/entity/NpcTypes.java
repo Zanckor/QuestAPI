@@ -10,16 +10,13 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-public class ModEntityTypes {
+public class NpcTypes {
     public static final DeferredRegister<EntityType<?>>
             ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, QuestApiMain.MOD_ID);
 
 
     public static final RegistryObject<EntityType<NPCEntity>> NPC_ENTITY = ENTITY_TYPES.register("quest_npc",
-            () -> EntityType.Builder.of(NPCEntity::new, MobCategory.MONSTER)
-                    .sized(1f, 1f)
-                    .canSpawnFarFromPlayer()
-                    .setShouldReceiveVelocityUpdates(true)
+            () -> EntityType.Builder.of(NPCEntity::new, MobCategory.AMBIENT)
                     .build(new ResourceLocation(QuestApiMain.MOD_ID, "quest_npc").toString()));
 
 

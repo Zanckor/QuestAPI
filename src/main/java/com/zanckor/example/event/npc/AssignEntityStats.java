@@ -1,6 +1,6 @@
 package com.zanckor.example.event.npc;
 
-import com.zanckor.example.entity.ModEntityTypes;
+import com.zanckor.example.entity.NpcTypes;
 import com.zanckor.example.entity.server.NPCEntity;
 import com.zanckor.mod.QuestApiMain;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -11,6 +11,6 @@ import net.minecraftforge.fml.common.Mod;
 public class AssignEntityStats {
     @SubscribeEvent
     public static void assignEntityAtts(EntityAttributeCreationEvent e) {
-        e.put(ModEntityTypes.NPC_ENTITY.get(), NPCEntity.setAttributes());
+        e.put(NpcTypes.NPC_ENTITY.get(), NPCEntity.setAttributes());
     }
 }

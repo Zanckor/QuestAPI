@@ -105,9 +105,11 @@ public class DialogScreen extends Screen {
 
     private void button(int optionID, int dialogID) {
         EnumOptionType optionType = EnumOptionType.valueOf(optionStrings.get(optionID).get(1));
+
+
         switch (optionType) {
             case OPEN_DIALOG, CLOSE_DIALOG -> {
-                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, dialogID, optionID));
+                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID));
                 break;
             }
 

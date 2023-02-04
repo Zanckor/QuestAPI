@@ -25,12 +25,14 @@ public class QuestList {
     public QuestList(UUID playerUUID) throws IOException {
         File[] activeQuests = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(playerUUID)).toFile().listFiles();
 
+
         for (File file : activeQuests) {
             String currentQuestTitle = MCUtil.getJsonClientQuest(file).getTitle();
             String currentQuestID = MCUtil.getJsonClientQuest(file).getId();
 
-            id.add(currentQuestID);
             title.add(currentQuestTitle);
+
+            id.add(currentQuestID);
         }
     }
 
@@ -45,6 +47,7 @@ public class QuestList {
 
     public void encodeBuffer(FriendlyByteBuf buffer) {
         buffer.writeInt(title.size());
+
 
         for (int i = 0; i < title.size(); i++) {
             buffer.writeUtf(id.get(i));

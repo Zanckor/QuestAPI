@@ -42,7 +42,7 @@ public class TimerPacket {
 
                         if (playerQuest.isCompleted()) return;
 
-                        if (playerQuest.hasTimeLimit() && Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+                        if (playerQuest.hasTimeLimit() && Timer.canUseWithCooldown(player.getUUID(), playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
                             FileWriter writer = new FileWriter(file);
                             playerQuest.setCompleted(true);
 

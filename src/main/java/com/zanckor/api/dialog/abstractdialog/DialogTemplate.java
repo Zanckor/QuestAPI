@@ -1,21 +1,22 @@
 package com.zanckor.api.dialog.abstractdialog;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
 public class DialogTemplate {
-    public static HashMap<Integer, Path> dialog_location = new HashMap<>();
-    private static int global_id;
+    public static HashMap<String, Path> dialog_location = new HashMap<>();
+    private static String global_id;
 
     List<QuestDialog> dialog;
 
 
-    public static HashMap<Integer, Path> getDialog_location() {
+    public static HashMap<String, Path> getDialog_location() {
         return dialog_location;
     }
 
-    public int getGlobal_id() {
+    public String getGlobal_id() {
         return global_id;
     }
 
@@ -23,8 +24,9 @@ public class DialogTemplate {
         return dialog;
     }
 
-    public static DialogTemplate createDialog(Path path) {
+    public static DialogTemplate createDialog(Path path) throws IOException {
         DialogTemplate dialogQuest = new DialogTemplate();
+
         dialogQuest.setGlobal_id(global_id);
 
         registerDialogLocation(global_id, path);
@@ -32,9 +34,8 @@ public class DialogTemplate {
         return dialogQuest;
     }
 
-    public void setGlobal_id(int global_id) {
+    public void setGlobal_id(String global_id) {
         this.global_id = global_id;
-        this.global_id++;
     }
 
 
@@ -79,7 +80,7 @@ public class DialogTemplate {
 
     public static class DialogRequirement {
         String type;
-        int global_id;
+        String global_id;
         int dialog_id;
         String quest_id;
         String requirement_status;
@@ -88,7 +89,7 @@ public class DialogTemplate {
             return type;
         }
 
-        public int getGlobal_id() {
+        public String getGlobal_id() {
             return global_id;
         }
 
@@ -104,7 +105,7 @@ public class DialogTemplate {
             return requirement_status;
         }
 
-        private static DialogRequirement createRequirement(String type, int global_id, int dialog_id, String quest_id, String requirement_status) {
+        private static DialogRequirement createRequirement(String type, String global_id, int dialog_id, String quest_id, String requirement_status) {
             DialogRequirement requirement = new DialogRequirement();
             requirement.type = type;
             requirement.global_id = global_id;
@@ -120,7 +121,7 @@ public class DialogTemplate {
     public static class DialogOption {
         String text;
         String type;
-        int global_id;
+        String global_id;
         int dialog;
         String quest_id;
 
@@ -132,7 +133,7 @@ public class DialogTemplate {
             return type;
         }
 
-        public int getGlobal_id() {
+        public String getGlobal_id() {
             return global_id;
         }
 
@@ -144,7 +145,7 @@ public class DialogTemplate {
             return quest_id;
         }
 
-        private static DialogOption createDialogOption(String text, String type, int global_id, int dialog, String quest_id) {
+        private static DialogOption createDialogOption(String text, String type, String global_id, int dialog, String quest_id) {
             DialogOption option = new DialogOption();
 
             option.text = text;
@@ -158,11 +159,11 @@ public class DialogTemplate {
     }
 
 
-    public static void registerDialogLocation(Integer global_id, Path location) {
-        dialog_location.put(global_id, location);
+    public static void registerDialogLocation(String global_id, Path location) {
+        dialog_location.put(global_id.substring(0, global_id.length() - 5), location);
     }
 
-    public static Path getDialogLocation(Integer global_id) {
+    public static Path getDialogLocation(String global_id) {
         return dialog_location.get(global_id);
     }
 }

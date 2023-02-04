@@ -51,7 +51,7 @@ public class CompleteQuest {
 
 
     public static void giveReward(Player player, ClientQuestBase modifiedPlayerQuest, Gson gson, File file, Path userFolder) throws IOException {
-        String questName = "id_" + modifiedPlayerQuest.getId() + ".json";
+        String questName = modifiedPlayerQuest.getId() + ".json";
 
         if (modifiedPlayerQuest.isCompleted()) {
             for (File serverFile : serverQuests.toFile().listFiles()) {
@@ -65,6 +65,7 @@ public class CompleteQuest {
                     serverQuestReader.close();
 
                     Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
+
                     LocateHash.movePathQuest(modifiedPlayerQuest.getId(), Paths.get(getCompletedQuest(userFolder).toString(), questName), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
                 }
             }

@@ -43,7 +43,7 @@ public class AddQuest {
     public static void handler(AddQuest msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Player player = ctx.get().getSender();
-            int dialogGlobalID = LocateHash.currentGlobalDialog.get(player);
+            String  dialogGlobalID = LocateHash.currentGlobalDialog.get(player);
 
             Path path = DialogTemplate.getDialogLocation(dialogGlobalID);
             File dialogFile = path.toFile();

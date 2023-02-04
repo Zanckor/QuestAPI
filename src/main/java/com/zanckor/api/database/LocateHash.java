@@ -1,6 +1,5 @@
 package com.zanckor.api.database;
 
-import com.zanckor.api.quest.enumquest.EnumQuestType;
 import net.minecraft.world.entity.player.Player;
 
 import java.nio.file.Path;
@@ -10,14 +9,14 @@ import java.util.List;
 
 public class LocateHash {
     public static HashMap<Player, Integer> currentDialog = new HashMap<>();
-    public static HashMap<Player, Integer> currentGlobalDialog = new HashMap<>();
+    public static HashMap<Player, String> currentGlobalDialog = new HashMap<>();
 
 
     public static HashMap<String, Path> clientQuestByIDLocation = new HashMap<String, Path>();
-    public static HashMap<EnumQuestType, List<Path>> clientQuestTypeLocation = new HashMap<>();
+    public static HashMap<Enum, List<Path>> clientQuestTypeLocation = new HashMap<>();
 
 
-    public static void registerQuestTypeLocation(EnumQuestType type, Path path) {
+    public static void registerQuestTypeLocation(Enum type, Path path) {
         if (clientQuestTypeLocation.get(type) == null) {
             clientQuestTypeLocation.put(type, new ArrayList<>());
         }
@@ -33,7 +32,7 @@ public class LocateHash {
     }
 
 
-    public static List<Path> getQuestTypeLocation(EnumQuestType type) {
+    public static List<Path> getQuestTypeLocation(Enum type) {
         return clientQuestTypeLocation.get(type);
     }
 
@@ -41,7 +40,7 @@ public class LocateHash {
         return clientQuestByIDLocation.get(id);
     }
 
-    public static void movePathQuest(String id, Path newPath, EnumQuestType enumQuestType) {
+    public static void movePathQuest(String id, Path newPath, Enum enumQuestType) {
         removeQuest(id, newPath, enumQuestType);
 
         registerQuestTypeLocation(enumQuestType, newPath);
@@ -49,7 +48,7 @@ public class LocateHash {
     }
 
 
-    public static void removeQuest(String id, Path oldPath, EnumQuestType enumQuestType) {
+    public static void removeQuest(String id, Path oldPath, Enum enumQuestType) {
         List<Path> oldPathList = getQuestTypeLocation(enumQuestType);
 
         List<Path> newPathList = oldPathList;

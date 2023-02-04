@@ -19,9 +19,8 @@ import java.util.function.Supplier;
 public class DialogRequestPacket {
     EnumOptionType optionType;
     int optionID;
-    int globalID;
 
-    public DialogRequestPacket(EnumOptionType optionType, int globalID, int optionID) {
+    public DialogRequestPacket(EnumOptionType optionType, int optionID) {
         this.optionType = optionType;
         this.optionID = optionID;
     }
@@ -40,7 +39,7 @@ public class DialogRequestPacket {
     public static void handler(DialogRequestPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Player player = ctx.get().getSender();
-            int globalDialogID = LocateHash.currentGlobalDialog.get(player);
+            String globalDialogID = LocateHash.currentGlobalDialog.get(player);
 
             Path path = DialogTemplate.getDialogLocation(globalDialogID);
             File dialogFile = path.toFile();

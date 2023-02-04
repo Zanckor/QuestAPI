@@ -15,6 +15,7 @@ public class QuestTracked {
     private String id;
     private String title;
     private String quest_type;
+    private boolean quest_completed;
 
     private Integer quest_target_size;
     private List<String> quest_target = new ArrayList<>();
@@ -30,6 +31,7 @@ public class QuestTracked {
         id = clientQuestBase.getId();
         title = clientQuestBase.getTitle();
         quest_type = clientQuestBase.getQuest_type();
+        quest_completed = clientQuestBase.isCompleted();
         quest_target = clientQuestBase.getQuest_target();
         target_quantity = clientQuestBase.getTarget_quantity();
         target_current_quantity = clientQuestBase.getTarget_current_quantity();
@@ -41,6 +43,7 @@ public class QuestTracked {
         title = buffer.readUtf();
         id = buffer.readUtf();
         quest_type = buffer.readUtf();
+        quest_completed = buffer.readBoolean();
 
         quest_target_size = buffer.readInt();
         target_quantity_size = buffer.readInt();
@@ -62,6 +65,7 @@ public class QuestTracked {
         buffer.writeUtf(title);
         buffer.writeUtf(id);
         buffer.writeUtf(quest_type);
+        buffer.writeBoolean(quest_completed);
 
         buffer.writeInt(quest_target.size());
         buffer.writeInt(target_quantity.size());
@@ -83,7 +87,7 @@ public class QuestTracked {
     public static void handler(QuestTracked msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.questTracked(msg.id, msg.title, msg.quest_type,
-                    msg.quest_target, msg.target_quantity, msg.target_current_quantity,
+                    msg.quest_completed, msg.quest_target, msg.target_quantity, msg.target_current_quantity,
                     msg.hasTimeLimit, msg.timeLimitInSeconds));
         });
 

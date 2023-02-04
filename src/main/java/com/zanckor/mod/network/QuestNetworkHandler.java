@@ -8,10 +8,7 @@ import com.zanckor.mod.network.message.dialogoption.DisplayDialog;
 import com.zanckor.mod.network.message.quest.QuestDataPacket;
 import com.zanckor.mod.network.message.quest.TimerPacket;
 import com.zanckor.mod.network.message.quest.ToastPacket;
-import com.zanckor.mod.network.message.screen.QuestList;
-import com.zanckor.mod.network.message.screen.QuestTracked;
-import com.zanckor.mod.network.message.screen.RemovedQuest;
-import com.zanckor.mod.network.message.screen.RequestQuestTracked;
+import com.zanckor.mod.network.message.screen.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -51,6 +48,10 @@ public class QuestNetworkHandler {
         CHANNEL.messageBuilder(AddQuest.class, index++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(AddQuest::encodeBuffer).decoder(AddQuest::new)
                 .consumerNetworkThread(AddQuest::handler).add();
+
+        CHANNEL.messageBuilder(RequestQuestList.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(RequestQuestList::encodeBuffer).decoder(RequestQuestList::new)
+                .consumerNetworkThread(RequestQuestList::handler).add();
 
 
         CHANNEL.messageBuilder(ToastPacket.class, index++, NetworkDirection.PLAY_TO_CLIENT)

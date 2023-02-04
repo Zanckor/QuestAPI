@@ -22,6 +22,7 @@ public class ClientHandler {
     public static String trackedID;
     public static String trackedTitle;
     public static String trackedQuest_type;
+    public static boolean trackedQuest_completed;
     public static List<String> trackedQuest_target = new ArrayList<>();
     public static List<Integer> trackedTarget_quantity, trackedTarget_current_quantity = new ArrayList<>();
     public static boolean trackedHasTimeLimit;
@@ -47,10 +48,11 @@ public class ClientHandler {
     }
 
 
-    public static void questTracked(String id, String title, String quest_type, List<String> quest_target, List<Integer> target_quantity, List<Integer> target_current_quantity, boolean hasTimeLimit, int timeLimitInSeconds) {
+    public static void questTracked(String id, String title, String quest_type, boolean quest_completed, List<String> quest_target, List<Integer> target_quantity, List<Integer> target_current_quantity, boolean hasTimeLimit, int timeLimitInSeconds) {
         trackedID = id;
         trackedTitle = title;
         trackedQuest_type = quest_type;
+        trackedQuest_completed = quest_completed;
         trackedQuest_target = quest_target;
         trackedTarget_quantity = target_quantity;
         trackedTarget_current_quantity = target_current_quantity;

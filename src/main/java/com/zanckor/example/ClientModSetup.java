@@ -1,6 +1,6 @@
 package com.zanckor.example;
 
-import com.zanckor.example.entity.ModEntityTypes;
+import com.zanckor.example.entity.NpcTypes;
 import com.zanckor.example.entity.client.NPCRenderer;
 import com.zanckor.mod.QuestApiMain;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -15,6 +15,6 @@ public class ClientModSetup {
 
     @SubscribeEvent
     public static void registerOverlays(FMLClientSetupEvent e) {
-        EntityRenderers.register(ModEntityTypes.NPC_ENTITY.get(), NPCRenderer::new);
+        EntityRenderers.register(NpcTypes.NPC_ENTITY.get(), NPCRenderer::new);
     }
 }

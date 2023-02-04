@@ -7,6 +7,7 @@ import com.zanckor.api.quest.abstracquest.AbstractQuest;
 import com.zanckor.api.quest.enumquest.EnumQuestType;
 import com.zanckor.mod.network.SendQuestPacket;
 import com.zanckor.mod.network.message.screen.QuestTracked;
+import com.zanckor.mod.util.MCUtil;
 import com.zanckor.mod.util.Timer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +33,7 @@ public class ProtectEntityHandler extends AbstractQuest {
 
         FileWriter protectEntityWriter = new FileWriter(file);
 
-        if (Timer.canUseWithCooldown(player.getUUID(), "id_" + playerQuest.getId(), playerQuest.getTimeLimitInSeconds()) && entity.isAlive()) {
+        if (Timer.canUseWithCooldown(player.getUUID(), playerQuest.getId(), playerQuest.getTimeLimitInSeconds()) && entity.isAlive()) {
             gson.toJson(playerQuest.incrementProgress(playerQuest, 0), protectEntityWriter);
             entity.remove(Entity.RemovalReason.DISCARDED);
 
@@ -51,7 +52,7 @@ public class ProtectEntityHandler extends AbstractQuest {
             LocateHash.movePathQuest(playerQuest.getId(), file.toPath().toAbsolutePath(), EnumQuestType.valueOf(playerQuest.getQuest_type()));
         }
 
-        playerQuest.setTimeLimitInSeconds((int) Timer.remainingTime(player.getUUID(), "id_" + playerQuest.getId() + ".json"));
+        playerQuest.setTimeLimitInSeconds((int) Timer.remainingTime(player.getUUID(), playerQuest.getId() + ".json"));
         SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
     }
 }
