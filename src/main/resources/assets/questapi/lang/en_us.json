@@ -1,4 +1,5 @@
 {
-  "key.categories.DragonBallMod": "Quest API",
-  "key.dcz.stat_gui": "Open Quest Menu"
+  "key.categories.QuestApi": "Quest API",
+  "key.questapi.quest_menu": "Open Quest Menu",
+  "entity.questapi.quest_npc": "Quest NPC Test"
 }

@@ -4,11 +4,13 @@
   "quest_type": "INTERACT_ENTITY",
   "quest_target": [
     "entity.minecraft.pig",
-    "entity.minecraft.cow"
+    "entity.minecraft.cow",
+    "entity.questapi.quest_npc"
   ],
   "target_quantity": [
     1,
-    2
+    2,
+    1
   ],
   "hasTimeLimit": true,
   "timeLimitInSeconds": 60,
