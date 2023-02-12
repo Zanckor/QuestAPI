@@ -3,8 +3,8 @@ package dev.zanckor.api.dialog.register;
 import com.google.gson.Gson;
 import dev.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import dev.zanckor.mod.util.MCUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.*;
@@ -19,8 +19,8 @@ public class DialogRegistry {
 
     static DialogTemplate dialogTemplate;
 
-    public static void registerDialog(String modid) {
-        ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+    public static void registerDialog(MinecraftServer server, String modid) {
+        ResourceManager resourceManager = server.getResourceManager();
 
         resourceManager.listResources("dialog", (file) -> {
             if (file.getPath().length() > 7) {
@@ -28,7 +28,7 @@ public class DialogRegistry {
                 ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
 
                 if (file.getPath().endsWith(".json")) {
-                    read(MCUtil.gson(), resourceLocation);
+                    read(MCUtil.gson(), resourceLocation, server);
                     write(MCUtil.gson(), dialogTemplate, fileName);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
@@ -40,9 +40,9 @@ public class DialogRegistry {
     }
 
 
-    private static void read(Gson gson, ResourceLocation resourceLocation) {
+    private static void read(Gson gson, ResourceLocation resourceLocation, MinecraftServer server) {
         try {
-            InputStream inputStream = Minecraft.getInstance().getResourceManager().getResource(resourceLocation).get().open();
+            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).get().open();
             dialogTemplate = gson.fromJson(new InputStreamReader(inputStream), DialogTemplate.class);
 
         } catch (IOException e) {

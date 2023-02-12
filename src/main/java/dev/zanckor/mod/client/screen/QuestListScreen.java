@@ -3,13 +3,13 @@ package dev.zanckor.mod.client.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.api.quest.abstracquest.AbstractTargetType;
-import dev.zanckor.example.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.api.quest.register.TemplateRegistry;
+import dev.zanckor.example.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.QuestApiMain;
+import dev.zanckor.mod.network.ClientHandler;
 import dev.zanckor.mod.network.SendQuestPacket;
 import dev.zanckor.mod.network.message.screen.RequestQuestTracked;
-import dev.zanckor.mod.util.MCUtil;
-import dev.zanckor.mod.network.ClientHandler;
+import dev.zanckor.mod.util.MCUtilClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -17,6 +17,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -37,7 +38,7 @@ public class QuestListScreen extends Screen {
         super(Component.literal("questlist"));
 
         for (int i = 0; i < title.size(); i++) {
-            quest.put(i, new AbstractMap.SimpleEntry(id.get(i), title.get(i)));
+            quest.put(i, new AbstractMap.SimpleEntry<>(id.get(i), title.get(i)));
         }
     }
 
@@ -50,7 +51,7 @@ public class QuestListScreen extends Screen {
         imageWidth = width / 2;
         imageHeight = width / 3;
         xScreenPos = width - (imageWidth);
-        yScreenPos = height / 4;
+        yScreenPos = (double) height / 4;
 
 
         float scale = ((float) width) / 575;
@@ -73,16 +74,14 @@ public class QuestListScreen extends Screen {
 
             if (displayedButton.size() < 4 && quest.size() > (i + (4 * (selectedPage)))) {
                 int buttonIndex = i + (4 * (selectedPage));
-                int index = buttonIndex;
 
                 int textLines = (quest.get(buttonIndex).getValue().length() * 5) / maxLength;
                 int yButtonIndent = (int) (((8 * (textLines + 1)) * displayedButton.size() * scale) + splitIndent);
 
                 int buttonWidth = textLines < 1 ? (int) (quest.get(buttonIndex).getValue().length() * 5 * scale) : (int) (maxLength * scale);
 
-                Button questSelect = new Button(xButtonPosition, yButtonPosition + yButtonIndent, buttonWidth, height / 40 * (textLines + 1), Component.literal(""), button -> {
-                    button(index);
-                });
+                Button questSelect = new Button(xButtonPosition, yButtonPosition + yButtonIndent, buttonWidth, height / 40 * (textLines + 1), Component.literal(""),
+                        button -> button(buttonIndex));
 
 
                 if (displayedButton.get(displayedButton.size()) != null) {
@@ -96,8 +95,8 @@ public class QuestListScreen extends Screen {
 
 
                     if (textLines == 0 && ((quest.get(lastButton).getValue().length() * 5) / maxLength) == 1) {
-                        questSelect.y += buttonIndent / 2 * scale;
-                        splitIndent += buttonIndent / 2 * scale;
+                        questSelect.y += (buttonIndent / 2) * scale;
+                        splitIndent += (buttonIndent / 2) * scale;
                     }
                 }
 
@@ -146,7 +145,7 @@ public class QuestListScreen extends Screen {
 
 
     @Override
-    public void render(PoseStack poseStack, int x, int y, float partialTicks) {
+    public void render(@NotNull PoseStack poseStack, int x, int y, float partialTicks) {
         Minecraft.getInstance().getProfiler().push("background");
 
         RenderSystem.setShaderTexture(0, QUEST_LOG);
@@ -157,7 +156,7 @@ public class QuestListScreen extends Screen {
         renderQuestTitles(poseStack);
         renderQuestData(poseStack);
 
-        MCUtil.renderText(poseStack, (xScreenPos - imageWidth / 2.9), yScreenPos * 1.4, 10, ((float) width) / 500, 28, "Quest Title", font);
+        MCUtilClient.renderText(poseStack, (xScreenPos - imageWidth / 2.9), yScreenPos * 1.4, 10, ((float) width) / 500, 28, "Quest Title", font);
 
         Minecraft.getInstance().getProfiler().pop();
         super.render(poseStack, x, y, partialTicks);
@@ -193,7 +192,7 @@ public class QuestListScreen extends Screen {
                 displayedButton++;
             }
 
-            MCUtil.renderText(poseStack, xScreenPos - (imageWidth / 2.4), yScreenPos * 1.6, 16, ((float) width) / 575, 23, questList, font);
+            MCUtilClient.renderText(poseStack, xScreenPos - (imageWidth / 2.4), yScreenPos * 1.6, 16, ((float) width) / 575, 23, questList, font);
 
         }
     }
@@ -215,10 +214,11 @@ public class QuestListScreen extends Screen {
                 }
             }
 
-            if (ClientHandler.trackedHasTimeLimit) questData.add("Time limit: " + ClientHandler.trackedTimeLimitInSeconds);
+            if (ClientHandler.trackedHasTimeLimit)
+                questData.add("Time limit: " + ClientHandler.trackedTimeLimitInSeconds);
 
 
-            MCUtil.renderText(poseStack, xScreenPos + (imageWidth / 20), yScreenPos * 1.6, 20, ((float) width) / 700, 28, questData, font);
+            MCUtilClient.renderText(poseStack, xScreenPos + (imageWidth / 20), yScreenPos * 1.6, 20, ((float) width) / 700, 28, questData, font);
         }
     }
 

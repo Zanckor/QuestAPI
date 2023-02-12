@@ -6,6 +6,7 @@ import dev.zanckor.mod.util.MCUtil;
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.*;
@@ -19,8 +20,8 @@ public class LoadQuestFromResources {
 
     static ServerQuestBase playerQuest;
 
-    public static void registerQuest(String modid) {
-        ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+    public static void registerQuest(MinecraftServer server, String modid) {
+        ResourceManager resourceManager = server.getResourceManager();
 
         resourceManager.listResources("quest", (file) -> {
             if(file.getPath().length() > 7) {
@@ -28,8 +29,8 @@ public class LoadQuestFromResources {
                 ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
 
                 if (file.getPath().endsWith(".json")) {
-                    read(MCUtil.gson(), resourceLocation);
-                    write(MCUtil.gson(), playerQuest, fileName);
+                    read(MCUtil.gson(), resourceLocation, server);
+                    write(MCUtil.gson(), playerQuest, modid + "_" + fileName);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
                 }
@@ -40,9 +41,9 @@ public class LoadQuestFromResources {
     }
 
 
-    private static void read(Gson gson, ResourceLocation resourceLocation) {
+    private static void read(Gson gson, ResourceLocation resourceLocation, MinecraftServer server) {
         try {
-            InputStream inputStream = Minecraft.getInstance().getResourceManager().getResource(resourceLocation).get().open();
+            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).get().open();
             playerQuest = gson.fromJson(new InputStreamReader(inputStream), ServerQuestBase.class);
 
         } catch (IOException e) {
@@ -53,6 +54,8 @@ public class LoadQuestFromResources {
     private static void write(Gson gson, ServerQuestBase questTemplate, String fileName) {
         try {
             FileWriter writer = new FileWriter(new File(QuestApiMain.serverQuests.toFile(), fileName));
+            questTemplate.setId(fileName.substring(0, fileName.length() - 5));
+
             writer.write(gson.toJson(questTemplate));
             writer.flush();
             writer.close();

@@ -3,9 +3,9 @@ package dev.zanckor.mod.client.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.example.enumregistry.enumdialog.EnumOptionType;
 import dev.zanckor.mod.network.SendQuestPacket;
-import dev.zanckor.mod.network.message.dialogoption.DialogRequestPacket;
 import dev.zanckor.mod.network.message.dialogoption.AddQuest;
-import dev.zanckor.mod.util.MCUtil;
+import dev.zanckor.mod.network.message.dialogoption.DialogRequestPacket;
+import dev.zanckor.mod.util.MCUtilClient;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -47,9 +47,7 @@ public class DialogScreen extends Screen {
 
             int index = i;
             addRenderableWidget(new Button(xPosition, yPosition, stringLength, 20,
-                    Component.literal(optionStrings.get(i).get(0)), button -> {
-                button(index, dialogID);
-            }));
+                    Component.literal(optionStrings.get(i).get(0)), button -> button(index, dialogID)));
 
             yPosition += 22;
         }
@@ -61,21 +59,13 @@ public class DialogScreen extends Screen {
 
         if (textDisplaySize < text.length()) {
             if (textDisplayDelay == 0) {
-                MCUtil.playSound(SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_ON, 0.975f, 1.025f);
+                MCUtilClient.playSound(SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_ON, 0.975f, 1.025f);
                 textDisplaySize++;
 
                 if (textDisplaySize < text.length()) {
                     switch (Character.toString(text.charAt(textDisplaySize))) {
-                        case ".", "?", "!" -> {
-                            textDisplayDelay = 9;
-
-                            break;
-                        }
-
-                        case "," -> {
-                            textDisplayDelay = 5;
-                            break;
-                        }
+                        case ".", "?", "!" -> textDisplayDelay = 9;
+                        case "," -> textDisplayDelay = 5;
                     }
                 }
             } else {
@@ -89,7 +79,7 @@ public class DialogScreen extends Screen {
         poseStack.pushPose();
         int yPosition = (int) (height / 1.5);
 
-        for (List<FormattedCharSequence> textBlock : MCUtil.splitText(text.substring(0, textDisplaySize), font, (int) (width / 1.9))) {
+        for (List<FormattedCharSequence> textBlock : MCUtilClient.splitText(text.substring(0, textDisplaySize), font, (int) (width / 1.9))) {
             for (FormattedCharSequence line : textBlock) {
                 font.draw(poseStack, line, (float) (width / 4), yPosition, 0);
 
@@ -108,19 +98,9 @@ public class DialogScreen extends Screen {
 
 
         switch (optionType) {
-            case OPEN_DIALOG, CLOSE_DIALOG -> {
-                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID));
-                break;
-            }
-
-            case ADD_QUEST -> {
-                SendQuestPacket.TO_SERVER(new AddQuest(optionType, dialogID, optionID));
-                break;
-            }
-
-            case REMOVE_QUEST -> {
-                break;
-            }
+            case OPEN_DIALOG, CLOSE_DIALOG -> SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID));
+            case ADD_QUEST -> SendQuestPacket.TO_SERVER(new AddQuest(optionType, dialogID, optionID));
+            case REMOVE_QUEST -> System.out.println("A");
         }
     }
 

@@ -45,7 +45,7 @@ public class LocateHash {
     public static HashMap<Player, String> currentGlobalDialog = new HashMap<>();
 
 
-    public static HashMap<String, Path> clientQuestByIDLocation = new HashMap<String, Path>();
+    public static HashMap<String, Path> clientQuestByIDLocation = new HashMap<>();
     public static HashMap<Enum, List<Path>> clientQuestTypeLocation = new HashMap<>();
 
     public static HashMap<String, Path> dialogLocation = new HashMap<>();
@@ -76,16 +76,15 @@ public class LocateHash {
     }
 
     public static void movePathQuest(String id, Path newPath, Enum enumQuestType) {
-        removeQuest(id, newPath, enumQuestType);
+        removeQuest(id, enumQuestType);
 
         registerQuestTypeLocation(enumQuestType, newPath);
         registerQuestByID(id, newPath);
     }
 
 
-    public static void removeQuest(String id, Path oldPath, Enum enumQuestType) {
+    public static void removeQuest(String id, Enum enumQuestType) {
         List<Path> oldPathList = getQuestTypeLocation(enumQuestType);
-
         List<Path> newPathList = oldPathList;
 
         newPathList.removeIf(listId -> (listId.toString().contains(id + ".json")));

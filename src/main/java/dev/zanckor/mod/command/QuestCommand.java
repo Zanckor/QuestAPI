@@ -137,7 +137,7 @@ public class QuestCommand {
         reader.close();
 
         SendQuestPacket.TO_CLIENT(player, new RemovedQuest(clientQuest.getId()));
-        LocateHash.removeQuest(questID, path, EnumQuestType.valueOf(clientQuest.getQuest_type()));
+        LocateHash.removeQuest(questID, EnumQuestType.valueOf(clientQuest.getQuest_type()));
         path.toFile().delete();
 
         return 1;

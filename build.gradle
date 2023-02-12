@@ -31,6 +31,12 @@ minecraft {
             }
         }
 
+        clientalt {
+            parent runs.client
+            args '--username', 'Zanckor'
+        }
+
+
         server {
             workingDirectory project.file('run')
 

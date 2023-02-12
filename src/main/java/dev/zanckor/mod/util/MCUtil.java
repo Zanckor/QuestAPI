@@ -2,22 +2,13 @@ package dev.zanckor.mod.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.dialog.abstractdialog.DialogReadTemplate;
 import dev.zanckor.api.dialog.abstractdialog.DialogTemplate;
 import dev.zanckor.api.quest.ClientQuestBase;
 import dev.zanckor.api.quest.ServerQuestBase;
 import dev.zanckor.mod.QuestApiMain;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -160,8 +151,8 @@ public class MCUtil {
         } else {
             dialogIDList = dialog.getDialog_id();
 
-            for (int i = 0; i < dialogIDList.size(); i++) {
-                if (dialogIDList.get(i).getDialog_id() == dialogID) {
+            for (DialogReadTemplate.DialogID id : dialogIDList) {
+                if (id.getDialog_id() == dialogID) {
                     return;
                 }
             }
@@ -197,8 +188,8 @@ public class MCUtil {
         if (dialog != null) {
             dialogIDList = dialog.getDialog_id();
 
-            for (int i = 0; i < dialogIDList.size(); i++) {
-                if (dialogIDList.get(i).getDialog_id() == dialogID) {
+            for (DialogReadTemplate.DialogID id : dialogIDList) {
+                if (id.getDialog_id() == dialogID) {
                     return true;
                 }
             }
@@ -207,87 +198,7 @@ public class MCUtil {
         return false;
     }
 
-    public static List<List<FormattedCharSequence>> splitText(String text, Font font, int textSize) {
-        final List<List<FormattedCharSequence>> textBlocks = new ArrayList<>();
-
-        textBlocks.add(font.split(Component.literal(text), textSize));
-
-        return textBlocks;
-    }
-
-
-    public static void playSound(SoundEvent sound, float minPitch, float maxPitch) {
-        SoundManager soundManager = Minecraft.getInstance().getSoundManager();
-
-        soundManager.play(SimpleSoundInstance.forUI(sound, Mth.randomBetween(RandomSource.create(), minPitch, maxPitch)));
-    }
-
-
     public static Gson gson() {
         return new GsonBuilder().setPrettyPrinting().create();
-    }
-
-
-    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, String text, Font font) {
-        float splitIndent = 0;
-
-
-        poseStack.pushPose();
-
-        poseStack.translate(width, height, 0);
-        poseStack.scale(scale, scale, 1);
-
-        for (List<FormattedCharSequence> textBlock : MCUtil.splitText(text, font, 5 * textMaxLength)) {
-            for (FormattedCharSequence line : textBlock) {
-                if (splitIndent < 2) {
-                    font.draw(poseStack, line, 0, textIndent * (splitIndent / 2), 0);
-                    splitIndent++;
-                }
-            }
-
-            splitIndent++;
-        }
-
-        poseStack.popPose();
-    }
-
-
-    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, List<String> text, Font font) {
-        if (text == null) return;
-        float splitIndent = 0;
-
-        if (text.size() > 6) {
-            for (int i = 0; i < text.size() - 6; i++) {
-                scale *= 0.85;
-            }
-        }
-
-
-        poseStack.pushPose();
-
-        poseStack.translate(width, height, 0);
-        poseStack.scale(scale, scale, 1);
-
-        for (int i = 0; i < text.size(); i++) {
-            for (List<FormattedCharSequence> textBlock : MCUtil.splitText(text.get(i), font, 5 * textMaxLength)) {
-                for (FormattedCharSequence line : textBlock) {
-                    if (splitIndent < 2) {
-                        font.draw(poseStack, line, 0, textIndent * (i + (splitIndent / 2)), 0);
-                        splitIndent++;
-                    }
-
-                    if (textBlock.size() >= 2 && textBlock.get(textBlock.size() - 1).equals(line)) {
-                        poseStack.translate(0, textIndent / 2, 0);
-                    }
-                }
-
-                splitIndent++;
-            }
-
-            splitIndent = 0;
-        }
-
-
-        poseStack.popPose();
     }
 }

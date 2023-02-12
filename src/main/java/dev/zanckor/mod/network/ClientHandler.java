@@ -3,7 +3,7 @@ package dev.zanckor.mod.network;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.client.screen.DialogScreen;
 import dev.zanckor.mod.client.screen.QuestListScreen;
-import dev.zanckor.mod.util.MCUtil;
+import dev.zanckor.mod.util.MCUtilClient;
 import dev.zanckor.mod.util.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
@@ -35,7 +35,7 @@ public class ClientHandler {
                 Component.literal("Quest Completed"),
                 Component.literal(questName));
 
-        MCUtil.playSound(SoundEvents.NOTE_BLOCK_PLING, 1, 2);
+        MCUtilClient.playSound(SoundEvents.NOTE_BLOCK_PLING, 1, 2);
     }
 
     public static void displayDialog(int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings) {
