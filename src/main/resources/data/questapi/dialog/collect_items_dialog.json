@@ -8,7 +8,7 @@
         "type": "QUEST",
         "global_id": "",
         "dialog_id": null,
-        "quest_id": "recollect_items",
+        "quest_id": "collect_items",
         "requirement_status": "NOT_OBTAINED"
       },
       "options": [
@@ -40,7 +40,7 @@
           "type": "ADD_QUEST",
           "global_id": "",
           "dialog": null,
-          "quest_id": "recollect_items"
+          "quest_id": "collect_items"
         }
       ]
     },
@@ -96,7 +96,7 @@
         "type": "QUEST",
         "global_id": "",
         "dialog_id": null,
-        "quest_id": "recollect_items",
+        "quest_id": "collect_items",
         "requirement_status": "IN_PROGRESS"
       },
       "options": [
@@ -117,7 +117,7 @@
         "type": "QUEST",
         "global_id": "",
         "dialog_id": null,
-        "quest_id": "recollect_items",
+        "quest_id": "collect_items",
         "requirement_status": "COMPLETED"
       },
       "options": [
