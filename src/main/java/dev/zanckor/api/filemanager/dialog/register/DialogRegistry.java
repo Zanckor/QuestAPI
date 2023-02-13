@@ -29,7 +29,7 @@ public class DialogRegistry {
 
                 if (file.getPath().endsWith(".json")) {
                     read(GsonManager.gson(), resourceLocation, server);
-                    write(GsonManager.gson(), dialogTemplate, fileName);
+                    write(GsonManager.gson(), dialogTemplate, modid + "_" + fileName);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
                 }

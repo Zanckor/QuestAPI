@@ -15,14 +15,14 @@
         {
           "text": "Sure, tell me what you need.",
           "type": "OPEN_DIALOG",
-          "global_id": "collect_items_dialog",
+          "global_id": "questapi_collect_items_dialog",
           "dialog": 1,
           "quest_id": ""
         },
         {
           "text": "No, sorry, I don\u0027t have time.",
           "type": "OPEN_DIALOG",
-          "global_id": "collect_items_dialog",
+          "global_id": "questapi_collect_items_dialog",
           "dialog": 2,
           "quest_id": ""
         }
@@ -75,14 +75,14 @@
         {
           "text": "Sure, tell me what you need.",
           "type": "OPEN_DIALOG",
-          "global_id": "collect_items_dialog",
+          "global_id": "questapi_collect_items_dialog",
           "dialog": 1,
           "quest_id": ""
         },
         {
           "text": "No, sorry, I don\u0027t have time.",
           "type": "OPEN_DIALOG",
-          "global_id": "collect_items_dialog",
+          "global_id": "questapi_collect_items_dialog",
           "dialog": 2,
           "quest_id": ""
         }

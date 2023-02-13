@@ -18,7 +18,7 @@ import java.io.IOException;
 public class NPCEntity extends Cat {
 
 
-    private String dialogID = "collect_items_dialog";
+    private String dialogID = "questapi_collect_items_dialog";
 
     public NPCEntity(EntityType<? extends Cat> entityType, Level level) {
         super(entityType, level);
