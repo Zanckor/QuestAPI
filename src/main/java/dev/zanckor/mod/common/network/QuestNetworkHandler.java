@@ -9,7 +9,6 @@ import dev.zanckor.mod.common.network.message.quest.QuestDataPacket;
 import dev.zanckor.mod.common.network.message.quest.TimerPacket;
 import dev.zanckor.mod.common.network.message.quest.ToastPacket;
 import dev.zanckor.mod.common.network.message.screen.*;
-import dev.zanckor.mod.network.message.screen.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;

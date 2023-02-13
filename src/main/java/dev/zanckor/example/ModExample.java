@@ -48,15 +48,15 @@ public class ModExample {
      */
 
     public static void initialize() {
-        TemplateRegistry.registerQuestTemplate(EnumQuestType.KILL, new KillHandler());
-        TemplateRegistry.registerQuestTemplate(EnumQuestType.INTERACT_ENTITY, new InteractEntityHandler());
-        TemplateRegistry.registerQuestTemplate(EnumQuestType.MOVE_TO, new MoveToHandler());
-        TemplateRegistry.registerQuestTemplate(EnumQuestType.PROTECT_ENTITY, new ProtectEntityHandler());
-        TemplateRegistry.registerQuestTemplate(EnumQuestType.RECOLLECT, new RecollectHandler());
+        TemplateRegistry.registerQuest(EnumQuestType.KILL, new KillHandler());
+        TemplateRegistry.registerQuest(EnumQuestType.INTERACT_ENTITY, new InteractEntityHandler());
+        TemplateRegistry.registerQuest(EnumQuestType.MOVE_TO, new MoveToHandler());
+        TemplateRegistry.registerQuest(EnumQuestType.PROTECT_ENTITY, new ProtectEntityHandler());
+        TemplateRegistry.registerQuest(EnumQuestType.RECOLLECT, new RecollectHandler());
 
-        TemplateRegistry.registerDialogTemplate(EnumOptionType.OPEN_DIALOG, new OpenDialogHandler());
-        TemplateRegistry.registerDialogTemplate(EnumOptionType.CLOSE_DIALOG, new CloseDialogHandler());
-        TemplateRegistry.registerDialogTemplate(EnumOptionType.ADD_QUEST, new AddQuestHandler());
+        TemplateRegistry.registerDialog(EnumOptionType.OPEN_DIALOG, new OpenDialogHandler());
+        TemplateRegistry.registerDialog(EnumOptionType.CLOSE_DIALOG, new CloseDialogHandler());
+        TemplateRegistry.registerDialog(EnumOptionType.ADD_QUEST, new AddQuestHandler());
 
         TemplateRegistry.registerReward(EnumQuestReward.ITEM, new ItemReward());
         TemplateRegistry.registerQuestRequirement(EnumQuestRequirement.XP, new XpRequirement());

@@ -25,7 +25,7 @@ public class TemplateRegistry {
 
     private static HashMap<Enum, AbstractTargetType> target_type = new HashMap<>();
 
-    public static void registerQuestTemplate(Enum key, AbstractQuest quest) {
+    public static void registerQuest(Enum key, AbstractQuest quest) {
         quest_template.put(key, quest);
     }
 
@@ -38,7 +38,7 @@ public class TemplateRegistry {
     }
 
 
-    public static void registerDialogTemplate(Enum key, AbstractDialogOption dialog) {
+    public static void registerDialog(Enum key, AbstractDialogOption dialog) {
         dialog_template.put(key, dialog);
     }
 
