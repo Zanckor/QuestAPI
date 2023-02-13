@@ -2,7 +2,7 @@ package dev.zanckor.mod;
 
 import com.mojang.logging.LogUtils;
 import dev.zanckor.example.ModExample;
-import dev.zanckor.mod.network.QuestNetworkHandler;
+import dev.zanckor.mod.common.network.QuestNetworkHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;

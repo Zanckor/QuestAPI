@@ -1,11 +1,11 @@
 package dev.zanckor.mod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.zanckor.api.quest.abstracquest.AbstractTargetType;
-import dev.zanckor.example.enumregistry.enumquest.EnumQuestType;
-import dev.zanckor.api.quest.register.TemplateRegistry;
+import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
+import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
+import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.util.Timer;
+import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +14,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import static dev.zanckor.mod.network.ClientHandler.*;
+import static dev.zanckor.mod.common.network.ClientHandler.*;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderQuestTracker {

@@ -1,7 +1,7 @@
 package dev.zanckor.example;
 
-import dev.zanckor.example.entity.NpcTypes;
-import dev.zanckor.example.entity.client.NPCRenderer;
+import dev.zanckor.example.common.entity.NpcTypes;
+import dev.zanckor.example.common.entity.client.NPCRenderer;
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;

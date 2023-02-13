@@ -1,11 +1,11 @@
 package dev.zanckor.mod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.zanckor.example.enumregistry.enumdialog.EnumOptionType;
-import dev.zanckor.mod.network.SendQuestPacket;
-import dev.zanckor.mod.network.message.dialogoption.AddQuest;
-import dev.zanckor.mod.network.message.dialogoption.DialogRequestPacket;
-import dev.zanckor.mod.util.MCUtilClient;
+import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
+import dev.zanckor.mod.common.network.SendQuestPacket;
+import dev.zanckor.mod.common.network.message.dialogoption.AddQuest;
+import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
+import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;

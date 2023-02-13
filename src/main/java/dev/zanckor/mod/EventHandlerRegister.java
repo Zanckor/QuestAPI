@@ -1,7 +1,7 @@
 package dev.zanckor.mod;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import dev.zanckor.mod.command.QuestCommand;
+import dev.zanckor.mod.server.command.QuestCommand;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
