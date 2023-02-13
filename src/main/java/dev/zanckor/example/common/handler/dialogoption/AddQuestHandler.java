@@ -53,6 +53,7 @@ public class AddQuestHandler extends AbstractDialogOption {
         ServerDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
         String quest = option.getQuest_id() + ".json";
 
+
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
         if (option.getType().equals(EnumOptionType.ADD_QUEST.toString())) {

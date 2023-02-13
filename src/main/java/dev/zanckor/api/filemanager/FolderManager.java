@@ -26,6 +26,10 @@ public class FolderManager {
     public static void serverFolderManager(ServerAboutToStartEvent e) {
         Path serverDirectory = e.getServer().getWorldPath(LevelResource.ROOT).toAbsolutePath();
 
+        createAPIFolder(serverDirectory);
+    }
+
+    public static void createAPIFolder(Path serverDirectory){
         File questApi = new File(serverDirectory.toString(), "quest-api");
         File playerData = new File(questApi.toString(), "player-data");
         File serverQuests = new File(questApi.toString(), "server-quests");

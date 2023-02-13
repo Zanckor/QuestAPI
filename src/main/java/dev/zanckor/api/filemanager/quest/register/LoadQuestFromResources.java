@@ -1,14 +1,18 @@
 package dev.zanckor.api.filemanager.quest.register;
 
 import com.google.gson.Gson;
+import dev.zanckor.api.filemanager.FolderManager;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
+
+import static dev.zanckor.mod.QuestApiMain.serverQuests;
 
 public class LoadQuestFromResources {
 
@@ -21,6 +25,10 @@ public class LoadQuestFromResources {
 
     public static void registerQuest(MinecraftServer server, String modid) {
         ResourceManager resourceManager = server.getResourceManager();
+
+        if(serverQuests == null){
+            FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
+        }
 
         resourceManager.listResources("quest", (file) -> {
             if(file.getPath().length() > 7) {
@@ -52,7 +60,7 @@ public class LoadQuestFromResources {
 
     private static void write(Gson gson, ServerQuest questTemplate, String fileName) {
         try {
-            FileWriter writer = new FileWriter(new File(QuestApiMain.serverQuests.toFile(), fileName));
+            FileWriter writer = new FileWriter(new File(serverQuests.toFile(), fileName));
             questTemplate.setId(fileName.substring(0, fileName.length() - 5));
 
             writer.write(gson.toJson(questTemplate));

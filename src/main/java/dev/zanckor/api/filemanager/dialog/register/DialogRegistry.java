@@ -1,11 +1,14 @@
 package dev.zanckor.api.filemanager.dialog.register;
 
 import com.google.gson.Gson;
+import dev.zanckor.api.filemanager.FolderManager;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;
+import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
 
@@ -21,6 +24,10 @@ public class DialogRegistry {
 
     public static void registerDialog(MinecraftServer server, String modid) {
         ResourceManager resourceManager = server.getResourceManager();
+
+        if(serverDialogs == null){
+            FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
+        }
 
         resourceManager.listResources("dialog", (file) -> {
             if (file.getPath().length() > 7) {

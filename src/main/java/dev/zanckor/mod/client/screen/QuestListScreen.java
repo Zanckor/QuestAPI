@@ -53,6 +53,8 @@ public class QuestListScreen extends Screen {
         xScreenPos = width - (imageWidth);
         yScreenPos = (double) height / 4;
 
+        //TODO: Al añadir una misión con npc no se añade la misión a la pantalla
+
 
         float scale = ((float) width) / 575;
 

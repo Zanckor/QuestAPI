@@ -102,22 +102,27 @@ public class ServerEvent {
         Path[] paths = {activeQuest, completedQuest, uncompletedQuest};
 
         for (Path path : paths) {
-            for (File file : path.toFile().listFiles()) {
-                UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
-                if (userQuest == null) continue;
+            if (path.toFile().listFiles() != null) {
 
-                LocateHash.registerQuestTypeLocation(EnumQuestType.valueOf(userQuest.getQuest_type()), file.toPath().toAbsolutePath());
-                LocateHash.registerQuestByID(userQuest.getId(), file.toPath().toAbsolutePath());
+                for (File file : path.toFile().listFiles()) {
+                    UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+                    if (userQuest == null) continue;
+
+                    LocateHash.registerQuestTypeLocation(EnumQuestType.valueOf(userQuest.getQuest_type()), file.toPath().toAbsolutePath());
+                    LocateHash.registerQuestByID(userQuest.getId(), file.toPath().toAbsolutePath());
+                }
             }
         }
 
 
-        for (File file : QuestApiMain.serverDialogs.toFile().listFiles()) {
-            FileReader reader = new FileReader(file);
-            ServerDialog dialogTemplate = GsonManager.gson().fromJson(reader, ServerDialog.class);
-            reader.close();
+        if (QuestApiMain.serverDialogs.toFile().listFiles() != null) {
+            for (File file : QuestApiMain.serverDialogs.toFile().listFiles()) {
+                FileReader reader = new FileReader(file);
+                ServerDialog dialogTemplate = GsonManager.gson().fromJson(reader, ServerDialog.class);
+                reader.close();
 
-            LocateHash.registerDialogLocation(file.getName(), file.toPath().toAbsolutePath());
+                LocateHash.registerDialogLocation(file.getName(), file.toPath().toAbsolutePath());
+            }
         }
     }
 }
