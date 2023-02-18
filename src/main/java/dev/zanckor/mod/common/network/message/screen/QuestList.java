@@ -23,6 +23,7 @@ public class QuestList {
 
     int listSize;
 
+
     public QuestList(UUID playerUUID) throws IOException {
         File[] activeQuests = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(playerUUID)).toFile().listFiles();
 
@@ -46,7 +47,6 @@ public class QuestList {
 
     public void encodeBuffer(FriendlyByteBuf buffer) {
         buffer.writeInt(title.size());
-
 
         for (int i = 0; i < title.size(); i++) {
             buffer.writeUtf(id.get(i));

@@ -9,6 +9,7 @@ import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
 import dev.zanckor.mod.common.util.GsonManager;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
      */
 
     @Override
-    public boolean handler(Player player, ServerDialog dialog, int option_id) throws IOException {
+    public boolean handler(Player player, ServerDialog dialog, int option_id, Entity npc) throws IOException {
         if (player.level.isClientSide) return false;
 
         EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(option_id).getRequirements().getRequirement_status());
@@ -52,7 +53,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
                 switch (requirementStatus) {
                     case IN_PROGRESS -> {
                         if (questFile.exists() && !playerQuest.isCompleted()) {
-                            displayDialog(player, option_id, dialog);
+                            displayDialog(player, option_id, dialog, npc);
 
                             return true;
                         }
@@ -61,7 +62,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
 
                     case COMPLETED -> {
                         if (questFile.exists() && playerQuest.isCompleted()) {
-                            displayDialog(player, option_id, dialog);
+                            displayDialog(player, option_id, dialog, npc);
 
                             return true;
                         }
@@ -69,7 +70,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
 
                     case NOT_OBTAINED -> {
                         if (!questFile.exists()) {
-                            displayDialog(player, option_id, dialog);
+                            displayDialog(player, option_id, dialog, npc);
 
                             return true;
                         }
@@ -78,7 +79,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
             } else {
                 switch (requirementStatus) {
                     case NOT_OBTAINED -> {
-                        displayDialog(player, option_id, dialog);
+                        displayDialog(player, option_id, dialog, npc);
 
                         return true;
                     }
@@ -91,8 +92,8 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
     }
 
 
-    private void displayDialog(Player player, int dialog_id, ServerDialog dialog) throws IOException {
+    private void displayDialog(Player player, int dialog_id, ServerDialog dialog, Entity npc) throws IOException {
         LocateHash.currentDialog.put(player, dialog_id);
-        SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, dialog_id, player));
+        SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, dialog.getIdentifier(), dialog_id, player, npc));
     }
 }

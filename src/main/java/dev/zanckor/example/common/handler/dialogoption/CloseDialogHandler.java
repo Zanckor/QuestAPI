@@ -6,9 +6,11 @@ import dev.zanckor.api.filemanager.dialog.ServerDialog;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.CloseDialog;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class CloseDialogHandler extends AbstractDialogOption {
 
@@ -22,7 +24,7 @@ public class CloseDialogHandler extends AbstractDialogOption {
      */
 
     @Override
-    public void handler(Player player, ServerDialog dialog, int option_id) throws IOException {
+    public void handler(Player player, ServerDialog dialog, int option_id, Entity npc) throws IOException {
         int currentDialog = LocateHash.currentDialog.get(player);
         ServerDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
 

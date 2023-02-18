@@ -6,6 +6,7 @@ import dev.zanckor.api.filemanager.dialog.ServerDialog;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.IOException;
@@ -22,12 +23,14 @@ public class OpenDialogHandler extends AbstractDialogOption {
      */
 
     @Override
-    public void handler(Player player, ServerDialog dialog, int option_id) throws IOException {
+    public void handler(Player player, ServerDialog dialog, int option_id, Entity npc) throws IOException {
         int currentDialog = LocateHash.currentDialog.get(player);
+
         ServerDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
 
+
         if (option.getType().equals(EnumOptionType.OPEN_DIALOG.toString())) {
-            SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, option.getDialog(), player));
+            SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, dialog.getIdentifier(), option.getDialog(), player, npc));
         }
     }
 }

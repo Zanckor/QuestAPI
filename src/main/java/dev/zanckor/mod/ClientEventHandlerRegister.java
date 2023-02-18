@@ -1,7 +1,7 @@
 package dev.zanckor.mod;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.zanckor.mod.client.screen.RenderQuestTracker;
+import dev.zanckor.mod.client.screen.hud.RenderQuestTracker;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;

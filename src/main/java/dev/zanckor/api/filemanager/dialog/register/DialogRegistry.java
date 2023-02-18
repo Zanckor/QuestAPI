@@ -3,7 +3,6 @@ package dev.zanckor.api.filemanager.dialog.register;
 import com.google.gson.Gson;
 import dev.zanckor.api.filemanager.FolderManager;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;
-import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -25,7 +24,7 @@ public class DialogRegistry {
     public static void registerDialog(MinecraftServer server, String modid) {
         ResourceManager resourceManager = server.getResourceManager();
 
-        if(serverDialogs == null){
+        if (serverDialogs == null) {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
@@ -36,7 +35,7 @@ public class DialogRegistry {
 
                 if (file.getPath().endsWith(".json")) {
                     read(GsonManager.gson(), resourceLocation, server);
-                    write(GsonManager.gson(), dialogTemplate, modid + "_" + fileName);
+                    write(GsonManager.gson(), dialogTemplate, modid, fileName);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
                 }
@@ -57,11 +56,16 @@ public class DialogRegistry {
         }
     }
 
-    private static void write(Gson gson, ServerDialog dialogTemplate, String fileName) {
+    private static void write(Gson gson, ServerDialog dialogTemplate, String modid, String fileName) {
         try {
-            File file = new File(serverDialogs.toFile(), fileName);
+            File file = new File(serverDialogs.toFile(), modid + "_" + fileName);
 
             FileWriter writer = new FileWriter(file);
+
+            if (dialogTemplate.getIdentifier() == null || dialogTemplate.getIdentifier().isEmpty()) {
+                dialogTemplate.setIdentifier(modid);
+            }
+
             writer.write(gson.toJson(dialogTemplate));
             writer.flush();
             writer.close();

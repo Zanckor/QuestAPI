@@ -3,6 +3,7 @@ package dev.zanckor.mod.common.util;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.ReadDialog;
 import dev.zanckor.mod.QuestApiMain;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID)
 public class MCUtil {
@@ -155,5 +157,13 @@ public class MCUtil {
         }
 
         return false;
+    }
+
+    public static Entity getEntityByUUID(Level level, UUID uuid) {
+        for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()){
+            if(entity.getUUID().equals(uuid)) return entity;
+        }
+
+        return null;
     }
 }

@@ -1,9 +1,9 @@
 package dev.zanckor.api.filemanager.quest.register;
 
 import com.google.gson.Gson;
+import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.FolderManager;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
-import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -26,12 +26,12 @@ public class LoadQuestFromResources {
     public static void registerQuest(MinecraftServer server, String modid) {
         ResourceManager resourceManager = server.getResourceManager();
 
-        if(serverQuests == null){
+        if (serverQuests == null) {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
         resourceManager.listResources("quest", (file) -> {
-            if(file.getPath().length() > 7) {
+            if (file.getPath().length() > 7) {
                 String fileName = file.getPath().substring(6);
                 ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
 

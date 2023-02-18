@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.PROTECT_ENTITY;
@@ -48,7 +49,7 @@ public class AddQuestHandler extends AbstractDialogOption {
      */
 
     @Override
-    public void handler(Player player, ServerDialog dialog, int option_id) throws IOException {
+    public void handler(Player player, ServerDialog dialog, int option_id, Entity npc) throws IOException {
         int currentDialog = LocateHash.currentDialog.get(player);
         ServerDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
         String quest = option.getQuest_id() + ".json";

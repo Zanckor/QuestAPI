@@ -1,8 +1,8 @@
 package dev.zanckor.api.filemanager.quest;
 
+import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.FileAbstract;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
-import dev.zanckor.api.database.LocateHash;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

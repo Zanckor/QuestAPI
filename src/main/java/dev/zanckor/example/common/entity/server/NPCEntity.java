@@ -9,22 +9,22 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import java.io.IOException;
 
-public class NPCEntity extends Cat {
+public class NPCEntity extends Villager {
 
 
     private String dialogID = "questapi_collect_items_dialog";
 
-    public NPCEntity(EntityType<? extends Cat> entityType, Level level) {
+    public NPCEntity(EntityType<? extends Villager> entityType, Level level) {
         super(entityType, level);
         this.setInvulnerable(true);
 
-        this.setCustomName(Component.literal("Magic Cat"));
+        this.setCustomName(Component.literal("Magic Villager"));
         this.setCustomNameVisible(true);
     }
 
@@ -33,7 +33,7 @@ public class NPCEntity extends Cat {
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         if (!player.level.isClientSide && interactionHand.equals(InteractionHand.MAIN_HAND)) {
             try {
-                StartDialog.loadDialog(player, dialogID);
+                StartDialog.loadDialog(player, dialogID, this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

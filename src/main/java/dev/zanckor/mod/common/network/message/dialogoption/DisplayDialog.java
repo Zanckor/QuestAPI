@@ -5,6 +5,7 @@ import dev.zanckor.api.filemanager.dialog.ServerDialog;
 import dev.zanckor.mod.common.network.ClientHandler;
 import dev.zanckor.mod.common.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -14,32 +15,40 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class DisplayDialog {
 
     ServerDialog dialogTemplate;
 
-
+    String modid;
     int dialogID;
     int optionSize;
     String questDialog;
     HashMap<Integer, List<String>> optionStrings = new HashMap<>();
     HashMap<Integer, List<Integer>> optionIntegers = new HashMap<>();
 
+    UUID npcUUID;
 
-    public DisplayDialog(ServerDialog dialogTemplate, int dialogID, Player player) throws IOException {
+
+    public DisplayDialog(ServerDialog dialogTemplate, String modid, int dialogID, Player player, Entity npc) throws IOException {
         this.dialogTemplate = dialogTemplate;
         this.dialogID = dialogID;
+        this.npcUUID = npc == null ? player.getUUID() : npc.getUUID();
+        this.modid = modid;
 
         LocateHash.currentDialog.put(player, dialogID);
         MCUtil.writeDialogRead(player, dialogID);
     }
 
     public DisplayDialog(FriendlyByteBuf buffer) {
-        questDialog = buffer.readUtf();
+        npcUUID = buffer.readUUID();
+        modid = buffer.readUtf();
 
+        questDialog = buffer.readUtf();
         optionSize = buffer.readInt();
+
         for (int optionSizeIndex = 0; optionSizeIndex < optionSize; optionSizeIndex++) {
             List<String> optionStringData = new ArrayList<>();
             List<Integer> optionIntegerData = new ArrayList<>();
@@ -59,8 +68,11 @@ public class DisplayDialog {
 
     public void encodeBuffer(FriendlyByteBuf buffer) {
         ServerDialog.QuestDialog dialog = dialogTemplate.getDialog().get(dialogID);
-        buffer.writeUtf(dialog.getDialogText());
 
+        buffer.writeUUID(npcUUID);
+        buffer.writeUtf(modid);
+
+        buffer.writeUtf(dialog.getDialogText());
         buffer.writeInt(dialog.getOptions().size());
 
         for (ServerDialog.DialogOption option : dialog.getOptions()) {
@@ -76,12 +88,11 @@ public class DisplayDialog {
     public static void handler(DisplayDialog msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
 
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.displayDialog(msg.dialogID,
-                    msg.questDialog,
-                    msg.optionSize, msg.optionIntegers, msg.optionStrings));
+
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                    ClientHandler.displayDialog(msg.modid, msg.dialogID, msg.questDialog, msg.optionSize, msg.optionIntegers, msg.optionStrings, msg.npcUUID));
         });
 
         ctx.get().setPacketHandled(true);
     }
 }
-

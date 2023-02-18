@@ -14,7 +14,15 @@ public class ServerDialog extends FileAbstract {
     private static String global_id;
 
     List<QuestDialog> dialog;
+    String identifier;
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
 
     public String getGlobal_id() {
         return global_id;

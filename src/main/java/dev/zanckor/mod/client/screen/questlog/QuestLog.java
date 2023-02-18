@@ -1,4 +1,4 @@
-package dev.zanckor.mod.client.screen;
+package dev.zanckor.mod.client.screen.questlog;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class QuestListScreen extends Screen {
+public class QuestLog extends Screen {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
     List<String> questData = new ArrayList<>();
     int selectedPage = 0;
@@ -34,7 +34,7 @@ public class QuestListScreen extends Screen {
 
     HashMap<Integer, Map.Entry<String, String>> quest = new HashMap<>();
 
-    public QuestListScreen(List<String> id, List<String> title) {
+    public QuestLog(List<String> id, List<String> title) {
         super(Component.literal("questlist"));
 
         for (int i = 0; i < title.size(); i++) {
@@ -52,8 +52,6 @@ public class QuestListScreen extends Screen {
         imageHeight = width / 3;
         xScreenPos = width - (imageWidth);
         yScreenPos = (double) height / 4;
-
-        //TODO: Al añadir una misión con npc no se añade la misión a la pantalla
 
 
         float scale = ((float) width) / 575;
@@ -74,8 +72,8 @@ public class QuestListScreen extends Screen {
                 }
             }
 
-            if (displayedButton.size() < 4 && quest.size() > (i + (4 * (selectedPage)))) {
-                int buttonIndex = i + (4 * (selectedPage));
+            if (displayedButton.size() < 4 && quest.size() > (i + (4 * selectedPage))) {
+                int buttonIndex = i + (4 * selectedPage);
 
                 int textLines = (quest.get(buttonIndex).getValue().length() * 5) / maxLength;
                 int yButtonIndent = (int) (((8 * (textLines + 1)) * displayedButton.size() * scale) + splitIndent);
@@ -83,7 +81,7 @@ public class QuestListScreen extends Screen {
                 int buttonWidth = textLines < 1 ? (int) (quest.get(buttonIndex).getValue().length() * 5 * scale) : (int) (maxLength * scale);
 
                 Button questSelect = new Button(xButtonPosition, yButtonPosition + yButtonIndent, buttonWidth, height / 40 * (textLines + 1), Component.literal(""),
-                        button -> button(buttonIndex));
+                        button -> SendQuestPacket.TO_SERVER(new RequestQuestTracked(quest.get(buttonIndex).getKey())));
 
 
                 if (displayedButton.get(displayedButton.size()) != null) {
@@ -110,6 +108,7 @@ public class QuestListScreen extends Screen {
         }
 
 
+
         Button prevPage = new Button((int) (xScreenPos - (imageWidth / 8.5)), (int) (yScreenPos + imageHeight * 0.69), width / 65, width / 65, Component.literal(""), button -> {
             if (selectedPage > 0) {
                 selectedPage--;
@@ -132,7 +131,7 @@ public class QuestListScreen extends Screen {
                 Component.literal(""));
 
 
-        addRenderableWidget(textButton);
+        addWidget(textButton);
 
         textButton.setValue(textButton.getValue());
 
@@ -140,10 +139,6 @@ public class QuestListScreen extends Screen {
         addWidget(nextPage);
     }
 
-
-    private void button(int index) {
-        SendQuestPacket.TO_SERVER(new RequestQuestTracked(quest.get(index).getKey()));
-    }
 
 
     @Override
@@ -203,7 +198,9 @@ public class QuestListScreen extends Screen {
         questData.clear();
 
         if (ClientHandler.trackedID != null) {
-            questData.add("Type: " + ClientHandler.trackedID.substring(0, 1).toUpperCase() + ClientHandler.trackedQuest_type.substring(1).toLowerCase());
+            questData.add("Type: " + ClientHandler.trackedQuest_type.substring(0, 1).toUpperCase() + ClientHandler.trackedQuest_type.substring(1).toLowerCase());
+
+            System.out.println(ClientHandler.trackedID);
 
             for (int i = 0; i < ClientHandler.trackedQuest_target.size(); i++) {
                 AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(ClientHandler.trackedQuest_type));

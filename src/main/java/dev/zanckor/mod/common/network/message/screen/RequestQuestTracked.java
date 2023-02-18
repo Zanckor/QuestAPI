@@ -3,8 +3,8 @@ package dev.zanckor.mod.common.network.message.screen;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.network.SendQuestPacket;
+import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
@@ -37,8 +37,8 @@ public class RequestQuestTracked {
 
             try {
                 UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
-
                 SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
+
             } catch (IOException e) {
                 QuestApiMain.LOGGER.error(e.getMessage());
             }

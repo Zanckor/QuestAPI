@@ -51,7 +51,7 @@ public class AddQuest {
             try {
                 ServerDialog dialog = (ServerDialog) GsonManager.getJson(dialogFile, ServerDialog.class);
 
-                dialogTemplate.handler(ctx.get().getSender(), dialog, msg.optionID);
+                dialogTemplate.handler(ctx.get().getSender(), dialog, msg.optionID, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

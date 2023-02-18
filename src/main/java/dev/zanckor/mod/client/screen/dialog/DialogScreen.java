@@ -1,4 +1,4 @@
-package dev.zanckor.mod.client.screen;
+package dev.zanckor.mod.client.screen.dialog;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -7,18 +7,24 @@ import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.AddQuest;
 import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
+import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
-public class DialogScreen extends Screen {
+public class DialogScreen extends AbstractDialog {
     int dialogID;
     String text;
     int textDisplayDelay;
@@ -29,27 +35,41 @@ public class DialogScreen extends Screen {
 
     double xScreenPos, yScreenPos;
     int imageWidth, imageHeight;
+    Entity npc;
 
 
     private final static ResourceLocation DIALOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_background.png");
 
+    public DialogScreen(Component component) {
+        super(component);
+    }
 
-    public DialogScreen(int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings) {
-        super(Component.literal(String.valueOf(dialogID)));
+
+    @Override
+    public Screen modifyScreen(int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings, UUID npcUUID) {
         this.dialogID = dialogID;
         this.text = text;
         this.optionSize = optionSize;
         this.optionIntegers = optionIntegers;
         this.optionStrings = optionStrings;
-    }
 
+        this.npc = MCUtil.getEntityByUUID(Minecraft.getInstance().level, npcUUID);
+
+        return this;
+    }
 
     @Override
     protected void init() {
         super.init();
 
-        int xPosition = width / 4;
-        int yPosition = (int) (height / 1.2);
+        textDisplaySize = 0;
+        imageWidth = width / 2;
+        imageHeight = (int) (width / 2.7);
+        xScreenPos = width - (imageWidth);
+        yScreenPos = (double) width / 11;
+
+        int xPosition = (int) (width / 3.55);
+        int yPosition = (int) (yScreenPos * 3.6);
 
         for (int i = 0; i < optionSize; i++) {
             int stringLength = optionStrings.get(i).get(0).length() * 5;
@@ -58,7 +78,13 @@ public class DialogScreen extends Screen {
             addRenderableWidget(new Button(xPosition, yPosition, stringLength, 20,
                     Component.literal(optionStrings.get(i).get(0)), button -> button(index, dialogID)));
 
-            yPosition += 22;
+            xPosition += optionStrings.get(i).get(0).length() * 5 + 5;
+
+
+            if (xPosition > (width / 3.85) + 150) {
+                xPosition = (int) (width / 3.85);
+                yPosition += 22;
+            }
         }
     }
 
@@ -86,40 +112,32 @@ public class DialogScreen extends Screen {
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         poseStack.pushPose();
-        RenderSystem.setShaderTexture(0, DIALOG);
-        imageWidth = width / 2;
-        imageHeight = width / 4;
-        xScreenPos = width - (imageWidth);
-        yScreenPos = (double) height / 4;
 
+        RenderSystem.setShaderTexture(0, DIALOG);
         blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
 
-        int yPosition = (int) (height / 1.5);
+        int xPosition = (int) (width / 2.41);
+        int yPosition = (int) (yScreenPos + yScreenPos / 1.45);
 
-        for (List<FormattedCharSequence> textBlock : MCUtilClient.splitText(text.substring(0, textDisplaySize), font, (int) (width / 1.9))) {
-            for (FormattedCharSequence line : textBlock) {
-                font.draw(poseStack, line, (float) (width / 4), yPosition, 0);
-
-                yPosition += 14;
-            }
-        }
+        MCUtilClient.renderText(poseStack, xPosition, yPosition, 26, (float) width / 675, 42, text.substring(0, textDisplaySize), font);
 
         poseStack.popPose();
 
-
+        MCUtilClient.renderEntity(
+                xScreenPos / 1.4575, yScreenPos * 3.41, width / 12,
+                (xScreenPos / 1.4575 - mouseX) / 4, (yScreenPos * 2.5 - mouseY) / 4,
+                (LivingEntity) npc);
         super.render(poseStack, mouseX, mouseY, partialTicks);
     }
 
     private void button(int optionID, int dialogID) {
         EnumOptionType optionType = EnumOptionType.valueOf(optionStrings.get(optionID).get(1));
 
-
         switch (optionType) {
-            case OPEN_DIALOG, CLOSE_DIALOG -> SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID));
+            case OPEN_DIALOG, CLOSE_DIALOG ->
+                    SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID, npc));
             case ADD_QUEST -> SendQuestPacket.TO_SERVER(new AddQuest(optionType, dialogID, optionID));
-            case REMOVE_QUEST -> //TODO:
-            System.out.println("A");
         }
     }
 

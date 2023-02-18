@@ -17,7 +17,7 @@ public class GsonManager {
         if (!file.exists()) return null;
 
         FileReader reader = new FileReader(file);
-        FileAbstract dialog =GsonManager.gson().fromJson(reader, fileClass);
+        FileAbstract dialog = GsonManager.gson().fromJson(reader, fileClass);
         reader.close();
 
         return dialog;

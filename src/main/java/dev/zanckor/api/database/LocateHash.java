@@ -13,31 +13,30 @@ public class LocateHash {
      * This class stores server quests and dialogs as temporary data to improve access time.
      *
      * <p>
-     *      <code> currentDialog: </code> Stores dialog id of a text displayed to a player. It's equal to the id in the dialog.json file.
+     * <code> currentDialog: </code> Stores dialog id of a text displayed to a player. It's equal to the id in the dialog.json file.
      * </p>
      *
      * <p>
-     *      <code> currentGlobalDialog: </code> Stores the path to a json file that have dialog information. Example: collect_items_dialog.json
+     * <code> currentGlobalDialog: </code> Stores the path to a json file that have dialog information. Example: collect_items_dialog.json
      * </p>
      *
      * <p>
-     *      <code> clientQuestByIDLocation: </code> A path to access quests faster by quest id. Only active quests are stored, not completed or uncompleted quests.
+     * <code> clientQuestByIDLocation: </code> A path to access quests faster by quest id. Only active quests are stored, not completed or uncompleted quests.
      * </p>
      *
      * <p>
-     *      <code> clientQuestTypeLocation: </code> A list of paths referenced to an Enum that stores all quests of Enum type.
+     * <code> clientQuestTypeLocation: </code> A list of paths referenced to an Enum that stores all quests of Enum type.
      * </p>
      *
      * <p>
-     *      <code> dialogLocation </code>: A path referenced to dialog ID.
+     * <code> dialogLocation </code>: A path referenced to dialog ID.
      * </p>
      *
      * <p> <p>
-     *     As a developer you shouldn't add stuff here to registry more types of quests, dialogs, rewards, etc.
+     * As a developer you shouldn't add stuff here to registry more types of quests, dialogs, rewards, etc.
      * </p>
      *
      * @return clientQuestTypeLocation returns a list<Path> of all quests of Enum type
-     *
      */
 
 
@@ -74,6 +73,7 @@ public class LocateHash {
     public static Path getQuestByID(String id) {
         return clientQuestByIDLocation.get(id);
     }
+
 
     public static void movePathQuest(String id, Path newPath, Enum enumQuestType) {
         removeQuest(id, enumQuestType);

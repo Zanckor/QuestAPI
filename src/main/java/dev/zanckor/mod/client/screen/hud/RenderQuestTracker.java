@@ -1,4 +1,4 @@
-package dev.zanckor.mod.client.screen;
+package dev.zanckor.mod.client.screen.hud;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;

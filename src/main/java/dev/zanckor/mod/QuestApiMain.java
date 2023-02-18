@@ -4,7 +4,9 @@ import com.mojang.logging.LogUtils;
 import dev.zanckor.example.ModExample;
 import dev.zanckor.mod.common.network.QuestNetworkHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -18,12 +20,12 @@ public class QuestApiMain {
     public static Path serverDirectory, questApi, playerData, serverQuests, serverDialogs;
 
     public QuestApiMain() {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MinecraftForge.EVENT_BUS.register(this);
 
         QuestNetworkHandler.register();
         new ModExample();
     }
-
 
     public static Path getUserFolder(UUID playerUUID) {
         Path userFolder = Paths.get(playerData.toString(), playerUUID.toString());

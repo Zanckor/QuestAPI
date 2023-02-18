@@ -1,27 +1,29 @@
 package dev.zanckor.example.client.event;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;
-import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
+import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.example.common.entity.server.NPCEntity;
+import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
 import dev.zanckor.mod.common.util.GsonManager;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 public class StartDialog {
 
     /**
-     *
-     * @param player            The player
-     * @param globalDialogID    Dialog ID of dialog file player will see. Example: collect_items_dialog.json
-     * @throws IOException  Exception fired when server cannot read json file
+     * @param player         The player
+     * @param globalDialogID Dialog ID of dialog file player will see. Example: collect_items_dialog.json
+     * @throws IOException Exception fired when server cannot read json file
      */
 
-    public static void loadDialog(Player player, String globalDialogID) throws IOException {
+    public static void loadDialog(Player player, String globalDialogID, Entity entity) throws IOException {
         Path path = LocateHash.getDialogLocation(globalDialogID);
 
         File dialogFile = path.toFile();
@@ -36,7 +38,7 @@ public class StartDialog {
             EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
             AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
 
-            if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id)) return;
+            if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id, entity)) return;
         }
     }
 }
