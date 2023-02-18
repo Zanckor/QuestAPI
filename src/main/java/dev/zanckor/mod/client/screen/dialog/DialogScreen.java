@@ -10,13 +10,12 @@ import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -35,10 +34,12 @@ public class DialogScreen extends AbstractDialog {
 
     double xScreenPos, yScreenPos;
     int imageWidth, imageHeight;
+    int xButtonPosition, yButtonPosition;
     Entity npc;
 
 
     private final static ResourceLocation DIALOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_background.png");
+    private final static ResourceLocation BUTTON = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_button.png");
 
     public DialogScreen(Component component) {
         super(component);
@@ -68,22 +69,23 @@ public class DialogScreen extends AbstractDialog {
         xScreenPos = width - (imageWidth);
         yScreenPos = (double) width / 11;
 
-        int xPosition = (int) (width / 3.55);
-        int yPosition = (int) (yScreenPos * 3.6);
+        xButtonPosition = (int) (width / 3.55);
+        yButtonPosition = (int) (yScreenPos * 3.6);
 
         for (int i = 0; i < optionSize; i++) {
             int stringLength = optionStrings.get(i).get(0).length() * 5;
 
             int index = i;
-            addRenderableWidget(new Button(xPosition, yPosition, stringLength, 20,
+
+            addRenderableWidget(new Button(xButtonPosition, yButtonPosition, stringLength, 20,
                     Component.literal(optionStrings.get(i).get(0)), button -> button(index, dialogID)));
 
-            xPosition += optionStrings.get(i).get(0).length() * 5 + 5;
+            xButtonPosition += optionStrings.get(i).get(0).length() * 5 + 5;
 
 
-            if (xPosition > (width / 3.85) + 150) {
-                xPosition = (int) (width / 3.85);
-                yPosition += 22;
+            if (xButtonPosition > (width / 3.85) + 150) {
+                xButtonPosition = (int) (width / 3.55);
+                yButtonPosition += 22;
             }
         }
     }
@@ -111,23 +113,24 @@ public class DialogScreen extends AbstractDialog {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        poseStack.pushPose();
-
-        RenderSystem.setShaderTexture(0, DIALOG);
-        blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-
-
         int xPosition = (int) (width / 2.41);
         int yPosition = (int) (yScreenPos + yScreenPos / 1.45);
+
+        poseStack.pushPose();
+        RenderSystem.setShaderTexture(0, DIALOG);
+
+        blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
         MCUtilClient.renderText(poseStack, xPosition, yPosition, 26, (float) width / 675, 42, text.substring(0, textDisplaySize), font);
 
         poseStack.popPose();
 
+
         MCUtilClient.renderEntity(
                 xScreenPos / 1.4575, yScreenPos * 3.41, width / 12,
                 (xScreenPos / 1.4575 - mouseX) / 4, (yScreenPos * 2.5 - mouseY) / 4,
                 (LivingEntity) npc);
+
         super.render(poseStack, mouseX, mouseY, partialTicks);
     }
 

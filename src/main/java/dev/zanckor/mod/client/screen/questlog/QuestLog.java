@@ -131,7 +131,7 @@ public class QuestLog extends Screen {
                 Component.literal(""));
 
 
-        addWidget(textButton);
+        addRenderableWidget(textButton);
 
         textButton.setValue(textButton.getValue());
 
@@ -199,8 +199,6 @@ public class QuestLog extends Screen {
 
         if (ClientHandler.trackedID != null) {
             questData.add("Type: " + ClientHandler.trackedQuest_type.substring(0, 1).toUpperCase() + ClientHandler.trackedQuest_type.substring(1).toLowerCase());
-
-            System.out.println(ClientHandler.trackedID);
 
             for (int i = 0; i < ClientHandler.trackedQuest_target.size(); i++) {
                 AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(ClientHandler.trackedQuest_type));
