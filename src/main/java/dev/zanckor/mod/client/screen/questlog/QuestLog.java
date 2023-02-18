@@ -204,7 +204,7 @@ public class QuestLog extends Screen {
                 AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(ClientHandler.trackedQuest_type));
 
                 if (targetType != null) {
-                    String translationKey = targetType.handler(new ResourceLocation(ClientHandler.trackedQuest_target.get(i)));
+                    String translationKey = targetType.handler(new ResourceLocation(ClientHandler.trackedQuest_target.get(i)), Minecraft.getInstance().level);
                     questData.add(I18n.get(translationKey) + ": " + ClientHandler.trackedTarget_current_quantity.get(i) + "/" + ClientHandler.trackedTarget_quantity.get(i));
                 } else {
                     questData.add(ClientHandler.trackedQuest_target.get(i) + ": " + ClientHandler.trackedTarget_current_quantity.get(i) + "/" + ClientHandler.trackedTarget_quantity.get(i));

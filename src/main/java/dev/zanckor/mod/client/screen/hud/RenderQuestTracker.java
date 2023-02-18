@@ -63,7 +63,7 @@ public class RenderQuestTracker {
             AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(trackedQuest_type));
 
             if (targetType != null) {
-                String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)));
+                String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)), Minecraft.getInstance().level);
 
 
                 mc.font.draw(poseStack,

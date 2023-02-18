@@ -29,6 +29,7 @@ public class EventHandlerRegister {
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent e) {
         e.getDispatcher().register(Commands.literal("quests")
+                .requires((player) -> player.hasPermission(3))
                 .then(Commands.literal("add")
                         .then(Commands.argument("player", EntityArgument.player())
                                 .then(Commands.argument("questID", StringArgumentType.string())
