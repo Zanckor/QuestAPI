@@ -22,6 +22,7 @@ import dev.zanckor.example.common.handler.questrequirement.XpRequirement;
 import dev.zanckor.example.common.handler.questreward.ItemReward;
 import dev.zanckor.example.common.handler.questtype.*;
 import dev.zanckor.example.common.handler.targettype.EntityTargetType;
+import dev.zanckor.example.common.handler.targettype.EntityUUIDTargetType;
 import dev.zanckor.example.common.handler.targettype.ItemTargetType;
 import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.mod.client.screen.dialog.DialogScreen;
@@ -85,6 +86,7 @@ public class ModExample {
 
     public static void registerTarget() {
         TemplateRegistry.registerTargetType(EnumQuestType.RECOLLECT, new ItemTargetType());
+        TemplateRegistry.registerTargetType(EnumQuestType.PROTECT_ENTITY, new EntityUUIDTargetType());
         TemplateRegistry.registerTargetType(EnumQuestType.KILL, new EntityTargetType());
         TemplateRegistry.registerTargetType(EnumQuestType.INTERACT_ENTITY, new EntityTargetType());
     }

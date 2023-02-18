@@ -2,8 +2,8 @@ package dev.zanckor.mod.client.screen.hud;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
-import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.client.Minecraft;
@@ -39,7 +39,10 @@ public class RenderQuestTracker {
 
 
     public static void renderQuestTracker(PoseStack poseStack, int width, int height, int questID) {
-        if (trackedTitle == null || trackedTarget_quantity.equals(trackedTarget_current_quantity) || trackedQuest_completed) return;
+        if (trackedTitle == null || trackedTitle.isEmpty() || trackedTarget_quantity.equals(trackedTarget_current_quantity) || trackedQuest_completed){
+            return;
+        }
+
         Minecraft mc = Minecraft.getInstance();
 
         xPosition = width / 100;
@@ -52,10 +55,7 @@ public class RenderQuestTracker {
 
         poseStack.scale(scale, scale, 1);
 
-        mc.font.draw(poseStack,
-                "Quest: " + trackedTitle,
-                xPosition, yPosition, 0
-        );
+        mc.font.draw(poseStack, "Quest: " + trackedTitle, xPosition, yPosition, 0);
 
         yPosition += 20;
 

@@ -33,7 +33,9 @@ public class ProtectEntityHandler extends AbstractQuest {
         FileWriter protectEntityWriter = new FileWriter(file);
 
         if (Timer.canUseWithCooldown(player.getUUID(), playerQuest.getId(), playerQuest.getTimeLimitInSeconds()) && entity.isAlive()) {
-            gson.toJson(playerQuest.incrementProgress(playerQuest, 0), protectEntityWriter);
+            playerQuest.setTarget_current_quantity(playerQuest.getTarget_quantity().get(0), 0);
+
+            gson.toJson(playerQuest, protectEntityWriter);
             entity.remove(Entity.RemovalReason.DISCARDED);
 
             protectEntityWriter.flush();

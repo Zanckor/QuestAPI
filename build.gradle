@@ -97,18 +97,17 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19-41.1.0'
-
 }
 
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "questapi",
-                "Specification-Vendor"    : "questapisareus",
+                "Specification-Title"     : "QuestAPI",
+                "Specification-Vendor"    : "Zanckor",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "questapisareus",
+                "Implementation-Vendor"   : "Zanckor",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

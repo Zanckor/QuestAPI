@@ -11,7 +11,6 @@ import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -73,7 +72,7 @@ public class DialogScreen extends AbstractDialog {
         yButtonPosition = (int) (yScreenPos * 3.6);
 
         for (int i = 0; i < optionSize; i++) {
-            int stringLength = optionStrings.get(i).get(0).length() * 5;
+            int stringLength = (optionStrings.get(i).get(0).length() + 1) * 5;
 
             int index = i;
 
