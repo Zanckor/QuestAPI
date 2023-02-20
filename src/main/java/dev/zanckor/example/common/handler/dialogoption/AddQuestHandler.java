@@ -2,16 +2,20 @@ package dev.zanckor.example.common.handler.dialogoption;
 
 import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;
-import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
-import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
+import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.mod.common.network.ClientHandler;
+import dev.zanckor.mod.common.network.SendQuestPacket;
+import dev.zanckor.mod.common.network.message.dialogoption.CloseDialog;
+import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
+import dev.zanckor.mod.common.util.MCUtilClient;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -30,7 +34,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.PROTECT_ENTITY;
@@ -42,10 +45,10 @@ public class AddQuestHandler extends AbstractDialogOption {
      * When player clicks on an option which type is "ADD_QUEST" will try to give it if player has the requirements.
      * In case that player obtains the quest, a new file will be written on his folder data.
      *
-     * @param player            The player
-     * @param dialog            DialogTemplate class with all dialog data
-     * @param option_id         DialogOption ID, Returns the object inside the List< DialogOption >. This is not a parameter inside the .json file
-     * @throws IOException      Exception fired when server cannot read json file
+     * @param player    The player
+     * @param dialog    DialogTemplate class with all dialog data
+     * @param option_id DialogOption ID, Returns the object inside the List< DialogOption >. This is not a parameter inside the .json file
+     * @throws IOException Exception fired when server cannot read json file
      */
 
     @Override
@@ -59,7 +62,7 @@ public class AddQuestHandler extends AbstractDialogOption {
 
         if (option.getType().equals(EnumOptionType.ADD_QUEST.toString())) {
             if (Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getUncompletedQuest(userFolder).toString(), quest))) {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.closeDialog());
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);
 
                 return;
             }
@@ -73,7 +76,7 @@ public class AddQuestHandler extends AbstractDialogOption {
                     AbstractQuestRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
 
                     if (!requirement.handler(player, serverQuest)) {
-                        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.closeDialog());
+                        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);
                         return;
                     }
 
@@ -92,17 +95,21 @@ public class AddQuestHandler extends AbstractDialogOption {
                     }
 
                     LocateHash.registerQuestByID(option.getQuest_id(), path);
+
+                    UserQuest userQuest = (UserQuest) GsonManager.getJson(path.toFile(), UserQuest.class);
+                    SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
+
                     break;
                 }
             }
         }
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.closeDialog());
+        SendQuestPacket.TO_CLIENT(player, new CloseDialog());
     }
 
 
     private static void protectEntityQuest(UserQuest playerQuest, Level level, Player player, ServerQuest serverQuest, Path path, Gson gson, String questID) throws IOException {
-        EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
+        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
         UUID playerUUID = player.getUUID();
 
         Entity entity = entityType.create(level);

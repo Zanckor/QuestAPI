@@ -7,6 +7,7 @@ import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +19,7 @@ import java.io.IOException;
 
 public class RecollectHandler extends AbstractQuest {
 
-    public void handler(Player player, Gson gson, File file, UserQuest playerQuest) throws IOException {
+    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest) throws IOException {
         UserQuest recollectPlayerQuest;
         int itemCount;
 

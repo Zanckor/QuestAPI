@@ -7,9 +7,7 @@ import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.AddQuest;
 import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
-import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -53,7 +51,7 @@ public class DialogScreen extends AbstractDialog {
         this.optionIntegers = optionIntegers;
         this.optionStrings = optionStrings;
 
-        this.npc = MCUtil.getEntityByUUID(Minecraft.getInstance().level, npcUUID);
+        this.npc = MCUtilClient.getEntityByUUID(npcUUID);
 
         return this;
     }
@@ -72,20 +70,19 @@ public class DialogScreen extends AbstractDialog {
         yButtonPosition = (int) (yScreenPos * 3.6);
 
         for (int i = 0; i < optionSize; i++) {
-            int stringLength = (optionStrings.get(i).get(0).length() + 1) * 5;
-
+            int stringLength = (int) ((optionStrings.get(i).get(0).length() + 1) * 5.5);
             int index = i;
+
+
+            if (xButtonPosition + stringLength > (width / 1.4)) {
+                xButtonPosition = (int) (width / 3.55);
+                yButtonPosition += 22;
+            }
 
             addRenderableWidget(new Button(xButtonPosition, yButtonPosition, stringLength, 20,
                     Component.literal(optionStrings.get(i).get(0)), button -> button(index, dialogID)));
 
-            xButtonPosition += optionStrings.get(i).get(0).length() * 5 + 5;
-
-
-            if (xButtonPosition > (width / 3.85) + 150) {
-                xButtonPosition = (int) (width / 3.55);
-                yButtonPosition += 22;
-            }
+            xButtonPosition += optionStrings.get(i).get(0).length() * 5.7 + 5;
         }
     }
 
@@ -137,9 +134,12 @@ public class DialogScreen extends AbstractDialog {
         EnumOptionType optionType = EnumOptionType.valueOf(optionStrings.get(optionID).get(1));
 
         switch (optionType) {
-            case OPEN_DIALOG, CLOSE_DIALOG ->
-                    SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID, npc));
-            case ADD_QUEST -> SendQuestPacket.TO_SERVER(new AddQuest(optionType, dialogID, optionID));
+            case OPEN_DIALOG, CLOSE_DIALOG:
+                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID, npc));
+                break;
+            case ADD_QUEST:
+                SendQuestPacket.TO_SERVER(new AddQuest(optionType, optionID));
+                break;
         }
     }
 

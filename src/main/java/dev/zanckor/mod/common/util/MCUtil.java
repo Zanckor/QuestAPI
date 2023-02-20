@@ -4,6 +4,7 @@ import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.ReadDialog;
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -159,8 +160,8 @@ public class MCUtil {
         return false;
     }
 
-    public static Entity getEntityByUUID(Level level, UUID uuid) {
-        for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()){
+    public static Entity getEntityByUUID(ServerLevel level, UUID uuid) {
+        for (Entity entity : level.getAllEntities()){
             if(entity.getUUID().equals(uuid)) return entity;
         }
 

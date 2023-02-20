@@ -18,6 +18,7 @@ import static dev.zanckor.mod.common.network.ClientHandler.*;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RenderQuestTracker {
+
     static float xPosition;
     static float yPosition;
     static float scale;
@@ -39,7 +40,8 @@ public class RenderQuestTracker {
 
 
     public static void renderQuestTracker(PoseStack poseStack, int width, int height, int questID) {
-        if (trackedTitle == null || trackedTitle.isEmpty() || trackedTarget_quantity.equals(trackedTarget_current_quantity) || trackedQuest_completed){
+        if (trackedTitle == null || trackedTitle.isEmpty() || trackedTarget_quantity.equals(trackedTarget_current_quantity) || trackedQuest_completed) {
+            trackedID = "";
             return;
         }
 
@@ -63,7 +65,7 @@ public class RenderQuestTracker {
             AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(trackedQuest_type));
 
             if (targetType != null) {
-                String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)), Minecraft.getInstance().level);
+                String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)));
 
 
                 mc.font.draw(poseStack,

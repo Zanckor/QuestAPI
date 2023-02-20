@@ -8,6 +8,7 @@ import com.mojang.math.Vector3f;
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -17,12 +18,14 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class MCUtilClient {
@@ -99,6 +102,14 @@ public class MCUtilClient {
 
 
         poseStack.popPose();
+    }
+
+    public static Entity getEntityByUUID(UUID uuid) {
+        for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()) {
+            if (entity.getUUID().equals(uuid)) return entity;
+        }
+
+        return null;
     }
 
     public static void renderEntity(double xPos, double yPos, double size, double xRot, double yRot, LivingEntity entity) {

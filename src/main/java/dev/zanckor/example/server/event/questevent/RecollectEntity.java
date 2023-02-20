@@ -1,8 +1,8 @@
 package dev.zanckor.example.server.event.questevent;
 
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.quest.QuestDataPacket;
+import dev.zanckor.mod.common.network.ServerHandler;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,20 +16,27 @@ public class RecollectEntity {
 
     @SubscribeEvent
     public static void recollectPickUpQuest(PlayerEvent.ItemPickupEvent e) throws IOException {
-        sendQuestPacket();
+        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
+
+
+        sendQuestPacket((ServerPlayer) e.getEntity());
     }
 
     @SubscribeEvent
-    public static void recollectCraftQuest(PlayerEvent.ItemCraftedEvent e) {
-        sendQuestPacket();
+    public static void recollectCraftQuest(PlayerEvent.ItemCraftedEvent e) throws IOException {
+        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
+
+        sendQuestPacket((ServerPlayer) e.getEntity());
     }
 
     @SubscribeEvent
-    public static void recollectCraftQuest(PlayerEvent.ItemSmeltedEvent e) {
-        sendQuestPacket();
+    public static void recollectCraftQuest(PlayerEvent.ItemSmeltedEvent e) throws IOException {
+        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
+
+        sendQuestPacket((ServerPlayer) e.getEntity());
     }
 
-    public static void sendQuestPacket() {
-        SendQuestPacket.TO_SERVER(new QuestDataPacket(RECOLLECT));
+    public static void sendQuestPacket(ServerPlayer player) throws IOException {
+        ServerHandler.questHandler(RECOLLECT, player, null);
     }
 }

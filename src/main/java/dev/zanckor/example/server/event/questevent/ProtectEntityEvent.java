@@ -1,15 +1,14 @@
 package dev.zanckor.example.server.event.questevent;
 
-import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.quest.QuestDataPacket;
+import dev.zanckor.mod.common.network.ServerHandler;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.Timer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
@@ -32,23 +31,25 @@ public class ProtectEntityEvent {
 
         for (Player player : e.getEntity().getServer().getPlayerList().getPlayers()) {
             List<Path> protectEntityQuests = LocateHash.getQuestTypeLocation(PROTECT_ENTITY);
-            if (protectEntityQuests == null) return;
+            if (protectEntityQuests == null) continue;
 
-            checkEntity(protectEntityQuests, GsonManager.gson(), player, e.getEntity());
+            checkEntity(protectEntityQuests, player, e.getEntity());
         }
     }
 
-    public static void checkEntity(List<Path> protectEntityQuests, Gson gson, Player player, Entity entity) throws IOException {
+    public static void checkEntity(List<Path> protectEntityQuests, Player player, Entity entity) throws IOException {
+        if (protectEntityQuests == null) return;
+
         for (Path path : protectEntityQuests) {
             UserQuest playerQuest = (UserQuest) GsonManager.getJson(path.toFile(), UserQuest.class);
-            if (playerQuest == null || !playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) return;
+            if (playerQuest == null || !playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) continue;
 
             AbstractQuest quest = TemplateRegistry.getQuestTemplate(PROTECT_ENTITY);
 
             for (String entityUUID : playerQuest.getQuest_target()) {
                 if (!entity.getUUID().toString().equals(entityUUID)) continue;
 
-                quest.handler(player, gson, path.toFile(), playerQuest);
+                quest.handler(player, null, GsonManager.gson(), path.toFile(), playerQuest);
             }
         }
     }
@@ -56,27 +57,23 @@ public class ProtectEntityEvent {
 
     @SubscribeEvent
     public static void protectEntityQuest(TickEvent.PlayerTickEvent e) throws IOException {
-        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide)
-            return;
-
+        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.side.isClient()) return;
         List<Path> protectEntityQuests = LocateHash.getQuestTypeLocation(PROTECT_ENTITY);
+
         if (protectEntityQuests == null) return;
 
         for (Path path : protectEntityQuests) {
             UserQuest userQuest = (UserQuest) GsonManager.getJson(path.toFile(), UserQuest.class);
-            if (userQuest != null && userQuest.isCompleted()) return;
+            if (userQuest != null && userQuest.isCompleted()) continue;
 
-            protectEntity(userQuest, e.player);
+            protectEntity(userQuest, (ServerPlayer) e.player);
         }
     }
 
-    public static void protectEntity(UserQuest playerQuest, Player player) {
-        if (playerQuest != null &&
-                playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString()) &&
-                !playerQuest.getQuest_target().contains("entity") &&
-                Timer.canUseWithCooldown(player.getUUID(), playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
+    public static void protectEntity(UserQuest playerQuest, ServerPlayer player) throws IOException {
+        if (playerQuest != null && playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString()) && !playerQuest.getQuest_target().contains("entity") && Timer.canUseWithCooldown(player.getUUID(), playerQuest.getId(), playerQuest.getTimeLimitInSeconds())) {
 
-            SendQuestPacket.TO_SERVER(new QuestDataPacket(PROTECT_ENTITY));
+            ServerHandler.questHandler(PROTECT_ENTITY, player, null);
         }
     }
 }

@@ -46,6 +46,7 @@ public class CompleteQuest {
             if (activeQuestFile.exists()) {
                 UserQuest playerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
+                if(playerQuest == null) continue;
                 SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
             }
         }

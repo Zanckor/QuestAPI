@@ -6,7 +6,6 @@ import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.network.ClientHandler;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.RequestQuestTracked;
 import dev.zanckor.mod.common.util.MCUtilClient;
@@ -20,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+
+import static dev.zanckor.mod.common.network.ClientHandler.*;
 
 public class QuestLog extends Screen {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
@@ -53,48 +54,37 @@ public class QuestLog extends Screen {
         xScreenPos = width - (imageWidth);
         yScreenPos = (double) height / 4;
 
-
         float scale = ((float) width) / 575;
-
         int buttonIndent = 16;
         int maxLength = 22 * 5;
         float splitIndent = 0;
-
-        HashMap<Integer, Integer> displayedButton = new HashMap<>();
-
         int xButtonPosition = (int) (xScreenPos - (imageWidth / 2.4));
         int yButtonPosition = (int) (yScreenPos * 1.6);
 
+        HashMap<Integer, Integer> displayedButton = new HashMap<>();
+
+
         for (int i = 0; i < quest.size(); i++) {
-            if (questSearch != null && !questSearch.isEmpty()) {
-                if (!quest.get(i).getValue().toLowerCase().contains(questSearch.toLowerCase())) {
-                    continue;
-                }
-            }
+            if (questSearch != null && !questSearch.isEmpty() && !quest.get(i).getValue().toLowerCase().contains(questSearch.toLowerCase()))
+                continue;
 
             if (displayedButton.size() < 4 && quest.size() > (i + (4 * selectedPage))) {
                 int buttonIndex = i + (4 * selectedPage);
-
                 int textLines = (quest.get(buttonIndex).getValue().length() * 5) / maxLength;
                 int yButtonIndent = (int) (((8 * (textLines + 1)) * displayedButton.size() * scale) + splitIndent);
-
                 int buttonWidth = textLines < 1 ? (int) (quest.get(buttonIndex).getValue().length() * 5 * scale) : (int) (maxLength * scale);
 
-                Button questSelect = new Button(xButtonPosition, yButtonPosition + yButtonIndent, buttonWidth, height / 40 * (textLines + 1), Component.literal(""),
-                        button -> SendQuestPacket.TO_SERVER(new RequestQuestTracked(quest.get(buttonIndex).getKey())));
+                Button questSelect = new Button(xButtonPosition, yButtonPosition + yButtonIndent, buttonWidth, height / 40 * (textLines + 1), Component.literal(""), button -> SendQuestPacket.TO_SERVER(new RequestQuestTracked(quest.get(buttonIndex).getKey())));
 
+                if (displayedButton.size() > 0) {
+                    int prevButton = displayedButton.get(displayedButton.size());
 
-                if (displayedButton.get(displayedButton.size()) != null) {
-                    int lastButton = displayedButton.get(displayedButton.size());
-
-
-                    if (textLines == 1 && ((quest.get(lastButton).getValue().length() * 5) / maxLength) == 0) {
-                        questSelect.y -= height / 40 * (textLines + 1);
-                        yButtonPosition -= height / 40 * (textLines + 1);
+                    if (textLines == 1 && ((quest.get(prevButton).getValue().length() * 5) / maxLength) == 0) {
+                        questSelect.y -= height / 80 * (textLines + 1);
+                        yButtonPosition -= (height / 80) / 8 * (textLines + 1);
                     }
 
-
-                    if (textLines == 0 && ((quest.get(lastButton).getValue().length() * 5) / maxLength) == 1) {
+                    if (textLines == 0 && ((quest.get(prevButton).getValue().length() * 5) / maxLength) == 1) {
                         questSelect.y += (buttonIndent / 2) * scale;
                         splitIndent += (buttonIndent / 2) * scale;
                     }
@@ -108,7 +98,6 @@ public class QuestLog extends Screen {
         }
 
 
-
         Button prevPage = new Button((int) (xScreenPos - (imageWidth / 8.5)), (int) (yScreenPos + imageHeight * 0.69), width / 65, width / 65, Component.literal(""), button -> {
             if (selectedPage > 0) {
                 selectedPage--;
@@ -116,7 +105,6 @@ public class QuestLog extends Screen {
                 init();
             }
         });
-
         Button nextPage = new Button((int) (xScreenPos - (imageWidth / 17)), (int) (yScreenPos + imageHeight * 0.69), width / 65, width / 65, Component.literal(""), button -> {
             if (selectedPage + 1 < Math.ceil(quest.size()) / 4) {
                 selectedPage++;
@@ -125,24 +113,21 @@ public class QuestLog extends Screen {
             }
         });
 
-        textButton = new EditBox(font,
-                (int) (xScreenPos - (imageWidth / 2.4)), (int) (yScreenPos + imageHeight * 0.68),
-                width / 8, 10,
-                Component.literal(""));
-
+        textButton = new EditBox(font, (int) (xScreenPos - (imageWidth / 2.4)), (int) (yScreenPos + imageHeight * 0.68), width / 8, 10, Component.literal(""));
 
         addRenderableWidget(textButton);
-
-        textButton.setValue(textButton.getValue());
-
         addWidget(prevPage);
         addWidget(nextPage);
-    }
 
+        textButton.setValue(textButton.getValue());
+    }
 
 
     @Override
     public void render(@NotNull PoseStack poseStack, int x, int y, float partialTicks) {
+        clearWidgets();
+        init();
+
         Minecraft.getInstance().getProfiler().push("background");
 
         RenderSystem.setShaderTexture(0, QUEST_LOG);
@@ -173,7 +158,7 @@ public class QuestLog extends Screen {
         List<String> questList = new ArrayList<>();
         int displayedButton = 0;
 
-        if (ClientHandler.trackedID != null) {
+        if (trackedID != null) {
 
             for (int i = 0; i < quest.size(); i++) {
                 if (questSearch != null && !questSearch.isEmpty()) {
@@ -197,22 +182,21 @@ public class QuestLog extends Screen {
     public void renderQuestData(PoseStack poseStack) {
         questData.clear();
 
-        if (ClientHandler.trackedID != null) {
-            questData.add("Type: " + ClientHandler.trackedQuest_type.substring(0, 1).toUpperCase() + ClientHandler.trackedQuest_type.substring(1).toLowerCase());
+        if (!trackedID.isEmpty()) {
+            questData.add("Type: " + trackedQuest_type.substring(0, 1).toUpperCase() + trackedQuest_type.substring(1).toLowerCase());
 
-            for (int i = 0; i < ClientHandler.trackedQuest_target.size(); i++) {
-                AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(ClientHandler.trackedQuest_type));
+            for (int i = 0; i < trackedQuest_target.size(); i++) {
+                AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(trackedQuest_type));
 
                 if (targetType != null) {
-                    String translationKey = targetType.handler(new ResourceLocation(ClientHandler.trackedQuest_target.get(i)), Minecraft.getInstance().level);
-                    questData.add(I18n.get(translationKey) + ": " + ClientHandler.trackedTarget_current_quantity.get(i) + "/" + ClientHandler.trackedTarget_quantity.get(i));
+                    String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)));
+                    questData.add(I18n.get(translationKey) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
                 } else {
-                    questData.add(ClientHandler.trackedQuest_target.get(i) + ": " + ClientHandler.trackedTarget_current_quantity.get(i) + "/" + ClientHandler.trackedTarget_quantity.get(i));
+                    questData.add(trackedQuest_target.get(i) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
                 }
             }
 
-            if (ClientHandler.trackedHasTimeLimit)
-                questData.add("Time limit: " + ClientHandler.trackedTimeLimitInSeconds);
+            if (trackedHasTimeLimit) questData.add("Time limit: " + trackedTimeLimitInSeconds);
 
 
             MCUtilClient.renderText(poseStack, xScreenPos + (imageWidth / 20), yScreenPos * 1.6, 20, ((float) width) / 700, 28, questData, font);

@@ -7,6 +7,7 @@ import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractReward;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.example.common.entity.NpcTypes;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
@@ -24,10 +25,13 @@ import dev.zanckor.example.common.handler.questtype.*;
 import dev.zanckor.example.common.handler.targettype.EntityTargetType;
 import dev.zanckor.example.common.handler.targettype.EntityUUIDTargetType;
 import dev.zanckor.example.common.handler.targettype.ItemTargetType;
-import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.mod.client.screen.dialog.DialogScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import static dev.zanckor.mod.QuestApiMain.MOD_ID;
@@ -42,7 +46,6 @@ public class ModExample {
         registerRequirement();
         registerDialog();
         registerTarget();
-        registerScreen();
     }
 
 
@@ -91,7 +94,13 @@ public class ModExample {
         TemplateRegistry.registerTargetType(EnumQuestType.INTERACT_ENTITY, new EntityTargetType());
     }
 
-    public static void registerScreen() {
-        ScreenRegistry.registerDialogScreen(MOD_ID, new DialogScreen(Component.literal("dialog_screen")));
+
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModExample {
+
+        @SubscribeEvent
+        public static void registerScreen(FMLClientSetupEvent e) {
+            ScreenRegistry.registerDialogScreen(MOD_ID, new DialogScreen(Component.literal("dialog_screen")));
+        }
     }
 }

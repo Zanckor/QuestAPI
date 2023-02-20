@@ -9,6 +9,7 @@ import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.network.message.screen.RemovedQuest;

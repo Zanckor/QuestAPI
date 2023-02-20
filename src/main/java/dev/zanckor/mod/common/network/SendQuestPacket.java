@@ -24,8 +24,6 @@ public class SendQuestPacket {
     }
 
     public static void TO_SERVER(Object packet) {
-        if(net.minecraft.client.Minecraft.getInstance().getConnection() == null) return;
-
         QuestNetworkHandler.CHANNEL.sendToServer(packet);
     }
 

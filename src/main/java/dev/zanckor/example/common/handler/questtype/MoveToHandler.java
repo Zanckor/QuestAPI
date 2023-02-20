@@ -6,6 +6,7 @@ import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.File;
@@ -14,7 +15,7 @@ import java.io.IOException;
 
 public class MoveToHandler extends AbstractQuest {
 
-    public void handler(Player player, Gson gson, File file, UserQuest playerQuest) throws IOException {
+    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest) throws IOException {
         UserQuest moveToPlayerQuest;
 
         for (int i = 0; i < 3; i++) {

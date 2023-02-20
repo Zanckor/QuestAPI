@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 public class EntityTargetType extends AbstractTargetType {
 
     @Override
-    public String handler(ResourceLocation resourceLocation, Level level) {
+    public String handler(ResourceLocation resourceLocation) {
         String translationKey = resourceLocation.getPath();
 
         return translationKey;

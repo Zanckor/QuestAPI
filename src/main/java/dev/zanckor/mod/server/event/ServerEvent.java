@@ -27,6 +27,10 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEvent {
 
+    /*
+     * TODO: Add auto-save quest's timer so on logout it wont lose the quest, jut will freeze the timer.
+     */
+
     @SubscribeEvent
     public static void questWithTimer(TickEvent.PlayerTickEvent e) throws IOException {
         if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide)
@@ -76,17 +80,19 @@ public class ServerEvent {
         for (File file : activeQuest.toFile().listFiles()) {
             UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
-            if (userQuest != null && userQuest.hasTimeLimit() || questWithTimer.contains(EnumQuestType.valueOf(userQuest.getQuest_type()))) {
-                FileWriter writer = new FileWriter(file);
-                userQuest.setCompleted(true);
+            if (userQuest != null && userQuest.hasTimeLimit()) {
+                if (questWithTimer.contains(EnumQuestType.valueOf(userQuest.getQuest_type()))) {
+                    FileWriter writer = new FileWriter(file);
+                    userQuest.setCompleted(true);
 
-                GsonManager.gson().toJson(userQuest, writer);
-                writer.close();
+                    GsonManager.gson().toJson(userQuest, writer);
+                    writer.close();
 
-                Path uncompletedPath = Paths.get(uncompletedQuest.toString(), file.getName());
+                    Path uncompletedPath = Paths.get(uncompletedQuest.toString(), file.getName());
 
-                Files.move(file.toPath(), uncompletedPath);
-                LocateHash.movePathQuest(userQuest.getId(), uncompletedPath, EnumQuestType.valueOf(userQuest.getQuest_type()));
+                    Files.move(file.toPath(), uncompletedPath);
+                    LocateHash.movePathQuest(userQuest.getId(), uncompletedPath, EnumQuestType.valueOf(userQuest.getQuest_type()));
+                }
             }
         }
     }
