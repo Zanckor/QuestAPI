@@ -14,16 +14,18 @@
   ],
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,
-  "requirements_type": "XP",
-  "requirements_min": 30,
-  "requirements_max": 40,
-  "reward_type": "ITEM",
-  "reward": [
-    "minecraft:coal",
-    "minecraft:gold_ingot"
+  "requirements": [
+    {
+      "type": "XP",
+      "requirements_min": 40,
+      "requirements_max": 50
+    }
   ],
-  "reward_quantity": [
-    64,
-    16
+  "rewards": [
+    {
+      "type": "ITEM",
+      "tag": "minecraft:coal",
+      "amount": 64
+    }
   ]
 }

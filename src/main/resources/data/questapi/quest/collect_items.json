@@ -1,27 +1,27 @@
 {
   "id": "recollect_items",
   "title": "Recollect items",
-  "quest_type": "RECOLLECT",
-  "quest_target": [
-    "minecraft:iron_ingot",
-    "minecraft:gold_ingot"
+  "goals": [
+    {
+      "type": "RECOLLECT",
+      "target": "minecraft:iron_ingot",
+      "amount": 1
+    }
   ],
-  "target_quantity": [
-    1,
-    2
+  "requirements": [
+    {
+      "type": "XP",
+      "requirements_min": 0,
+      "requirements_max": 10
+    }
+  ],
+  "rewards": [
+    {
+      "type": "ITEM",
+      "tag": "minecraft:coal",
+      "amount": 64
+    }
   ],
   "hasTimeLimit": false,
-  "timeLimitInSeconds": 0,
-  "requirements_type": "XP",
-  "requirements_min": 0,
-  "requirements_max": 10,
-  "reward_type": "ITEM",
-  "reward": [
-    "minecraft:coal",
-    "minecraft:gold_ingot"
-  ],
-  "reward_quantity": [
-    64,
-    16
-  ]
+  "timeLimitInSeconds": 0
 }
