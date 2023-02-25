@@ -20,6 +20,11 @@
       "type": "ITEM",
       "tag": "minecraft:coal",
       "amount": 64
+    },
+    {
+      "type": "ITEM",
+      "tag": "minecraft:iron_ingot",
+      "amount": 64
     }
   ],
   "hasTimeLimit": false,

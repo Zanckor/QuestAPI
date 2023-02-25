@@ -26,7 +26,6 @@ public class ProtectEntityHandler extends AbstractQuest {
     public void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest) throws IOException {
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
         Path uncompletedQuest = Paths.get(userFolder.toString(), "uncompleted-quests");
-
         UUID entityUUID = UUID.fromString(playerQuest.getQuest_target().get(0));
         Entity entityByUUID = player.getServer().overworld().getEntity(entityUUID);
 

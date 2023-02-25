@@ -15,25 +15,24 @@ import java.io.IOException;
 
 public class InteractEntityHandler extends AbstractQuest {
 
-    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest) throws IOException {
-        UserQuest interactPlayerQuest;
+    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest userQuest) throws IOException {
 
-        for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
-            interactPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        for (int targetIndex = 0; targetIndex < userQuest.getQuest_target().size(); targetIndex++) {
+            userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
-            if (interactPlayerQuest.getQuest_target().get(targetIndex).equals(entity.getType().getDescriptionId())
-                    && interactPlayerQuest.getTarget_current_quantity().get(targetIndex) < interactPlayerQuest.getTarget_quantity().get(targetIndex)) {
+            //Checks if interacted entity equals to target and if it is, checks if current progress is more than target amount
+            if (!(userQuest.getQuest_target().get(targetIndex).equals(entity.getType().getDescriptionId())) || userQuest.getTarget_current_quantity().get(targetIndex) >= userQuest.getTarget_quantity().get(targetIndex))
+                continue;
 
-                FileWriter interactWriter = new FileWriter(file);
-                gson.toJson(interactPlayerQuest.incrementProgress(interactPlayerQuest, targetIndex), interactWriter);
-                interactWriter.flush();
-                interactWriter.close();
-            }
+            FileWriter interactWriter = new FileWriter(file);
+            gson.toJson(userQuest.incrementProgress(userQuest, targetIndex), interactWriter);
+            interactWriter.flush();
+            interactWriter.close();
         }
 
-        interactPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(interactPlayerQuest));
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

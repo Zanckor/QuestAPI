@@ -2,12 +2,12 @@ package dev.zanckor.example.common.handler.questtype;
 
 import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractReward;
+import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.quest.ToastPacket;
 import dev.zanckor.mod.common.network.message.screen.QuestTracked;
@@ -28,50 +28,49 @@ public class CompleteQuest {
 
     public static void completeQuest(Player player, Gson gson, File file) throws IOException {
         Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
-        UserQuest modifiedPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
+        if (!(userQuest.getTarget_current_quantity().equals(userQuest.getTarget_quantity()))) return;
 
-        if (modifiedPlayerQuest.getTarget_current_quantity().equals(modifiedPlayerQuest.getTarget_quantity())) {
-            FileWriter completeQuestWriter = new FileWriter(file);
-            modifiedPlayerQuest.setCompleted(true);
-            gson.toJson(modifiedPlayerQuest, completeQuestWriter);
+        //Changes quest to completed
+        FileWriter writer = new FileWriter(file);
+        userQuest.setCompleted(true);
+        gson.toJson(userQuest, writer);
+        writer.close();
 
-            completeQuestWriter.close();
-            giveReward(player, modifiedPlayerQuest, gson, file, userFolder);
-
-            SendQuestPacket.TO_CLIENT(player, new ToastPacket(modifiedPlayerQuest.getTitle()));
-        }
-
+        //Changes tracked quest to next available
         for (File activeQuestFile : getActiveQuest(userFolder).toFile().listFiles()) {
-            if (activeQuestFile.exists()) {
-                UserQuest playerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+            if (!(activeQuestFile.exists())) return;
+            UserQuest playerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
-                if(playerQuest == null) continue;
-                SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
-            }
+            if (playerQuest == null) continue;
+            SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
         }
+
+        giveReward(player, userQuest, gson, file, userFolder);
+        SendQuestPacket.TO_CLIENT(player, new ToastPacket(userQuest.getTitle()));
     }
 
 
-    public static void giveReward(Player player, UserQuest modifiedPlayerQuest, Gson gson, File file, Path userFolder) throws IOException {
-        String questName = modifiedPlayerQuest.getId() + ".json";
+    public static void giveReward(Player player, UserQuest userQuest, Gson gson, File file, Path userFolder) throws IOException {
+        if (!(userQuest.isCompleted())) return;
+        String questName = userQuest.getId() + ".json";
 
-        if (modifiedPlayerQuest.isCompleted()) {
-            for (File serverFile : serverQuests.toFile().listFiles()) {
-                if (serverFile.getName().equals(questName)) {
+        for (File serverFile : serverQuests.toFile().listFiles()) {
+            if (!(serverFile.getName().equals(questName))) return;
 
-                    FileReader serverQuestReader = new FileReader(serverFile);
-                    ServerQuest serverQuest = gson.fromJson(serverQuestReader, ServerQuest.class);
-                    AbstractReward reward = TemplateRegistry.getQuestReward(EnumQuestReward.valueOf(serverQuest.getReward_type()));
+            FileReader serverQuestReader = new FileReader(serverFile);
+            ServerQuest serverQuest = gson.fromJson(serverQuestReader, ServerQuest.class);
+            serverQuestReader.close();
 
-                    reward.handler(player, serverQuest);
-                    serverQuestReader.close();
-
-                    Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
-
-                    LocateHash.movePathQuest(modifiedPlayerQuest.getId(), Paths.get(getCompletedQuest(userFolder).toString(), questName), EnumQuestType.valueOf(modifiedPlayerQuest.getQuest_type()));
-                }
+            //Gives each reward to payer
+            for (int rewardIndex = 0; rewardIndex < serverQuest.getRewards().size(); rewardIndex++) {
+                AbstractReward reward = TemplateRegistry.getQuestReward(EnumQuestReward.valueOf(serverQuest.getRewards().get(rewardIndex).getType()));
+                reward.handler(player, serverQuest, rewardIndex);
             }
+
+            Files.move(file.toPath(), Paths.get(getCompletedQuest(userFolder).toString(), file.getName()));
+            LocateHash.movePathQuest(userQuest.getId(), Paths.get(getCompletedQuest(userFolder).toString(), questName), EnumQuestType.valueOf(userQuest.getQuest_type()));
         }
     }
 }

@@ -3,13 +3,12 @@ package dev.zanckor.mod.server.command;
 import com.google.gson.Gson;
 import com.mojang.brigadier.context.CommandContext;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
+import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
-import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.network.message.screen.RemovedQuest;
@@ -69,41 +68,42 @@ public class QuestCommand {
 
         if (Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getUncompletedQuest(userFolder).toString(), quest))) {
             context.getSource().sendFailure(Component.literal("Player " + player.getScoreboardName() + " with UUID " + playerUUID + " already completed/has this quest"));
-
             return 0;
         }
 
+
         for (File file : serverQuests.toFile().listFiles()) {
+            if (!(file.getName().equals(quest))) return 0;
             Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
+            ServerQuest serverQuest = (ServerQuest) GsonManager.getJson(file, ServerQuest.class);
 
-            if (file.getName().equals(quest)) {
-                ServerQuest serverQuest = (ServerQuest) GsonManager.getJson(file, ServerQuest.class);
-                AbstractQuestRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
+            //Checks if player has all requirements
+            for (int requirementIndex = 0; requirementIndex < serverQuest.getRequirements().size(); requirementIndex++) {
+                AbstractQuestRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements().get(requirementIndex).getType()));
 
-                if (!requirement.handler(player, serverQuest)) {
+                if (!requirement.handler(player, serverQuest, requirementIndex)) {
                     return 0;
                 }
-
-                FileWriter writer = new FileWriter(path.toFile());
-                UserQuest playerQuest = UserQuest.createQuest(serverQuest, path);
-                GsonManager.gson().toJson(playerQuest, writer);
-                writer.close();
-
-                if (playerQuest.hasTimeLimit()) {
-                    Timer.updateCooldown(playerUUID, questID, playerQuest.getTimeLimitInSeconds());
-                }
-
-                if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {
-                    protectEntityQuest(playerQuest, level, player, serverQuest, path, GsonManager.gson(), questID);
-                }
-
-                LocateHash.registerQuestByID(questID, path);
-                trackedQuest(context, playerUUID, questID);
-                return 1;
             }
+
+            FileWriter writer = new FileWriter(path.toFile());
+            UserQuest playerQuest = UserQuest.createQuest(serverQuest, path);
+            GsonManager.gson().toJson(playerQuest, writer);
+            writer.close();
+
+            if (playerQuest.hasTimeLimit()) {
+                Timer.updateCooldown(playerUUID, questID, playerQuest.getTimeLimitInSeconds());
+            }
+            if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {
+                protectEntityQuest(playerQuest, level, player, serverQuest, path, GsonManager.gson(), questID);
+            }
+
+            LocateHash.registerQuestByID(questID, path);
+            trackedQuest(context, playerUUID, questID);
+            return 1;
         }
 
-        return 1;
+        return 0;
     }
 
     private static int protectEntityQuest(UserQuest playerQuest, ServerLevel level, Player player, ServerQuest serverQuest, Path path, Gson gson, String questID) throws IOException {

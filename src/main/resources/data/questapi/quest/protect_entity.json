@@ -1,12 +1,12 @@
 {
   "id": "protect_entity",
   "title": "Protect entity",
-  "quest_type": "PROTECT_ENTITY",
-  "quest_target": [
-    "entity.minecraft.pig"
-  ],
-  "target_quantity": [
-    1
+  "goals": [
+    {
+      "type": "PROTECT_ENTITY",
+      "target": "entity.minecraft.pig",
+      "amount": 1
+    }
   ],
   "hasTimeLimit": false,
   "timeLimitInSeconds": 5,

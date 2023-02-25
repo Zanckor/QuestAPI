@@ -9,21 +9,20 @@ public class ServerQuest extends FileAbstract {
     private String title;
     private boolean hasTimeLimit;
     private int timeLimitInSeconds;
-
     private List<QuestGoal> goals;
     private List<Reward> rewards;
     private List<Requirement> requirements;
 
-    public static ServerQuest createQuest(String id, String title, Enum quest_type, List<String> quest_target, List<Integer> target_quantity, boolean hasTimeLimit, int timeLimitInSeconds, List<QuestGoal> goals, List<Requirement> requirements, List<Reward> rewards) {
+    public static ServerQuest createQuest(String id, String title, List<QuestGoal> questGoal, boolean hasTimeLimit, int timeLimitInSeconds, List<Requirement> requirements, List<Reward> rewards) {
         ServerQuest questTemplate = new ServerQuest();
 
         questTemplate.setId(id);
         questTemplate.setTitle(title);
         questTemplate.setHasTimeLimit(hasTimeLimit);
         questTemplate.setTimeLimitInSeconds(timeLimitInSeconds);
-        questTemplate.setGoalList(goals);
         questTemplate.setRequirements(requirements);
-        questTemplate.setRewardTypeList(rewards);
+        questTemplate.setRewards(rewards);
+        questTemplate.setGoalList(questGoal);
 
         return questTemplate;
     }
@@ -55,10 +54,6 @@ public class ServerQuest extends FileAbstract {
 
         public void setAmount(Integer amount) {
             this.amount = amount;
-        }
-
-        public void incrementAmount(Integer amount){
-            this.amount += amount;
         }
     }
 
@@ -162,11 +157,11 @@ public class ServerQuest extends FileAbstract {
         this.goals = goal;
     }
 
-    public List<Reward> getRewardTypeList() {
+    public List<Reward> getRewards() {
         return rewards;
     }
 
-    public void setRewardTypeList(List<Reward> rewards) {
+    public void setRewards(List<Reward> rewards) {
         this.rewards = rewards;
     }
 

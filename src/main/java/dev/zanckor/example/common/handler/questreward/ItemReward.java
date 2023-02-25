@@ -1,7 +1,7 @@
 package dev.zanckor.example.common.handler.questreward;
 
-import dev.zanckor.api.filemanager.quest.abstracquest.AbstractReward;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.api.filemanager.quest.abstracquest.AbstractReward;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -16,22 +16,21 @@ public class ItemReward extends AbstractReward {
     /**
      * Type of reward, gives player whatever item is set on quest.json as reward
      *
-     * @param player        The player
-     * @param serverQuest   ServerQuestBase with global quest data
-     * @throws IOException      Exception fired when server cannot read json file
+     * @param player      The player
+     * @param serverQuest ServerQuestBase with global quest data
+     * @param rewardIndex
+     * @throws IOException Exception fired when server cannot read json file
      * @see EnumQuestReward Reward types
      */
 
     @Override
-    public void handler(Player player, ServerQuest serverQuest) throws IOException {
-        for (int rewardIndex = 0; rewardIndex < serverQuest.getReward().size(); rewardIndex++) {
-            String valueItem = serverQuest.getReward().get(rewardIndex);
-            int quantity = serverQuest.getReward_quantity().get(rewardIndex);
+    public void handler(Player player, ServerQuest serverQuest, int rewardIndex) throws IOException {
+        String valueItem = serverQuest.getRewards().get(rewardIndex).getTag();
+        int quantity = serverQuest.getRewards().get(rewardIndex).getAmount();
 
-            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
-            ItemStack stack = new ItemStack(item, quantity);
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
+        ItemStack stack = new ItemStack(item, quantity);
 
-            player.addItem(stack);
-        }
+        player.addItem(stack);
     }
 }

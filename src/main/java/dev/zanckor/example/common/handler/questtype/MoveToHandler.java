@@ -15,21 +15,21 @@ import java.io.IOException;
 
 public class MoveToHandler extends AbstractQuest {
 
-    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest) throws IOException {
-        UserQuest moveToPlayerQuest;
+    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest userQuest) throws IOException {
 
         for (int i = 0; i < 3; i++) {
-            moveToPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+            userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
             FileWriter moveToCoordWriter = new FileWriter(file);
-            gson.toJson(playerQuest.setProgress(moveToPlayerQuest, i, 1), moveToCoordWriter);
+            gson.toJson(userQuest.setProgress(userQuest, i, 1), moveToCoordWriter);
             moveToCoordWriter.flush();
             moveToCoordWriter.close();
 
         }
-        moveToPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(moveToPlayerQuest));
+        userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

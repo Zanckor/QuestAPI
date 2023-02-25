@@ -12,7 +12,6 @@ public class EntityUUIDTargetType extends AbstractTargetType {
     @Override
     public String handler(ResourceLocation resourceLocation) {
         LivingEntity entity = (LivingEntity) MCUtilClient.getEntityByUUID(UUID.fromString(resourceLocation.getPath()));
-
         String translationKey = entity != null ? entity.getType().getDescriptionId() : "";
 
         return translationKey;

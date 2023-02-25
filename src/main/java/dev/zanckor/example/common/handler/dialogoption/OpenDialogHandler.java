@@ -25,9 +25,7 @@ public class OpenDialogHandler extends AbstractDialogOption {
     @Override
     public void handler(Player player, ServerDialog dialog, int option_id, Entity npc) throws IOException {
         int currentDialog = LocateHash.currentDialog.get(player);
-
         ServerDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
-
 
         if (option.getType().equals(EnumOptionType.OPEN_DIALOG.toString())) {
             SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, dialog.getIdentifier(), option.getDialog(), player, npc));

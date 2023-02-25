@@ -15,7 +15,7 @@ import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.CloseDialog;
 import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
-import dev.zanckor.mod.common.util.MCUtilClient;
+import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -29,7 +29,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -56,59 +55,56 @@ public class AddQuestHandler extends AbstractDialogOption {
         int currentDialog = LocateHash.currentDialog.get(player);
         ServerDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
         String quest = option.getQuest_id() + ".json";
-
-
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
-        if (option.getType().equals(EnumOptionType.ADD_QUEST.toString())) {
-            if (Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getUncompletedQuest(userFolder).toString(), quest))) {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);
-
-                return;
-            }
-
-
-            for (File file : serverQuests.toFile().listFiles()) {
-                Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
-
-                if (file.getName().equals(quest)) {
-                    ServerQuest serverQuest = (ServerQuest) GsonManager.getJson(file, ServerQuest.class);
-                    AbstractQuestRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements_type()));
-
-                    if (!requirement.handler(player, serverQuest)) {
-                        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);
-                        return;
-                    }
+        if (!(option.getType().equals(EnumOptionType.ADD_QUEST.toString()))) return;
+        if (MCUtil.hasQuest(quest, userFolder)) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);
+            return;
+        }
 
 
-                    FileWriter writer = new FileWriter(path.toFile());
-                    UserQuest playerQuest = UserQuest.createQuest(serverQuest, path);
-                    GsonManager.gson().toJson(playerQuest, writer);
-                    writer.close();
+        for (File file : serverQuests.toFile().listFiles()) {
+            if (!(file.getName().equals(quest))) return;
 
-                    if (playerQuest.hasTimeLimit()) {
-                        Timer.updateCooldown(player.getUUID(), option.getQuest_id(), playerQuest.getTimeLimitInSeconds());
-                    }
+            Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
+            ServerQuest serverQuest = (ServerQuest) GsonManager.getJson(file, ServerQuest.class);
 
-                    if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {
-                        protectEntityQuest(playerQuest, player.level, player, serverQuest, path, GsonManager.gson(), option.getQuest_id());
-                    }
+            //Checks all quest requirements and return if player hasn't any requirement
+            for (int requirementIndex = 0; requirementIndex < serverQuest.getRequirements().size(); requirementIndex++) {
+                AbstractQuestRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements().get(requirementIndex).getType()));
 
-                    LocateHash.registerQuestByID(option.getQuest_id(), path);
-
-                    UserQuest userQuest = (UserQuest) GsonManager.getJson(path.toFile(), UserQuest.class);
-                    SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
-
-                    break;
+                if (!requirement.handler(player, serverQuest, requirementIndex)) {
+                    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);
+                    return;
                 }
             }
+
+            FileWriter writer = new FileWriter(path.toFile());
+            UserQuest playerQuest = UserQuest.createQuest(serverQuest, path);
+            GsonManager.gson().toJson(playerQuest, writer);
+            writer.close();
+
+            if (playerQuest.hasTimeLimit()) {
+                Timer.updateCooldown(player.getUUID(), option.getQuest_id(), playerQuest.getTimeLimitInSeconds());
+            }
+            if (playerQuest.getQuest_type().equals(PROTECT_ENTITY.toString())) {
+                addProtectEntity(playerQuest, player.level, player, serverQuest, path, GsonManager.gson(), option.getQuest_id());
+            }
+
+            LocateHash.registerQuestByID(option.getQuest_id(), path);
+
+            UserQuest userQuest = (UserQuest) GsonManager.getJson(path.toFile(), UserQuest.class);
+            SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
+
+            break;
         }
 
         SendQuestPacket.TO_CLIENT(player, new CloseDialog());
     }
 
 
-    private static void protectEntityQuest(UserQuest playerQuest, Level level, Player player, ServerQuest serverQuest, Path path, Gson gson, String questID) throws IOException {
+    private static void addProtectEntity(UserQuest playerQuest, Level level, Player player, ServerQuest serverQuest, Path path, Gson gson, String questID) throws IOException {
         EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(playerQuest.getQuest_target().get(0)));
         UUID playerUUID = player.getUUID();
 

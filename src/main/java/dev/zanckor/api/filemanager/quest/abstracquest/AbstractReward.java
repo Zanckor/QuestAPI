@@ -11,12 +11,14 @@ public abstract class AbstractReward {
 
     /**
      * Abstract class to call a registered quest type handler
-     * @see EnumQuestRequirement Types of rewards gave on complete a quest
-     * @see ModExample Main class where you should register reward's types
+     *
      * @param player        The player
      * @param questTemplate ServerQuestBase with global quest data
+     * @param rewardIndex
      * @throws IOException
+     * @see EnumQuestRequirement Types of rewards gave on complete a quest
+     * @see ModExample Main class where you should register reward's types
      */
 
-    public abstract void handler(Player player, ServerQuest questTemplate) throws IOException;
+    public abstract void handler(Player player, ServerQuest questTemplate, int rewardIndex) throws IOException;
 }

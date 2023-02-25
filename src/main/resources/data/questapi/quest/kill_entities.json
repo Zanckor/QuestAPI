@@ -1,14 +1,12 @@
 {
   "id": "kill_entities",
   "title": "Kill entities",
-  "quest_type": "KILL",
-  "quest_target": [
-    "entity.minecraft.pig",
-    "entity.minecraft.cow"
-  ],
-  "target_quantity": [
-    1,
-    2
+  "goals": [
+    {
+      "type": "KILL",
+      "target": "entity.minecraft.pig",
+      "amount": 1
+    }
   ],
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,

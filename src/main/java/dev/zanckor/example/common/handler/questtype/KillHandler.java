@@ -15,25 +15,25 @@ import java.io.IOException;
 
 public class KillHandler extends AbstractQuest {
 
-    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest) throws IOException {
-        UserQuest killPlayerQuest;
+    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest userQuest) throws IOException {
 
-        for (int targetIndex = 0; targetIndex < playerQuest.getQuest_target().size(); targetIndex++) {
-            killPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        for (int targetIndex = 0; targetIndex < userQuest.getQuest_target().size(); targetIndex++) {
+            userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
-            if (killPlayerQuest.getTarget_current_quantity().get(targetIndex) >= killPlayerQuest.getTarget_quantity().get(targetIndex) || !(killPlayerQuest.getQuest_target().get(targetIndex).equals(entity.getType().getDescriptionId()))) {
+            //Checks if killed entity equals to target and if it is, checks if current progress is more than target amount
+            if (userQuest.getTarget_current_quantity().get(targetIndex) >= userQuest.getTarget_quantity().get(targetIndex) || !(userQuest.getQuest_target().get(targetIndex).equals(entity.getType().getDescriptionId()))) {
                 continue;
             }
 
             FileWriter killWriter = new FileWriter(file);
-            gson.toJson(killPlayerQuest.incrementProgress(killPlayerQuest, targetIndex), killWriter);
+            gson.toJson(userQuest.incrementProgress(userQuest, targetIndex), killWriter);
             killWriter.flush();
             killWriter.close();
         }
 
-        killPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(killPlayerQuest));
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

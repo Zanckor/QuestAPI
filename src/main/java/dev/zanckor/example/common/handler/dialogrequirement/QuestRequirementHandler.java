@@ -32,53 +32,47 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
     @Override
     public boolean handler(Player player, ServerDialog dialog, int option_id, Entity npc) throws IOException {
         if (player.level.isClientSide) return false;
+        ServerDialog.DialogRequirement requirement = dialog.getDialog().get(option_id).getRequirements();
+        String requirementType = requirement.getType();
+        if (!(requirementType.equals(EnumRequirementType.QUEST.toString()))) return false;
 
-        EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(dialog.getDialog().get(option_id).getRequirements().getRequirement_status());
-        String requirement = dialog.getDialog().get(option_id).getRequirements().getType();
-        Path questPath = LocateHash.getQuestByID(dialog.getDialog().get(option_id).getRequirements().getQuestId());
-
+        EnumRequirementStatusType requirementStatus = EnumRequirementStatusType.valueOf(requirement.getRequirement_status());
+        Path questPath = LocateHash.getQuestByID(requirement.getQuestId());
         File questFile;
-        UserQuest playerQuest = null;
+        UserQuest playerQuest;
 
-        if (requirement.equals(EnumRequirementType.QUEST.toString())) {
+        if (questPath == null) {
+            switch (requirementStatus) {
+                case NOT_OBTAINED -> {
+                    displayDialog(player, option_id, dialog, npc);
 
-            if (questPath != null) {
-                questFile = questPath.toFile();
+                    return true;
+                }
+            }
+        } else {
+            questFile = questPath.toFile();
+            playerQuest = questFile.exists() ? (UserQuest) GsonManager.getJson(questFile, UserQuest.class) : null;
 
-                if (questFile.exists()) {
-                    playerQuest = (UserQuest) GsonManager.getJson(questFile, UserQuest.class);
+            switch (requirementStatus) {
+                case IN_PROGRESS -> {
+                    if (questFile.exists() && !playerQuest.isCompleted()) {
+                        displayDialog(player, option_id, dialog, npc);
+
+                        return true;
+                    }
                 }
 
 
-                switch (requirementStatus) {
-                    case IN_PROGRESS -> {
-                        if (questFile.exists() && !playerQuest.isCompleted()) {
-                            displayDialog(player, option_id, dialog, npc);
+                case COMPLETED -> {
+                    if (questFile.exists() && playerQuest.isCompleted()) {
+                        displayDialog(player, option_id, dialog, npc);
 
-                            return true;
-                        }
-                    }
-
-
-                    case COMPLETED -> {
-                        if (questFile.exists() && playerQuest.isCompleted()) {
-                            displayDialog(player, option_id, dialog, npc);
-
-                            return true;
-                        }
-                    }
-
-                    case NOT_OBTAINED -> {
-                        if (!questFile.exists()) {
-                            displayDialog(player, option_id, dialog, npc);
-
-                            return true;
-                        }
+                        return true;
                     }
                 }
-            } else {
-                switch (requirementStatus) {
-                    case NOT_OBTAINED -> {
+
+                case NOT_OBTAINED -> {
+                    if (!questFile.exists()) {
                         displayDialog(player, option_id, dialog, npc);
 
                         return true;
