@@ -158,7 +158,7 @@ public class QuestLog extends Screen {
         List<String> questList = new ArrayList<>();
         int displayedButton = 0;
 
-        if (trackedID != null) {
+        if (questID != null) {
 
             for (int i = 0; i < quest.size(); i++) {
                 if (questSearch != null && !questSearch.isEmpty()) {
@@ -182,7 +182,8 @@ public class QuestLog extends Screen {
     public void renderQuestData(PoseStack poseStack) {
         questData.clear();
 
-        if (!trackedID.isEmpty()) {
+        /*
+        if (!questID.isEmpty()) {
             questData.add("Type: " + trackedQuest_type.substring(0, 1).toUpperCase() + trackedQuest_type.substring(1).toLowerCase());
 
             for (int i = 0; i < trackedQuest_target.size(); i++) {
@@ -196,11 +197,12 @@ public class QuestLog extends Screen {
                 }
             }
 
-            if (trackedHasTimeLimit) questData.add("Time limit: " + trackedTimeLimitInSeconds);
+            if (questHasTimeLimit) questData.add("Time limit: " + questTimeLimit);
 
 
             MCUtilClient.renderText(poseStack, xScreenPos + (imageWidth / 20), yScreenPos * 1.6, 20, ((float) width) / 700, 28, questData, font);
         }
+         */
     }
 
     @Override

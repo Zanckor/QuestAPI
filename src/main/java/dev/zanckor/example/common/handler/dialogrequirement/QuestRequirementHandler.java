@@ -51,7 +51,7 @@ public class QuestRequirementHandler extends AbstractDialogRequirement {
             }
         } else {
             questFile = questPath.toFile();
-            playerQuest = questFile.exists() ? (UserQuest) GsonManager.getJson(questFile, UserQuest.class) : null;
+            playerQuest = questFile.exists() ? (UserQuest) GsonManager.getJsonClass(questFile, UserQuest.class) : null;
 
             switch (requirementStatus) {
                 case IN_PROGRESS -> {

@@ -1,7 +1,8 @@
 package dev.zanckor.mod.common.network;
 
-import dev.zanckor.mod.QuestApiMain;
+import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.screen.ScreenRegistry;
+import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.client.screen.dialog.AbstractDialog;
 import dev.zanckor.mod.client.screen.questlog.QuestLog;
 import dev.zanckor.mod.common.util.MCUtilClient;
@@ -13,7 +14,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -21,14 +21,12 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class ClientHandler {
 
-    public static String trackedID;
-    public static String trackedTitle;
-    public static String trackedQuest_type;
-    public static boolean trackedQuest_completed;
-    public static List<String> trackedQuest_target = new ArrayList<>();
-    public static List<Integer> trackedTarget_quantity, trackedTarget_current_quantity = new ArrayList<>();
-    public static boolean trackedHasTimeLimit;
-    public static int trackedTimeLimitInSeconds;
+    public static UserQuest userQuest;
+    public static String questID;
+    public static String questTitle;
+    public static List<UserQuest.QuestGoal> questGoals;
+    public static boolean questHasTimeLimit;
+    public static int questTimeLimit;
 
 
     public static void toastQuestCompleted(String questName) {
@@ -52,21 +50,17 @@ public class ClientHandler {
     }
 
 
-    public static void questTracked(String id, String title, String quest_type, boolean quest_completed, List<String> quest_target, List<Integer> target_quantity, List<Integer> target_current_quantity, boolean hasTimeLimit, int timeLimitInSeconds) {
-        trackedID = id;
-        trackedTitle = title;
-        trackedQuest_type = quest_type;
-        trackedQuest_completed = quest_completed;
-        trackedQuest_target = quest_target;
-        trackedTarget_quantity = target_quantity;
-        trackedTarget_current_quantity = target_current_quantity;
-        trackedHasTimeLimit = hasTimeLimit;
+    public static void questTracked(UserQuest userQuest) {
+        ClientHandler.userQuest = userQuest;
 
+        questTitle = userQuest.getTitle();
+        questID = userQuest.getId();
+        questHasTimeLimit = userQuest.hasTimeLimit();
+        questTimeLimit = userQuest.getTimeLimitInSeconds();
+        questGoals = userQuest.getQuestGoals();
 
-        if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + id) && hasTimeLimit) {
-            trackedTimeLimitInSeconds = timeLimitInSeconds;
-
-            Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + id, trackedTimeLimitInSeconds);
+        if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + questID) && questHasTimeLimit) {
+            Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + questID, questTimeLimit);
         }
     }
 

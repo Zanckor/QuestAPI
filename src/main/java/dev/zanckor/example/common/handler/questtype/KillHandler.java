@@ -6,32 +6,35 @@ import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
+import net.minecraft.Util;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class KillHandler extends AbstractQuest {
 
-    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest userQuest) throws IOException {
+    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoals) throws IOException {
 
-        for (int targetIndex = 0; targetIndex < userQuest.getQuest_target().size(); targetIndex++) {
-            userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
+        UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
 
-            //Checks if killed entity equals to target and if it is, checks if current progress is more than target amount
-            if (userQuest.getTarget_current_quantity().get(targetIndex) >= userQuest.getTarget_quantity().get(targetIndex) || !(userQuest.getQuest_target().get(targetIndex).equals(entity.getType().getDescriptionId()))) {
-                continue;
-            }
+        //Checks if killed entity equals to target and if it is, checks if current progress is more than target amount
+        if (questGoal.getCurrentAmount() >= questGoal.getAmount() || !(questGoal.getTarget().equals(EntityType.getKey(entity.getType()).toString())))
+            return;
 
-            FileWriter killWriter = new FileWriter(file);
-            gson.toJson(userQuest.incrementProgress(userQuest, targetIndex), killWriter);
-            killWriter.flush();
-            killWriter.close();
-        }
+        questGoal.incrementCurrentAmount(1);
 
-        userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        FileWriter interactWriter = new FileWriter(file);
+        gson.toJson(userQuest, interactWriter);
+        interactWriter.flush();
+        interactWriter.close();
+
+        userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
         SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
         CompleteQuest.completeQuest(player, gson, file);

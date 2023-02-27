@@ -77,18 +77,26 @@ public class MCUtil {
     }
 
     public static BlockHitResult getHitResult(Level level, Player player, float multiplier) {
-        float f = player.getXRot();
-        float f1 = player.getYRot();
-        Vec3 vec3 = player.getEyePosition();
-        float f2 = Mth.cos(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
-        float f3 = Mth.sin(-f1 * ((float) Math.PI / 180F) - (float) Math.PI);
-        float f4 = -Mth.cos(-f * ((float) Math.PI / 180F));
-        float f5 = Mth.sin(-f * ((float) Math.PI / 180F));
-        float f6 = f3 * f4;
-        float f7 = f2 * f4;
-        double d0 = player.getReachDistance() * multiplier;
-        Vec3 vec31 = vec3.add((double) f6 * d0, (double) f5 * d0, (double) f7 * d0);
-        return level.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        //Base values
+        float xRot = player.getXRot();
+        float yRot = player.getYRot();
+        Vec3 eyePos = player.getEyePosition();
+
+        //Getting yRotation cos and sin
+        float yRotCos = Mth.cos(-yRot * ((float) Math.PI / 180F) - (float) Math.PI);
+        float yRotSin = Mth.sin(-yRot * ((float) Math.PI / 180F) - (float) Math.PI);
+
+        //Formula to convert float to degrees
+        float xCosDegrees = -Mth.cos((float) -Math.toDegrees(xRot));
+        float xSinDegrees = Mth.sin((float) -Math.toDegrees(xRot));
+        float yCosRotation = yRotCos * xCosDegrees;
+        float ySinRotation = yRotSin * xCosDegrees;
+
+        //Distance in blocks, multiplier is applied to player reach distance
+        double viewDistance = player.getReachDistance() * multiplier;
+
+        Vec3 lookingVector = eyePos.add((double) ySinRotation * viewDistance, (double) xSinDegrees * viewDistance, (double) yCosRotation * viewDistance);
+        return level.clip(new ClipContext(eyePos, lookingVector, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
     }
 
 

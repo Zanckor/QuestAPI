@@ -29,7 +29,7 @@ public class QuestList {
 
 
         for (File file : activeQuests) {
-            UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+            UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
             title.add(userQuest.getTitle());
             id.add(userQuest.getId());

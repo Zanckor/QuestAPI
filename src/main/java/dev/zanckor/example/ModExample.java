@@ -21,7 +21,10 @@ import dev.zanckor.example.common.handler.dialogrequirement.DialogRequirementHan
 import dev.zanckor.example.common.handler.dialogrequirement.QuestRequirementHandler;
 import dev.zanckor.example.common.handler.questrequirement.XpRequirement;
 import dev.zanckor.example.common.handler.questreward.ItemReward;
-import dev.zanckor.example.common.handler.questtype.*;
+import dev.zanckor.example.common.handler.questtype.CollectHandler;
+import dev.zanckor.example.common.handler.questtype.InteractEntityHandler;
+import dev.zanckor.example.common.handler.questtype.KillHandler;
+import dev.zanckor.example.common.handler.questtype.MoveToHandler;
 import dev.zanckor.example.common.handler.targettype.EntityTargetType;
 import dev.zanckor.example.common.handler.targettype.EntityUUIDTargetType;
 import dev.zanckor.example.common.handler.targettype.ItemTargetType;
@@ -65,8 +68,7 @@ public class ModExample {
         TemplateRegistry.registerQuest(EnumQuestType.KILL, new KillHandler());
         TemplateRegistry.registerQuest(EnumQuestType.INTERACT_ENTITY, new InteractEntityHandler());
         TemplateRegistry.registerQuest(EnumQuestType.MOVE_TO, new MoveToHandler());
-        TemplateRegistry.registerQuest(EnumQuestType.PROTECT_ENTITY, new ProtectEntityHandler());
-        TemplateRegistry.registerQuest(EnumQuestType.RECOLLECT, new RecollectHandler());
+        TemplateRegistry.registerQuest(EnumQuestType.COLLECT, new CollectHandler());
     }
 
     public static void registerReward() {
@@ -88,8 +90,7 @@ public class ModExample {
     }
 
     public static void registerTarget() {
-        TemplateRegistry.registerTargetType(EnumQuestType.RECOLLECT, new ItemTargetType());
-        TemplateRegistry.registerTargetType(EnumQuestType.PROTECT_ENTITY, new EntityUUIDTargetType());
+        TemplateRegistry.registerTargetType(EnumQuestType.COLLECT, new ItemTargetType());
         TemplateRegistry.registerTargetType(EnumQuestType.KILL, new EntityTargetType());
         TemplateRegistry.registerTargetType(EnumQuestType.INTERACT_ENTITY, new EntityTargetType());
     }

@@ -40,7 +40,7 @@ public class ServerEvent {
         Path uncompletedQuest = QuestApiMain.getUncompletedQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
 
         for (File file : activeQuest.toFile().listFiles()) {
-            UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+            UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
             if (userQuest != null) {
                 timer(userQuest, e.player, file, GsonManager.gson(), uncompletedQuest);
@@ -65,7 +65,12 @@ public class ServerEvent {
             Path uncompletedPath = Paths.get(uncompletedQuest.toString(), file.getName());
 
             Files.move(file.toPath(), uncompletedPath);
-            LocateHash.movePathQuest(userQuest.getId(), uncompletedPath, EnumQuestType.valueOf(userQuest.getQuest_type()));
+
+            for (int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
+                UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
+
+                LocateHash.movePathQuest(userQuest.getId(), uncompletedPath, EnumQuestType.valueOf(questGoal.getType()));
+            }
         }
     }
 
@@ -73,26 +78,24 @@ public class ServerEvent {
     public static void uncompletedQuestOnLogOut(PlayerEvent.PlayerLoggedOutEvent e) throws IOException {
         Path activeQuest = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
         Path uncompletedQuest = QuestApiMain.getUncompletedQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
-        List<EnumQuestType> questWithTimer = new ArrayList<>();
-
-        questWithTimer.add(EnumQuestType.PROTECT_ENTITY);
 
         for (File file : activeQuest.toFile().listFiles()) {
-            UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+            UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
+            if (userQuest == null || !userQuest.hasTimeLimit()) continue;
 
-            if (userQuest != null && userQuest.hasTimeLimit()) {
-                if (questWithTimer.contains(EnumQuestType.valueOf(userQuest.getQuest_type()))) {
-                    FileWriter writer = new FileWriter(file);
-                    userQuest.setCompleted(true);
+            for (int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
+                UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
 
-                    GsonManager.gson().toJson(userQuest, writer);
-                    writer.close();
+                FileWriter writer = new FileWriter(file);
+                userQuest.setCompleted(true);
 
-                    Path uncompletedPath = Paths.get(uncompletedQuest.toString(), file.getName());
+                GsonManager.gson().toJson(userQuest, writer);
+                writer.close();
 
-                    Files.move(file.toPath(), uncompletedPath);
-                    LocateHash.movePathQuest(userQuest.getId(), uncompletedPath, EnumQuestType.valueOf(userQuest.getQuest_type()));
-                }
+                Path uncompletedPath = Paths.get(uncompletedQuest.toString(), file.getName());
+
+                Files.move(file.toPath(), uncompletedPath);
+                LocateHash.movePathQuest(userQuest.getId(), uncompletedPath, EnumQuestType.valueOf(questGoal.getType()));
             }
         }
     }
@@ -111,10 +114,14 @@ public class ServerEvent {
             if (path.toFile().listFiles() != null) {
 
                 for (File file : path.toFile().listFiles()) {
-                    UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+                    UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
                     if (userQuest == null) continue;
 
-                    LocateHash.registerQuestTypeLocation(EnumQuestType.valueOf(userQuest.getQuest_type()), file.toPath().toAbsolutePath());
+                    for (int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
+                        UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
+                        LocateHash.registerQuestTypeLocation(EnumQuestType.valueOf(questGoal.getType()), file.toPath().toAbsolutePath());
+                    }
+
                     LocateHash.registerQuestByID(userQuest.getId(), file.toPath().toAbsolutePath());
                 }
             }

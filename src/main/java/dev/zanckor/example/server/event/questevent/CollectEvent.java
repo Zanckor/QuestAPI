@@ -9,13 +9,13 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
 
-import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.RECOLLECT;
+import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.COLLECT;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class RecollectEntity {
+public class CollectEvent {
 
     @SubscribeEvent
-    public static void recollectPickUpQuest(PlayerEvent.ItemPickupEvent e) throws IOException {
+    public static void CollectPickUpQuest(PlayerEvent.ItemPickupEvent e) throws IOException {
         if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
 
 
@@ -23,20 +23,20 @@ public class RecollectEntity {
     }
 
     @SubscribeEvent
-    public static void recollectCraftQuest(PlayerEvent.ItemCraftedEvent e) throws IOException {
+    public static void CollectCraftQuest(PlayerEvent.ItemCraftedEvent e) throws IOException {
         if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
 
         sendQuestPacket((ServerPlayer) e.getEntity());
     }
 
     @SubscribeEvent
-    public static void recollectCraftQuest(PlayerEvent.ItemSmeltedEvent e) throws IOException {
+    public static void CollectCraftQuest(PlayerEvent.ItemSmeltedEvent e) throws IOException {
         if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
 
         sendQuestPacket((ServerPlayer) e.getEntity());
     }
 
     public static void sendQuestPacket(ServerPlayer player) throws IOException {
-        ServerHandler.questHandler(RECOLLECT, player, null);
+        ServerHandler.questHandler(COLLECT, player, null);
     }
 }

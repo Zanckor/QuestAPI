@@ -1,20 +1,13 @@
 {
   "id": "kill_entities",
   "title": "Kill entities",
+  "hasTimeLimit": true,
+  "timeLimitInSeconds": 10,
   "goals": [
     {
       "type": "KILL",
-      "target": "entity.minecraft.pig",
+      "target": "minecraft:pig",
       "amount": 1
-    }
-  ],
-  "hasTimeLimit": false,
-  "timeLimitInSeconds": 0,
-  "requirements": [
-    {
-      "type": "XP",
-      "requirements_min": 30,
-      "requirements_max": 40
     }
   ],
   "rewards": [
@@ -22,6 +15,13 @@
       "type": "ITEM",
       "tag": "minecraft:coal",
       "amount": 64
+    }
+  ],
+  "requirements": [
+    {
+      "type": "XP",
+      "requirements_min": 0,
+      "requirements_max": 10
     }
   ]
 }

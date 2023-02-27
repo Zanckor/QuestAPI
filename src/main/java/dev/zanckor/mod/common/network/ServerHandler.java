@@ -35,7 +35,7 @@ public class ServerHandler {
         AbstractDialogOption dialogTemplate = TemplateRegistry.getDialogTemplate(optionType);
 
         try {
-            ServerDialog dialog = (ServerDialog) GsonManager.getJson(dialogFile, ServerDialog.class);
+            ServerDialog dialog = (ServerDialog) GsonManager.getJsonClass(dialogFile, ServerDialog.class);
 
             dialogTemplate.handler(player, dialog, optionID, null);
 
@@ -51,15 +51,17 @@ public class ServerHandler {
         if (quest == null || questTypeLocation == null) return;
 
         for (int i = 0; i < questTypeLocation.size(); i++) {
-
             File file = questTypeLocation.get(i).toAbsolutePath().toFile();
-            UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
-
+            UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
             if (userQuest == null || userQuest.isCompleted()) continue;
 
+            for(int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
+                UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
 
-            if (userQuest.getQuest_type().equals(questType.toString())) {
-                quest.handler(player, entity, GsonManager.gson(), file, userQuest);
+
+                if (questGoal.getType().equals(questType.toString())) {
+                    quest.handler(player, entity, GsonManager.gson(), file, userQuest, indexGoals);
+                }
             }
         }
     }
@@ -72,7 +74,7 @@ public class ServerHandler {
         AbstractDialogOption dialogTemplate = TemplateRegistry.getDialogTemplate(optionType);
 
         try {
-            ServerDialog dialog = (ServerDialog) GsonManager.getJson(dialogFile, ServerDialog.class);
+            ServerDialog dialog = (ServerDialog) GsonManager.getJsonClass(dialogFile, ServerDialog.class);
             dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID(player.getLevel(), npcUuid));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -86,7 +88,7 @@ public class ServerHandler {
 
             for (File file : userFolder.toFile().listFiles()) {
                 try {
-                    UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+                    UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
                     if (userQuest.isCompleted()) return;
 

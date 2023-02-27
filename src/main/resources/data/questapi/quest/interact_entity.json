@@ -1,20 +1,13 @@
 {
   "id": "interact_entity",
   "title": "Interact with cow and pig",
+  "hasTimeLimit": false,
+  "timeLimitInSeconds": 0,
   "goals": [
     {
-      "type": "INTERACT",
-      "target": "entity.minecraft.pig",
+      "type": "INTERACT_ENTITY",
+      "target": "minecraft:pig",
       "amount": 1
-    }
-  ],
-  "hasTimeLimit": true,
-  "timeLimitInSeconds": 60,
-  "requirements": [
-    {
-      "type": "XP",
-      "requirements_min": 20,
-      "requirements_max": 30
     }
   ],
   "rewards": [
@@ -22,6 +15,13 @@
       "type": "ITEM",
       "tag": "minecraft:coal",
       "amount": 64
+    }
+  ],
+  "requirements": [
+    {
+      "type": "XP",
+      "requirements_min": 0,
+      "requirements_max": 10
     }
   ]
 }

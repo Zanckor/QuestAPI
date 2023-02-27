@@ -20,10 +20,11 @@ public abstract class AbstractQuest {
      * @param gson        Gson used to write/read files
      * @param file        File used to write/read player's quest data
      * @param playerQuest ClientQuestBase class that contains player's quest data
+     * @param indexGoals
      * @throws IOException Exception fired when server cannot read json file
      * @see EnumQuestType Types of quests
      * @see ModExample Main class where you should register quest's types
      */
 
-    public abstract void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest) throws IOException;
+    public abstract void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest, int indexGoals) throws IOException;
 }

@@ -30,7 +30,7 @@ public class MoveToEvent {
 
         if (moveToQuests != null) {
             for (Path path : moveToQuests) {
-                UserQuest playerQuest = (UserQuest) GsonManager.getJson(path.toFile(), UserQuest.class);
+                UserQuest playerQuest = (UserQuest) GsonManager.getJsonClass(path.toFile(), UserQuest.class);
                 if (playerQuest == null || playerQuest.isCompleted()) continue;
 
                 moveTo(playerQuest, (ServerPlayer) e.player);
@@ -38,17 +38,29 @@ public class MoveToEvent {
         }
     }
 
-    public static void moveTo(UserQuest playerQuest, ServerPlayer player) throws IOException {
-        if (!playerQuest.getQuest_type().equals(MOVE_TO.toString())) return;
+    public static void moveTo(UserQuest userQuest, ServerPlayer player) throws IOException {
+        int xCoord = 0, yCoord = 0, zCoord = 0;
 
-        int xCoord = parseInt(playerQuest.getQuest_target().get(0));
-        int yCoord = parseInt(playerQuest.getQuest_target().get(1));
-        int zCoord = parseInt(playerQuest.getQuest_target().get(2));
+        for (int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
+            UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
+
+            if (!(questGoal.getType().equals(MOVE_TO.toString()))) continue;
+            String coord = questGoal.getTarget().substring(1);
+
+            if (questGoal.getTarget().contains("x")) {
+                xCoord = parseInt(coord);
+            }
+            if (questGoal.getTarget().contains("y")) {
+                yCoord = parseInt(coord);
+            }
+            if (questGoal.getTarget().contains("z")) {
+                zCoord = parseInt(coord);
+            }
+        }
 
         Vec3 playerCoord = new Vec3(player.getBlockX(), player.getBlockY(), player.getBlockZ());
 
         if (Mathematic.numberBetween(playerCoord.x, xCoord - 10, xCoord + 10) && Mathematic.numberBetween(playerCoord.y, yCoord - 10, yCoord + 10) && Mathematic.numberBetween(playerCoord.z, zCoord - 10, zCoord + 10)) {
-
             ServerHandler.questHandler(MOVE_TO, player, null);
         }
     }

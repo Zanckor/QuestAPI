@@ -4,7 +4,6 @@ import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
-import dev.zanckor.example.common.entity.server.NPCEntity;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Optional;
 
 public class StartDialog {
 
@@ -29,7 +27,7 @@ public class StartDialog {
         File dialogFile = path.toFile();
         LocateHash.currentGlobalDialog.put(player, dialogFile.getName().substring(0, dialogFile.getName().length() - 5));
 
-        ServerDialog dialog = (ServerDialog) GsonManager.getJson(dialogFile, ServerDialog.class);
+        ServerDialog dialog = (ServerDialog) GsonManager.getJsonClass(dialogFile, ServerDialog.class);
 
 
         for (int dialog_id = dialog.getDialog().size() - 1; dialog_id >= 0; dialog_id--) {
