@@ -55,6 +55,8 @@ public class LocateHash {
             clientQuestTypeLocation.put(type, new ArrayList<>());
         }
 
+        if(getQuestTypeLocation(type).contains(path)) return;
+
         List<Path> questList = clientQuestTypeLocation.get(type);
         questList.add(path);
 

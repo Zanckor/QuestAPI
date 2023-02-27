@@ -1,8 +1,8 @@
 package dev.zanckor.example.common.handler.questtype;
 
 import com.google.gson.Gson;
-import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
 import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
@@ -13,23 +13,25 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.MOVE_TO;
+
 public class MoveToHandler extends AbstractQuest {
 
-    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest) throws IOException {
-        UserQuest moveToPlayerQuest;
+    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoals) throws IOException {
 
-        for (int i = 0; i < 3; i++) {
-            moveToPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
 
-            FileWriter moveToCoordWriter = new FileWriter(file);
-            gson.toJson(playerQuest.setProgress(moveToPlayerQuest, i, 1), moveToCoordWriter);
-            moveToCoordWriter.flush();
-            moveToCoordWriter.close();
+        if (!(questGoal.getType().equals(MOVE_TO.toString()))) return;
+        questGoal.setCurrentAmount(1);
 
-        }
-        moveToPlayerQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+        FileWriter moveToCoordWriter = new FileWriter(file);
+        gson.toJson(userQuest, moveToCoordWriter);
+        moveToCoordWriter.flush();
+        moveToCoordWriter.close();
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(moveToPlayerQuest));
+        userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
+
+        SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

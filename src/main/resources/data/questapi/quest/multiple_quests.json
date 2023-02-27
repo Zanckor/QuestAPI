@@ -1,6 +1,6 @@
 {
-  "id": "move_to_coords",
-  "title": "Locate coord",
+  "id": "multiple_quests",
+  "title": "Multiple quests",
   "goals": [
     {
       "type": "MOVE_TO",
@@ -15,6 +15,21 @@
     {
       "type": "MOVE_TO",
       "target": "z100",
+      "amount": 1
+    },
+    {
+      "type": "COLLECT",
+      "target": "minecraft:gold_ingot",
+      "amount": 1
+    },
+    {
+      "type": "INTERACT_ENTITY",
+      "target": "minecraft:pig",
+      "amount": 1
+    },
+    {
+      "type": "KILL",
+      "target": "minecraft:pig",
       "amount": 1
     }
   ],

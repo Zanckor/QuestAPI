@@ -7,50 +7,115 @@ import java.util.List;
 public class ServerQuest extends FileAbstract {
     private String id;
     private String title;
-
-    private String quest_type;
-    private List<String> quest_target;
-    private List<Integer> target_quantity;
-
     private boolean hasTimeLimit;
     private int timeLimitInSeconds;
+    private List<QuestGoal> goals;
+    private List<Reward> rewards;
+    private List<Requirement> requirements;
 
-    private String requirements_type;
-    private int requirements_min;
-    private int requirements_max;
-
-    private String reward_type;
-    private List<String> reward;
-    private List<Integer> reward_quantity;
-
-
-    public static ServerQuest createQuest(
-            String id, String title,
-            Enum quest_type,
-            List<String> quest_target, List<Integer> target_quantity,
-            boolean hasTimeLimit, int timeLimitInSeconds,
-            Enum requirements_type, int requirements_min, int requirements_max,
-            Enum reward_type, List<String> reward, List<Integer> reward_quantity) {
-
+    public static ServerQuest createQuest(String id, String title, List<QuestGoal> questGoal, boolean hasTimeLimit, int timeLimitInSeconds, List<Requirement> requirements, List<Reward> rewards) {
         ServerQuest questTemplate = new ServerQuest();
 
         questTemplate.setId(id);
         questTemplate.setTitle(title);
-        questTemplate.setQuest_type(quest_type.name());
-        questTemplate.setQuest_target(quest_target);
-        questTemplate.setTarget_quantity(target_quantity);
         questTemplate.setHasTimeLimit(hasTimeLimit);
         questTemplate.setTimeLimitInSeconds(timeLimitInSeconds);
-        questTemplate.setRequirements_type(requirements_type.name());
-        questTemplate.setRequirements_min(requirements_min);
-        questTemplate.setRequirements_max(requirements_max);
-        questTemplate.setReward_type(reward_type.name());
-        questTemplate.setReward(reward);
-        questTemplate.setReward_quantity(reward_quantity);
+        questTemplate.setRequirements(requirements);
+        questTemplate.setRewards(rewards);
+        questTemplate.setGoalList(questGoal);
 
         return questTemplate;
     }
 
+    public class QuestGoal {
+        private String type;
+        private String target;
+        private Integer amount;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+
+        public Integer getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Integer amount) {
+            this.amount = amount;
+        }
+    }
+
+    public class Reward {
+        private String type;
+        private String tag;
+        private Integer amount;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public void setTag(String tag) {
+            this.tag = tag;
+        }
+
+        public Integer getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Integer amount) {
+            this.amount = amount;
+        }
+    }
+
+    public class Requirement {
+        private String type;
+        private int requirements_min;
+        private int requirements_max;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public int getRequirements_min() {
+            return requirements_min;
+        }
+
+        public void setRequirements_min(int requirements_min) {
+            this.requirements_min = requirements_min;
+        }
+
+        public int getRequirements_max() {
+            return requirements_max;
+        }
+
+        public void setRequirements_max(int requirements_max) {
+            this.requirements_max = requirements_max;
+        }
+    }
 
     public String getId() {
         return id;
@@ -68,78 +133,6 @@ public class ServerQuest extends FileAbstract {
         this.title = title;
     }
 
-    public String getQuest_type() {
-        return quest_type;
-    }
-
-    public void setQuest_type(String quest_type) {
-        this.quest_type = quest_type;
-    }
-
-    public List<String> getQuest_target() {
-        return quest_target;
-    }
-
-    public void setQuest_target(List<String> quest_target) {
-        this.quest_target = quest_target;
-    }
-
-    public List<Integer> getTarget_quantity() {
-        return target_quantity;
-    }
-
-    public void setTarget_quantity(List<Integer> target_quantity) {
-        this.target_quantity = target_quantity;
-    }
-
-    public String getRequirements_type() {
-        return requirements_type;
-    }
-
-    public void setRequirements_type(String requirements_type) {
-        this.requirements_type = requirements_type;
-    }
-
-    public int getRequirements_min() {
-        return requirements_min;
-    }
-
-    public void setRequirements_min(int requirements_min) {
-        this.requirements_min = requirements_min;
-    }
-
-    public int getRequirements_max() {
-        return requirements_max;
-    }
-
-    public void setRequirements_max(int requirements_max) {
-        this.requirements_max = requirements_max;
-    }
-
-    public String getReward_type() {
-        return reward_type;
-    }
-
-    public void setReward_type(String reward_type) {
-        this.reward_type = reward_type;
-    }
-
-    public List<String> getReward() {
-        return reward;
-    }
-
-    public void setReward(List<String> reward) {
-        this.reward = reward;
-    }
-
-    public List<Integer> getReward_quantity() {
-        return reward_quantity;
-    }
-
-    public void setReward_quantity(List<Integer> reward_quantity) {
-        this.reward_quantity = reward_quantity;
-    }
-
     public boolean isHasTimeLimit() {
         return hasTimeLimit;
     }
@@ -154,6 +147,30 @@ public class ServerQuest extends FileAbstract {
 
     public void setTimeLimitInSeconds(int timeLimitInSeconds) {
         this.timeLimitInSeconds = timeLimitInSeconds;
+    }
+
+    public List<QuestGoal> getGoalList() {
+        return goals;
+    }
+
+    public void setGoalList(List<QuestGoal> goal) {
+        this.goals = goal;
+    }
+
+    public List<Reward> getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(List<Reward> rewards) {
+        this.rewards = rewards;
+    }
+
+    public List<Requirement> getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(List<Requirement> requirements) {
+        this.requirements = requirements;
     }
 }
 

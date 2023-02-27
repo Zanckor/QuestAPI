@@ -13,7 +13,7 @@ public class GsonManager {
         return new GsonBuilder().setPrettyPrinting().create();
     }
 
-    public static <T extends FileAbstract> FileAbstract getJson(File file, Class<T> fileClass) throws IOException {
+    public static <T extends FileAbstract> FileAbstract getJsonClass(File file, Class<T> fileClass) throws IOException {
         if (!file.exists()) return null;
 
         FileReader reader = new FileReader(file);
@@ -22,4 +22,5 @@ public class GsonManager {
 
         return dialog;
     }
+
 }

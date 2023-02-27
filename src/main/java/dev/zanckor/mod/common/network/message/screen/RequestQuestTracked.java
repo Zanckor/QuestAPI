@@ -36,7 +36,7 @@ public class RequestQuestTracked {
             File file = LocateHash.getQuestByID(msg.questID).toFile();
 
             try {
-                UserQuest userQuest = (UserQuest) GsonManager.getJson(file, UserQuest.class);
+                UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
                 SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
 
             } catch (IOException e) {
