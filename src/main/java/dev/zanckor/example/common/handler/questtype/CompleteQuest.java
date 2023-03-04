@@ -9,10 +9,12 @@ import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.common.network.SendQuestPacket;
+import dev.zanckor.mod.common.network.handler.ServerHandler;
 import dev.zanckor.mod.common.network.message.quest.ToastPacket;
-import dev.zanckor.mod.common.network.message.screen.QuestTracked;
+import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -44,7 +46,7 @@ public class CompleteQuest {
                 return;
 
 
-            //Only executes code if it's on last index
+            //Only executes code if it's on last index/goal
             if (indexGoals < userQuest.getQuestGoals().size()) continue;
 
             //Changes quest to completed
@@ -59,52 +61,22 @@ public class CompleteQuest {
                 UserQuest playerQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
                 if (playerQuest == null) continue;
-                SendQuestPacket.TO_CLIENT(player, new QuestTracked(playerQuest));
+                SendQuestPacket.TO_CLIENT(player, new SetQuestTracked(playerQuest));
             }
 
-            giveReward(player, userQuest, gson, file, userFolder);
+            giveReward(player, userQuest, file, userFolder);
             SendQuestPacket.TO_CLIENT(player, new ToastPacket(userQuest.getTitle()));
 
-            //If quest is completed, items are removed, only for COLLECT type
-            CompleteQuest.removeItems(player, gson, LocateHash.getQuestByID(userQuest.getId()));
+            //Only for COLLECT Type:
+            //If quest is completed, items are removed
+            CompleteQuest.removeItems(player, LocateHash.getQuestByID(userQuest.getId()));
+
+            //Update collect quests data
+            updateInventoryItems(player);
         }
     }
 
-    public static boolean isQuestCompleted(Player player, Gson gson, File file) throws IOException {
-        UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
-
-        int indexGoals = 0;
-
-        for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
-            indexGoals++;
-
-            if (questGoal.getCurrentAmount() < questGoal.getAmount()) continue;
-
-            if (indexGoals < userQuest.getQuestGoals().size()) continue;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isQuestCompleted(Player player, Gson gson, UserQuest userQuest) throws IOException {
-        int indexGoals = 0;
-
-        for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
-            indexGoals++;
-
-            if (questGoal.getCurrentAmount() < questGoal.getAmount()) continue;
-
-            if (indexGoals < userQuest.getQuestGoals().size()) continue;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public static void removeItems(Player player, Gson gson, Path questByID) throws IOException {
+    public static void removeItems(Player player, Path questByID) throws IOException {
         UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(questByID.toFile(), UserQuest.class);
 
         for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
@@ -118,8 +90,7 @@ public class CompleteQuest {
         }
     }
 
-
-    public static void giveReward(Player player, UserQuest userQuest, Gson gson, File file, Path userFolder) throws IOException {
+    public static void giveReward(Player player, UserQuest userQuest, File file, Path userFolder) throws IOException {
         if (!(userQuest.isCompleted())) return;
         String questName = userQuest.getId() + ".json";
 
@@ -127,7 +98,7 @@ public class CompleteQuest {
             if (!(serverFile.getName().equals(questName))) continue;
 
             FileReader serverQuestReader = new FileReader(serverFile);
-            ServerQuest serverQuest = gson.fromJson(serverQuestReader, ServerQuest.class);
+            ServerQuest serverQuest = GsonManager.gson().fromJson(serverQuestReader, ServerQuest.class);
             serverQuestReader.close();
 
             //Gives each reward to payer
@@ -143,5 +114,26 @@ public class CompleteQuest {
                 LocateHash.movePathQuest(userQuest.getId(), Paths.get(getCompletedQuest(userFolder).toString(), questName), EnumQuestType.valueOf(userQuest.getQuestGoals().get(indexGoals).getType()));
             }
         }
+    }
+
+    public static void updateInventoryItems(Player player) throws IOException {
+        ServerHandler.questHandler(EnumQuestType.COLLECT, (ServerPlayer) player, null);
+    }
+
+
+    public static boolean isQuestCompleted(UserQuest userQuest) throws IOException {
+        int indexGoals = 0;
+
+        for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
+            indexGoals++;
+
+            if (questGoal.getCurrentAmount() < questGoal.getAmount()) return false;
+
+            if (indexGoals < userQuest.getQuestGoals().size()) continue;
+
+            return true;
+        }
+
+        return false;
     }
 }

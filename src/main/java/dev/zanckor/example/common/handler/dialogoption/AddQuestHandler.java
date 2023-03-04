@@ -1,6 +1,5 @@
 package dev.zanckor.example.common.handler.dialogoption;
 
-import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
@@ -10,28 +9,22 @@ import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
-import dev.zanckor.mod.common.network.ClientHandler;
+import dev.zanckor.mod.common.network.handler.ClientHandler;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.CloseDialog;
-import dev.zanckor.mod.common.network.message.screen.QuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.Timer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 import static dev.zanckor.mod.QuestApiMain.*;
 
@@ -87,9 +80,6 @@ public class AddQuestHandler extends AbstractDialogOption {
             }
 
             LocateHash.registerQuestByID(option.getQuest_id(), path);
-
-            UserQuest reloadedUserQuest = (UserQuest) GsonManager.getJsonClass(path.toFile(), UserQuest.class);
-            SendQuestPacket.TO_CLIENT(player, new QuestTracked(reloadedUserQuest));
 
             break;
         }

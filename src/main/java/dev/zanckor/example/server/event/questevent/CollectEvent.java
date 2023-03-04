@@ -1,7 +1,7 @@
 package dev.zanckor.example.server.event.questevent;
 
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.network.ServerHandler;
+import dev.zanckor.mod.common.network.handler.ServerHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

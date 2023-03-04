@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
 import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.screen.QuestTracked;
+import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
+import dev.zanckor.mod.common.network.message.screen.UpdateQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
-import net.minecraft.Util;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 public class KillHandler extends AbstractQuest {
 
@@ -36,7 +35,7 @@ public class KillHandler extends AbstractQuest {
 
         userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
+        SendQuestPacket.TO_CLIENT(player, new UpdateQuestTracked(userQuest));
         CompleteQuest.completeQuest(player, gson, file);
     }
 }

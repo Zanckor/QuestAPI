@@ -26,9 +26,10 @@ import dev.zanckor.example.common.handler.questtype.InteractEntityHandler;
 import dev.zanckor.example.common.handler.questtype.KillHandler;
 import dev.zanckor.example.common.handler.questtype.MoveToHandler;
 import dev.zanckor.example.common.handler.targettype.EntityTargetType;
-import dev.zanckor.example.common.handler.targettype.EntityUUIDTargetType;
 import dev.zanckor.example.common.handler.targettype.ItemTargetType;
-import dev.zanckor.mod.client.screen.dialog.DialogScreen;
+import dev.zanckor.example.client.screen.dialog.DialogScreen;
+import dev.zanckor.example.client.screen.hud.RenderQuestTracker;
+import dev.zanckor.example.client.screen.questlog.QuestLog;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -99,9 +100,15 @@ public class ModExample {
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModExample {
 
+        /**
+         * registerScreen adds specified classes to cache to load X or Y screen depending on your identifier and config file
+         */
+
         @SubscribeEvent
         public static void registerScreen(FMLClientSetupEvent e) {
             ScreenRegistry.registerDialogScreen(MOD_ID, new DialogScreen(Component.literal("dialog_screen")));
+            ScreenRegistry.registerQuestTrackedScreen(MOD_ID, new RenderQuestTracker());
+            ScreenRegistry.registerQuestLogScreen(MOD_ID, new QuestLog(Component.literal("quest_log_screen")));
         }
     }
 }

@@ -1,6 +1,6 @@
 {
   "id": "collect_items",
-  "title": "COLLECT items",
+  "title": "Collect items",
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,
   "goals": [

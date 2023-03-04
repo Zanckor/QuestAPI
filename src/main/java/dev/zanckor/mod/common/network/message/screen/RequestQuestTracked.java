@@ -37,7 +37,7 @@ public class RequestQuestTracked {
 
             try {
                 UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
-                SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
+                SendQuestPacket.TO_CLIENT(player, new SetQuestTracked(userQuest));
 
             } catch (IOException e) {
                 QuestApiMain.LOGGER.error(e.getMessage());

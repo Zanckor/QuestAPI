@@ -1,4 +1,4 @@
-package dev.zanckor.mod.common.network;
+package dev.zanckor.mod.common.network.handler;
 
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;

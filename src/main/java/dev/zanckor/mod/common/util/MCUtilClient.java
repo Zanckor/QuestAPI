@@ -8,7 +8,6 @@ import com.mojang.math.Vector3f;
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -29,6 +28,11 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class MCUtilClient {
+    public static String properNoun(String text) {
+        if (text.isEmpty() || text.length() < 1) return text;
+
+        return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
+    }
 
     public static List<List<FormattedCharSequence>> splitText(String text, Font font, int textMaxLength) {
         final List<List<FormattedCharSequence>> textBlocks = new ArrayList<>();
@@ -45,13 +49,41 @@ public class MCUtilClient {
         soundManager.play(SimpleSoundInstance.forUI(sound, Mth.randomBetween(RandomSource.create(), minPitch, maxPitch)));
     }
 
-    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, String text, Font font) {
+    public static void renderLine(PoseStack poseStack, float xPos, float yPos, float textIndent, String text, Font font) {
+        font.draw(poseStack, text, xPos, yPos, 0);
+
+        poseStack.translate(0, textIndent, 0);
+    }
+
+    public static void renderLines(PoseStack poseStack, float textIndent, int textMaxLength, String text, Font font) {
+        float splitIndent = 0;
+        List<List<FormattedCharSequence>> splintedText = splitText(text, font, textMaxLength * 5);
+
+        for (List<FormattedCharSequence> line : splintedText) {
+            for (FormattedCharSequence lineString : line) {
+                font.draw(poseStack, lineString, 0, textIndent * (splitIndent / 2), 0);
+
+                splitIndent++;
+            }
+        }
+
+
+        poseStack.translate(0, textIndent + (textIndent * (splitIndent / 4)), 0);
+    }
+
+    public static void renderLine(PoseStack poseStack, float textIndent, String text, Font font) {
+        font.draw(poseStack, text, 0, 0, 0);
+
+        poseStack.translate(0, textIndent, 0);
+    }
+
+    public static void renderText(PoseStack poseStack, double xPosition, double yPosition, float textIndent, float scale, int textMaxLength, String text, Font font) {
         float splitIndent = 0;
         List<List<FormattedCharSequence>> splintedText = splitText(text, font, textMaxLength * 5);
 
         poseStack.pushPose();
 
-        poseStack.translate(width, height, 0);
+        poseStack.translate(xPosition, yPosition, 0);
         poseStack.scale(scale, scale, 1);
 
         for (List<FormattedCharSequence> line : splintedText) {

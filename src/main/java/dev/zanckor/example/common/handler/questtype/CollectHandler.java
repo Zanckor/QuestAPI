@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
-import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.screen.QuestTracked;
+import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
+import dev.zanckor.mod.common.network.message.screen.UpdateQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -53,6 +53,6 @@ public class CollectHandler extends AbstractQuest {
 
 
         CompleteQuest.completeQuest(player, gson, file);
-        SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
+        SendQuestPacket.TO_CLIENT(player, new UpdateQuestTracked(userQuest));
     }
 }

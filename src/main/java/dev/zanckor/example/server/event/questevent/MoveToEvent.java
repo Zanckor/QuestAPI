@@ -3,7 +3,7 @@ package dev.zanckor.example.server.event.questevent;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.network.ServerHandler;
+import dev.zanckor.mod.common.network.handler.ServerHandler;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.Mathematic;
 import net.minecraft.server.level.ServerPlayer;
