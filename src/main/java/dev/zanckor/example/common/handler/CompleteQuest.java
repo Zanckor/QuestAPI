@@ -1,4 +1,4 @@
-package dev.zanckor.example.common.handler.questtype;
+package dev.zanckor.example.common.handler;
 
 import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;

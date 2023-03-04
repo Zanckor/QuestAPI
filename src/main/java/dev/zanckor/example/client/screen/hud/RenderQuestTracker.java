@@ -5,7 +5,7 @@ import dev.zanckor.api.filemanager.quest.UserQuest.QuestGoal;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
-import dev.zanckor.example.common.handler.questtype.CompleteQuest;
+import dev.zanckor.example.common.handler.CompleteQuest;
 import dev.zanckor.mod.client.screen.AbstractQuestTracked;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.Minecraft;

@@ -1,6 +1,6 @@
 package dev.zanckor.example.client.screen.hud;
 
-import dev.zanckor.example.common.handler.questtype.CompleteQuest;
+import dev.zanckor.example.common.handler.CompleteQuest;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.client.Minecraft;

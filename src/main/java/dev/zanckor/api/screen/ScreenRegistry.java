@@ -35,13 +35,13 @@ public class ScreenRegistry {
         return dialog.get(QuestApiMain.MOD_ID);
     }
 
-    public static void registerQuestTrackedScreen(String identifier, AbstractQuestTracked screen) {
-        tracked_screen.put(identifier, screen);
-    }
-
     /**
      * Registry quest tracked screen - Display tracked quest data on HUD
      */
+
+    public static void registerQuestTrackedScreen(String identifier, AbstractQuestTracked screen) {
+        tracked_screen.put(identifier, screen);
+    }
 
     public static AbstractQuestTracked getQuestTrackedScreen(String identifier) {
         AbstractQuestTracked trackedScreen = tracked_screen.get(identifier);
