@@ -1,4 +1,4 @@
-package dev.zanckor.mod.client.screen.dialog;
+package dev.zanckor.mod.client.screen;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;

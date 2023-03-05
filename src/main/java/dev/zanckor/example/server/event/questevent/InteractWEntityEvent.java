@@ -1,7 +1,7 @@
 package dev.zanckor.example.server.event.questevent;
 
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.network.ServerHandler;
+import dev.zanckor.mod.common.network.handler.ServerHandler;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;

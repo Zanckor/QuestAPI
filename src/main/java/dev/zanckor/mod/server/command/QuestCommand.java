@@ -9,7 +9,7 @@ import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.screen.QuestTracked;
+import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
 import dev.zanckor.mod.common.network.message.screen.RemovedQuest;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.Timer;
@@ -43,7 +43,7 @@ public class QuestCommand {
                 UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
 
-                SendQuestPacket.TO_CLIENT(player, new QuestTracked(userQuest));
+                SendQuestPacket.TO_CLIENT(player, new SetQuestTracked(userQuest));
             }
         }
 

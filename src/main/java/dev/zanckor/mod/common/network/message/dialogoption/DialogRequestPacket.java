@@ -1,22 +1,12 @@
 package dev.zanckor.mod.common.network.message.dialogoption;
 
-import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
-import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
-import dev.zanckor.mod.common.network.ServerHandler;
-import dev.zanckor.mod.common.util.GsonManager;
-import dev.zanckor.mod.common.util.MCUtil;
+import dev.zanckor.mod.common.network.handler.ServerHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.UUID;
 import java.util.function.Supplier;
 

@@ -2,7 +2,7 @@ package dev.zanckor.mod.common.network.message.dialogoption;
 
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;
-import dev.zanckor.mod.common.network.ClientHandler;
+import dev.zanckor.mod.common.network.handler.ClientHandler;
 import dev.zanckor.mod.common.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;

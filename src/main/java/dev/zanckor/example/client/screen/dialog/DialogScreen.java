@@ -1,9 +1,10 @@
-package dev.zanckor.mod.client.screen.dialog;
+package dev.zanckor.example.client.screen.dialog;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
 import dev.zanckor.mod.QuestApiMain;
+import dev.zanckor.mod.client.screen.AbstractDialog;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.AddQuest;
 import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;

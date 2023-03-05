@@ -1,6 +1,6 @@
 package dev.zanckor.mod.common.network.message.quest;
 
-import dev.zanckor.mod.common.network.ServerHandler;
+import dev.zanckor.mod.common.network.handler.ServerHandler;
 import dev.zanckor.mod.common.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

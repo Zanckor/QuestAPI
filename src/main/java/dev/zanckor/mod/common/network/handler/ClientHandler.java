@@ -1,10 +1,11 @@
-package dev.zanckor.mod.common.network;
+package dev.zanckor.mod.common.network.handler;
 
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.client.screen.dialog.AbstractDialog;
-import dev.zanckor.mod.client.screen.questlog.QuestLog;
+import dev.zanckor.mod.client.screen.AbstractDialog;
+import dev.zanckor.mod.client.screen.AbstractQuestLog;
+import dev.zanckor.mod.common.config.client.ScreenConfig;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.client.Minecraft;
@@ -39,9 +40,9 @@ public class ClientHandler {
     }
 
     public static void displayDialog(String dialogIdentifier, int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings, UUID npc) {
-        AbstractDialog screen = ScreenRegistry.getDialogScreen(dialogIdentifier);
+        AbstractDialog dialogScreen = ScreenRegistry.getDialogScreen(dialogIdentifier);
 
-        Minecraft.getInstance().setScreen(screen.modifyScreen(dialogID, text,
+        Minecraft.getInstance().setScreen(dialogScreen.modifyScreen(dialogID, text,
                 optionSize, optionIntegers, optionStrings, npc));
     }
 
@@ -50,7 +51,23 @@ public class ClientHandler {
     }
 
 
-    public static void questTracked(UserQuest userQuest) {
+    public static void setQuestTracked(UserQuest userQuest) {
+        ClientHandler.userQuest = userQuest;
+
+        questTitle = userQuest.getTitle();
+        questID = userQuest.getId();
+        questHasTimeLimit = userQuest.hasTimeLimit();
+        questTimeLimit = userQuest.getTimeLimitInSeconds();
+        questGoals = userQuest.getQuestGoals();
+
+        if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + questID) && questHasTimeLimit) {
+            Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + questID, questTimeLimit);
+        }
+    }
+
+    public static void updateQuestTracked(UserQuest userQuest) {
+        if (!(userQuest.getId().equals(ClientHandler.userQuest.getId()))) return;
+
         ClientHandler.userQuest = userQuest;
 
         questTitle = userQuest.getTitle();
@@ -70,6 +87,8 @@ public class ClientHandler {
 
 
     public static void displayQuestList(List<String> id, List<String> title) {
-        Minecraft.getInstance().setScreen(new QuestLog(id, title));
+        AbstractQuestLog questLogScreen = ScreenRegistry.getQuestLogScreen(ScreenConfig.QUEST_LOG_SCREEN.get());
+
+        Minecraft.getInstance().setScreen(questLogScreen.modifyScreen(id, title));
     }
 }

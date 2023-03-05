@@ -93,10 +93,14 @@ repositories {
     maven {
         url "https://raw.githubusercontent.com/Zanckor/QuestAPI/master"
     }
+    maven {
+        url "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19-41.1.0'
+    implementation fg.deobf('curse.maven:configured-457570:3947885')
 }
 
 jar {

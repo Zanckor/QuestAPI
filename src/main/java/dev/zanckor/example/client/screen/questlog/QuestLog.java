@@ -1,11 +1,13 @@
-package dev.zanckor.mod.client.screen.questlog;
+package dev.zanckor.example.client.screen.questlog;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.QuestApiMain;
+import dev.zanckor.mod.client.screen.AbstractQuestLog;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.RequestQuestTracked;
 import dev.zanckor.mod.common.util.MCUtilClient;
@@ -20,11 +22,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static dev.zanckor.mod.common.network.ClientHandler.*;
+import static dev.zanckor.mod.common.network.handler.ClientHandler.*;
+import static dev.zanckor.mod.common.util.MCUtilClient.properNoun;
 
-public class QuestLog extends Screen {
+public class QuestLog extends AbstractQuestLog {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
-    List<String> questData = new ArrayList<>();
     int selectedPage = 0;
 
 
@@ -35,14 +37,20 @@ public class QuestLog extends Screen {
 
     HashMap<Integer, Map.Entry<String, String>> quest = new HashMap<>();
 
-    public QuestLog(List<String> id, List<String> title) {
-        super(Component.literal("questlist"));
+    public QuestLog(Component component) {
+        super(component);
+    }
+
+    @Override
+    public Screen modifyScreen(List<String> id, List<String> title) {
+        quest.clear();
 
         for (int i = 0; i < title.size(); i++) {
             quest.put(i, new AbstractMap.SimpleEntry<>(id.get(i), title.get(i)));
         }
-    }
 
+        return this;
+    }
 
     @Override
     protected void init() {
@@ -59,7 +67,7 @@ public class QuestLog extends Screen {
         int maxLength = 22 * 5;
         float splitIndent = 0;
         int xButtonPosition = (int) (xScreenPos - (imageWidth / 2.4));
-        int yButtonPosition = (int) (yScreenPos * 1.6);
+        int yButtonPosition = (int) (yScreenPos * 1.7);
 
         HashMap<Integer, Integer> displayedButton = new HashMap<>();
 
@@ -98,50 +106,27 @@ public class QuestLog extends Screen {
         }
 
 
-        Button prevPage = new Button((int) (xScreenPos - (imageWidth / 8.5)), (int) (yScreenPos + imageHeight * 0.69), width / 65, width / 65, Component.literal(""), button -> {
+        Button prevPage = new Button((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
             if (selectedPage > 0) {
                 selectedPage--;
 
                 init();
             }
         });
-        Button nextPage = new Button((int) (xScreenPos - (imageWidth / 17)), (int) (yScreenPos + imageHeight * 0.69), width / 65, width / 65, Component.literal(""), button -> {
+        Button nextPage = new Button((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
             if (selectedPage + 1 < Math.ceil(quest.size()) / 4) {
                 selectedPage++;
 
                 init();
             }
         });
-
-        textButton = new EditBox(font, (int) (xScreenPos - (imageWidth / 2.4)), (int) (yScreenPos + imageHeight * 0.68), width / 8, 10, Component.literal(""));
+        textButton = new EditBox(font, (int) (xScreenPos - (imageWidth / 2.4)), (int) (yScreenPos + imageHeight * 0.75), width / 6, 10, Component.literal(""));
 
         addRenderableWidget(textButton);
         addWidget(prevPage);
         addWidget(nextPage);
 
-        textButton.setValue(textButton.getValue());
-    }
-
-
-    @Override
-    public void render(@NotNull PoseStack poseStack, int x, int y, float partialTicks) {
-        clearWidgets();
-        init();
-
-        Minecraft.getInstance().getProfiler().push("background");
-
-        RenderSystem.setShaderTexture(0, QUEST_LOG);
-
-        blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-
-
-        renderQuestTitles(poseStack);
-        renderQuestData(poseStack);
-
-        MCUtilClient.renderText(poseStack, (xScreenPos - imageWidth / 2.9), yScreenPos * 1.4, 10, ((float) width) / 500, 28, "Quest Title", font);
-
-        Minecraft.getInstance().getProfiler().pop();
-        super.render(poseStack, x, y, partialTicks);
+        textButton.setValue("Quest name");
     }
 
     @Override
@@ -154,11 +139,39 @@ public class QuestLog extends Screen {
         return super.keyReleased(x, y, p_94717_);
     }
 
+    @Override
+    public boolean mouseClicked(double x, double y, int p_94697_) {
+        textButton.setValue("");
+
+        return super.mouseClicked(x, y, p_94697_);
+    }
+
+    @Override
+    public void render(@NotNull PoseStack poseStack, int x, int y, float partialTicks) {
+        float scale = ((float) width) / 500;
+
+        Minecraft.getInstance().getProfiler().push("background");
+        RenderSystem.setShaderTexture(0, QUEST_LOG);
+        blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+
+        poseStack.pushPose();
+        renderQuestTitles(poseStack);
+        renderQuestData(poseStack);
+
+        MCUtilClient.renderText(poseStack, (float) (xScreenPos - imageWidth / 2.9), (float) (yScreenPos * 1.35), 0, scale, 40, "Quest Title", font);
+        MCUtilClient.renderText(poseStack, (float) (xScreenPos + imageWidth * 0.135), (float) (yScreenPos * 1.35), 0, scale, 40, "Quest Info", font);
+
+        poseStack.popPose();
+
+        Minecraft.getInstance().getProfiler().pop();
+        super.render(poseStack, x, y, partialTicks);
+    }
+
     public void renderQuestTitles(PoseStack poseStack) {
         List<String> questList = new ArrayList<>();
         int displayedButton = 0;
 
-        if (questID != null) {
+        if (quest != null) {
 
             for (int i = 0; i < quest.size(); i++) {
                 if (questSearch != null && !questSearch.isEmpty()) {
@@ -174,35 +187,68 @@ public class QuestLog extends Screen {
                 displayedButton++;
             }
 
-            MCUtilClient.renderText(poseStack, xScreenPos - (imageWidth / 2.4), yScreenPos * 1.6, 16, ((float) width) / 575, 23, questList, font);
+
+            MCUtilClient.renderText(poseStack, xScreenPos - (imageWidth / 2.4), yScreenPos * 1.7, 16, ((float) width) / 575, 23, questList, font);
 
         }
     }
 
     public void renderQuestData(PoseStack poseStack) {
-        questData.clear();
+        //TODO: Make multiple pages if quest has a lot of data
+        if (userQuest == null) return;
 
-        /*
-        if (!questID.isEmpty()) {
-            questData.add("Type: " + trackedQuest_type.substring(0, 1).toUpperCase() + trackedQuest_type.substring(1).toLowerCase());
+        HashMap<String, List<UserQuest.QuestGoal>> userQuests = new HashMap<>();
+        int xPosition = (int) (width / 1.925);
+        int yPosition = (int) (width / 4.25);
+        float scale = ((float) width) / 700;
 
-            for (int i = 0; i < trackedQuest_target.size(); i++) {
-                AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(trackedQuest_type));
+        poseStack.pushPose();
+        poseStack.translate(xPosition, yPosition, 0);
+        poseStack.scale(scale, scale, 0);
 
-                if (targetType != null) {
-                    String translationKey = targetType.handler(new ResourceLocation(trackedQuest_target.get(i)));
-                    questData.add(I18n.get(translationKey) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
-                } else {
-                    questData.add(trackedQuest_target.get(i) + ": " + trackedTarget_current_quantity.get(i) + "/" + trackedTarget_quantity.get(i));
-                }
+
+        //Gets all quest types on json and creates a HashMap with a list of goals
+        for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
+            String type = questGoal.getType();
+            List<UserQuest.QuestGoal> questGoalList = userQuests.get(type);
+
+
+            if (questGoalList == null) {
+                questGoalList = new ArrayList<>();
             }
 
-            if (questHasTimeLimit) questData.add("Time limit: " + questTimeLimit);
+            questGoalList.add(questGoal);
 
-
-            MCUtilClient.renderText(poseStack, xScreenPos + (imageWidth / 20), yScreenPos * 1.6, 20, ((float) width) / 700, 28, questData, font);
+            userQuests.put(type, questGoalList);
         }
-         */
+
+        //Displays quest goals
+        MCUtilClient.renderLines(poseStack, 20, 30, "Quest: " + properNoun(questTitle), font);
+
+        for (Map.Entry<String, List<UserQuest.QuestGoal>> entry : userQuests.entrySet()) {
+            List<UserQuest.QuestGoal> questGoalList = entry.getValue();
+            MCUtilClient.renderLines(poseStack, 10, 30, "Quest Type: " + properNoun(questGoalList.get(0).getType()), font);
+
+            for (UserQuest.QuestGoal questGoal : questGoalList) {
+                AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(questGoal.getType()));
+                String translationKey = questGoal.getTarget();
+                if (targetType != null)
+                    translationKey = targetType.handler(new ResourceLocation(questGoal.getTarget()));
+
+                MCUtilClient.renderLines(poseStack, 10, 30, properNoun(I18n.get(translationKey)) + ": " + questGoal.getCurrentAmount() + "/" + questGoal.getAmount(), font);
+            }
+
+
+            poseStack.translate(0, 10, 0);
+        }
+
+
+        if (questHasTimeLimit) {
+            MCUtilClient.renderLines(poseStack, 10, 30, "Time limit: " + questTimeLimit, font);
+        }
+
+
+        poseStack.popPose();
     }
 
     @Override

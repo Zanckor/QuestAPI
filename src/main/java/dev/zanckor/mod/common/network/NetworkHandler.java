@@ -14,7 +14,7 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-public class QuestNetworkHandler {
+public class NetworkHandler {
 
     private static final String PROTOCOL_VERSION = "1.0";
 
@@ -67,9 +67,13 @@ public class QuestNetworkHandler {
                 .encoder(CloseDialog::encodeBuffer).decoder(CloseDialog::new)
                 .consumerNetworkThread(CloseDialog::handler).add();
 
-        CHANNEL.messageBuilder(QuestTracked.class, index++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(QuestTracked::encodeBuffer).decoder(QuestTracked::new)
-                .consumerNetworkThread(QuestTracked::handler).add();
+        CHANNEL.messageBuilder(SetQuestTracked.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SetQuestTracked::encodeBuffer).decoder(SetQuestTracked::new)
+                .consumerNetworkThread(SetQuestTracked::handler).add();
+
+        CHANNEL.messageBuilder(UpdateQuestTracked.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(UpdateQuestTracked::encodeBuffer).decoder(UpdateQuestTracked::new)
+                .consumerNetworkThread(UpdateQuestTracked::handler).add();
 
         CHANNEL.messageBuilder(RemovedQuest.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(RemovedQuest::encodeBuffer).decoder(RemovedQuest::new)

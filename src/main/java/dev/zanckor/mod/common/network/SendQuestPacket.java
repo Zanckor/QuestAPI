@@ -8,28 +8,28 @@ import net.minecraftforge.network.PacketDistributor;
 public class SendQuestPacket {
 
     public static void NEAR(Player player, Object packet, double radius) {
-        QuestNetworkHandler.CHANNEL.send(
+        NetworkHandler.CHANNEL.send(
                 PacketDistributor.NEAR.with(() ->
                         new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(), radius, player.level.dimension())),
                 packet);
     }
 
     public static void ALL(Object packet) {
-        QuestNetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
+        NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
     }
 
 
     public static void TO_CLIENT(Player player, Object packet) {
-        QuestNetworkHandler.CHANNEL.sendTo(packet, ((ServerPlayer) player).connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+        NetworkHandler.CHANNEL.sendTo(packet, ((ServerPlayer) player).connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static void TO_SERVER(Object packet) {
-        QuestNetworkHandler.CHANNEL.sendToServer(packet);
+        NetworkHandler.CHANNEL.sendToServer(packet);
     }
 
 
     public static void DIMENSION(Player player, Object packet) {
-        QuestNetworkHandler.CHANNEL.send(
+        NetworkHandler.CHANNEL.send(
                 PacketDistributor.DIMENSION.with(() ->
                         player.level.dimension()),
                 packet);

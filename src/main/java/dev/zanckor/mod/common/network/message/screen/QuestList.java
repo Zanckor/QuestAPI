@@ -2,7 +2,7 @@ package dev.zanckor.mod.common.network.message.screen;
 
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.network.ClientHandler;
+import dev.zanckor.mod.common.network.handler.ClientHandler;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;

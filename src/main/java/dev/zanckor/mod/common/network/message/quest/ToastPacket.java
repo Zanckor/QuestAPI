@@ -1,6 +1,6 @@
 package dev.zanckor.mod.common.network.message.quest;
 
-import dev.zanckor.mod.common.network.ClientHandler;
+import dev.zanckor.mod.common.network.handler.ClientHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
