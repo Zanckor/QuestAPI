@@ -28,7 +28,7 @@
   "requirements": [
     {
       "type": "XP",
-      "requirements_min": 40,
+      "requirements_min": 0,
       "requirements_max": 50
     }
   ],

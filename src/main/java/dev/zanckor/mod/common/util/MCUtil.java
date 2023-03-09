@@ -2,6 +2,7 @@ package dev.zanckor.mod.common.util;
 
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.ReadDialog;
+import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -170,6 +171,22 @@ public class MCUtil {
 
     public static boolean hasQuest(String quest, Path userFolder) {
         return Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getUncompletedQuest(userFolder).toString(), quest));
+    }
+
+    public static boolean isQuestCompleted(UserQuest userQuest) throws IOException {
+        int indexGoals = 0;
+
+        for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
+            indexGoals++;
+
+            if (questGoal.getCurrentAmount() < questGoal.getAmount()) return false;
+
+            if (indexGoals < userQuest.getQuestGoals().size()) continue;
+
+            return true;
+        }
+
+        return false;
     }
 
     public static Entity getEntityByUUID(ServerLevel level, UUID uuid) {

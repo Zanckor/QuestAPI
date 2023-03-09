@@ -5,8 +5,8 @@ import dev.zanckor.api.filemanager.quest.UserQuest.QuestGoal;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
-import dev.zanckor.example.common.handler.CompleteQuest;
 import dev.zanckor.mod.client.screen.AbstractQuestTracked;
+import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -33,7 +33,7 @@ public class RenderQuestTracker extends AbstractQuestTracked {
         HashMap<String, List<QuestGoal>> userQuests = new HashMap<>();
 
         try {
-            if (userQuest == null || CompleteQuest.isQuestCompleted(userQuest) || mc.player.isReducedDebugInfo() || mc.options.keyPlayerList.isDown() || mc.options.renderDebug) {
+            if (userQuest == null || MCUtil.isQuestCompleted(userQuest) || mc.player.isReducedDebugInfo() || mc.options.keyPlayerList.isDown() || mc.options.renderDebug) {
                 userQuests.clear();
                 return;
             }
