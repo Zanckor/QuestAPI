@@ -10,6 +10,7 @@ import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.client.screen.AbstractQuestLog;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.RequestQuestTracked;
+import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -20,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.*;
 
 import static dev.zanckor.mod.common.network.handler.ClientHandler.*;
@@ -174,6 +176,7 @@ public class QuestLog extends AbstractQuestLog {
         if (quest != null) {
 
             for (int i = 0; i < quest.size(); i++) {
+
                 if (questSearch != null && !questSearch.isEmpty()) {
                     if (!quest.get(i).getValue().toLowerCase().contains(questSearch.toLowerCase())) {
                         continue;
@@ -195,60 +198,64 @@ public class QuestLog extends AbstractQuestLog {
 
     public void renderQuestData(PoseStack poseStack) {
         //TODO: Make multiple pages if quest has a lot of data
-        if (userQuest == null) return;
+        try {
+            if (userQuest == null || MCUtil.isQuestCompleted(userQuest)) return;
 
-        HashMap<String, List<UserQuest.QuestGoal>> userQuests = new HashMap<>();
-        int xPosition = (int) (width / 1.925);
-        int yPosition = (int) (width / 4.25);
-        float scale = ((float) width) / 700;
+            HashMap<String, List<UserQuest.QuestGoal>> userQuests = new HashMap<>();
+            int xPosition = (int) (width / 1.925);
+            int yPosition = (int) (width / 4.25);
+            float scale = ((float) width) / 700;
 
-        poseStack.pushPose();
-        poseStack.translate(xPosition, yPosition, 0);
-        poseStack.scale(scale, scale, 0);
-
-
-        //Gets all quest types on json and creates a HashMap with a list of goals
-        for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
-            String type = questGoal.getType();
-            List<UserQuest.QuestGoal> questGoalList = userQuests.get(type);
+            poseStack.pushPose();
+            poseStack.translate(xPosition, yPosition, 0);
+            poseStack.scale(scale, scale, 0);
 
 
-            if (questGoalList == null) {
-                questGoalList = new ArrayList<>();
+            //Gets all quest types on json and creates a HashMap with a list of goals
+            for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
+                String type = questGoal.getType();
+                List<UserQuest.QuestGoal> questGoalList = userQuests.get(type);
+
+
+                if (questGoalList == null) {
+                    questGoalList = new ArrayList<>();
+                }
+
+                questGoalList.add(questGoal);
+
+                userQuests.put(type, questGoalList);
             }
 
-            questGoalList.add(questGoal);
+            //Displays quest goals
+            MCUtilClient.renderLines(poseStack, 20, 30, "Quest: " + properNoun(questTitle), font);
 
-            userQuests.put(type, questGoalList);
-        }
+            for (Map.Entry<String, List<UserQuest.QuestGoal>> entry : userQuests.entrySet()) {
+                List<UserQuest.QuestGoal> questGoalList = entry.getValue();
+                MCUtilClient.renderLines(poseStack, 10, 30, "Quest Type: " + properNoun(questGoalList.get(0).getType()), font);
 
-        //Displays quest goals
-        MCUtilClient.renderLines(poseStack, 20, 30, "Quest: " + properNoun(questTitle), font);
+                for (UserQuest.QuestGoal questGoal : questGoalList) {
+                    AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(questGoal.getType()));
+                    String translationKey = questGoal.getTarget();
+                    if (targetType != null)
+                        translationKey = targetType.handler(new ResourceLocation(questGoal.getTarget()));
 
-        for (Map.Entry<String, List<UserQuest.QuestGoal>> entry : userQuests.entrySet()) {
-            List<UserQuest.QuestGoal> questGoalList = entry.getValue();
-            MCUtilClient.renderLines(poseStack, 10, 30, "Quest Type: " + properNoun(questGoalList.get(0).getType()), font);
+                    MCUtilClient.renderLines(poseStack, 10, 30, properNoun(I18n.get(translationKey)) + ": " + questGoal.getCurrentAmount() + "/" + questGoal.getAmount(), font);
+                }
 
-            for (UserQuest.QuestGoal questGoal : questGoalList) {
-                AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(questGoal.getType()));
-                String translationKey = questGoal.getTarget();
-                if (targetType != null)
-                    translationKey = targetType.handler(new ResourceLocation(questGoal.getTarget()));
 
-                MCUtilClient.renderLines(poseStack, 10, 30, properNoun(I18n.get(translationKey)) + ": " + questGoal.getCurrentAmount() + "/" + questGoal.getAmount(), font);
+                poseStack.translate(0, 10, 0);
             }
 
 
-            poseStack.translate(0, 10, 0);
+            if (questHasTimeLimit) {
+                MCUtilClient.renderLines(poseStack, 10, 30, "Time limit: " + questTimeLimit, font);
+            }
+
+
+            poseStack.popPose();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-
-        if (questHasTimeLimit) {
-            MCUtilClient.renderLines(poseStack, 10, 30, "Time limit: " + questTimeLimit, font);
-        }
-
-
-        poseStack.popPose();
     }
 
     @Override

@@ -27,7 +27,6 @@ public class QuestList {
     public QuestList(UUID playerUUID) throws IOException {
         File[] activeQuests = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(playerUUID)).toFile().listFiles();
 
-
         for (File file : activeQuests) {
             UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 

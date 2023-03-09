@@ -79,7 +79,15 @@ public class EventHandlerRegister {
 
                                                 return 0;
                                             }
-                                        })))));
+                                        }))))
+
+                .then(net.minecraft.commands.Commands.literal("reload")
+                        .then(net.minecraft.commands.Commands.argument("identifier", StringArgumentType.string())
+                                .executes((context) -> {
+                                    return QuestCommand.reloadQuests(
+                                            context,
+                                            StringArgumentType.getString(context, "identifier"));
+                                }))));
 
 
         ConfigCommand.register(e.getDispatcher());

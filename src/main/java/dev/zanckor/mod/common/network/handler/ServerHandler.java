@@ -56,11 +56,13 @@ public class ServerHandler {
             if (userQuest == null || userQuest.isCompleted()) continue;
 
             for(int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
+                userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
+                if(userQuest == null) return;
+
                 UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
 
-
                 if (questGoal.getType().equals(questType.toString())) {
-                    quest.handler(player, entity, GsonManager.gson(), file, userQuest, indexGoals);
+                    quest.handler(player, entity, GsonManager.gson(), file, userQuest, indexGoals, questType);
                 }
             }
         }

@@ -37,6 +37,11 @@ public class TemplateRegistry {
         }
     }
 
+    public static HashMap<Enum, AbstractQuest> getAllQuestTemplates(){
+        return quest_template;
+    }
+
+
 
     public static void registerDialog(Enum key, AbstractDialogOption dialog) {
         dialog_template.put(key, dialog);

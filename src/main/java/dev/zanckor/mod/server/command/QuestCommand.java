@@ -5,6 +5,7 @@ import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
+import dev.zanckor.api.filemanager.quest.register.LoadQuestFromResources;
 import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
@@ -31,6 +32,11 @@ import java.util.UUID;
 import static dev.zanckor.mod.QuestApiMain.*;
 
 public class QuestCommand {
+    public static int reloadQuests(CommandContext<CommandSourceStack> context, String identifier){
+        LoadQuestFromResources.registerQuest(context.getSource().getServer(), identifier);
+
+        return 1;
+    }
 
     public static int trackedQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
         ServerLevel level = context.getSource().getLevel();
