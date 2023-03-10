@@ -4,11 +4,13 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import dev.zanckor.mod.common.datapack.QuestJSONListener;
 import dev.zanckor.mod.server.command.QuestCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -141,5 +143,10 @@ public class EventHandlerRegister {
         }
 
         return builder.buildFuture();
+    }
+
+    @SubscribeEvent
+    public static void jsonListener(AddReloadListenerEvent e){
+        QuestJSONListener.register(e);
     }
 }
