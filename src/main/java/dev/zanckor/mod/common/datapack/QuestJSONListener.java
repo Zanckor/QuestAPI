@@ -13,19 +13,23 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import java.util.Map;
 
 public class QuestJSONListener extends SimpleJsonResourceReloadListener {
-    public QuestJSONListener(Gson gson, String name) {
-        super(gson, name);
+    private static final Gson GSON = new Gson();
+    public QuestJSONListener() {
+        super(GSON, "questapi/quests");
     }
 
     public static void register(AddReloadListenerEvent e) {
-        e.addListener(new QuestJSONListener(GsonManager.gson(), ""));
+        e.addListener(new QuestJSONListener());
     }
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> jsonElementMap, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         QuestApiMain.LOGGER.debug("Loaded quest api datapack");
         System.out.println("JSON ELEMENT MAP: " + jsonElementMap.keySet());
-
-
+        jsonElementMap.forEach((rl, jsonElement) -> {
+            JsonObject obj = jsonElement.getAsJsonObject();
+            String title = obj.get("title").getAsString();
+            System.out.println("Loaded JSON: " + rl.toString() + " with title: " + title);
+        })
     }
 }
