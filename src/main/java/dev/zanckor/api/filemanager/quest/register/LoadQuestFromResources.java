@@ -1,9 +1,10 @@
 package dev.zanckor.api.filemanager.quest.register;
 
 import com.google.gson.Gson;
-import dev.zanckor.api.database.LocateHash;
+import com.google.gson.JsonObject;
 import dev.zanckor.api.filemanager.FolderManager;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.mod.common.datapack.QuestJSONListener;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -11,6 +12,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.util.Map;
 
 import static dev.zanckor.mod.QuestApiMain.serverQuests;
 
@@ -36,7 +39,7 @@ public class LoadQuestFromResources {
                 ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
 
                 if (file.getPath().endsWith(".json")) {
-                    read(GsonManager.gson(), resourceLocation, server);
+                    read(GsonManager.gson(), resourceLocation, resourceManager);
                     write(GsonManager.gson(), playerQuest, modid + "_" + fileName);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
@@ -47,10 +50,21 @@ public class LoadQuestFromResources {
         });
     }
 
+    public static void registerDatapackQuest(MinecraftServer server) throws IOException {
+        if (serverQuests == null) {
+            FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
+        }
 
-    private static void read(Gson gson, ResourceLocation resourceLocation, MinecraftServer server) {
+        for(Map.Entry<String, JsonObject> entry : QuestJSONListener.datapackQuestList.entrySet()){
+            FileWriter writer = new FileWriter(String.valueOf(Path.of(serverQuests + "/" + entry.getKey())));
+            writer.write(entry.getValue().toString());
+            writer.close();
+        }
+    }
+
+    private static void read(Gson gson, ResourceLocation resourceLocation, ResourceManager resourceManager) {
         try {
-            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).get().open();
+            InputStream inputStream = resourceManager.getResource(resourceLocation).get().open();
             playerQuest = gson.fromJson(new InputStreamReader(inputStream), ServerQuest.class);
 
         } catch (IOException e) {
