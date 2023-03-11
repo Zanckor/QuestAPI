@@ -15,15 +15,15 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QuestJSONListener extends SimpleJsonResourceReloadListener {
-    public static HashMap<String, JsonObject> datapackQuestList = new HashMap<>();
+public class DialogJSONListener extends SimpleJsonResourceReloadListener {
+    public static HashMap<String, JsonObject> datapackDialogList = new HashMap<>();
 
-    public QuestJSONListener(Gson gson, String name) {
+    public DialogJSONListener(Gson gson, String name) {
         super(gson, name);
     }
 
     public static void register(AddReloadListenerEvent e) {
-        e.addListener(new QuestJSONListener(GsonManager.gson(), "questapi/quest"));
+        e.addListener(new DialogJSONListener(GsonManager.gson(), "questapi/dialog"));
     }
 
     @Override
@@ -32,14 +32,13 @@ public class QuestJSONListener extends SimpleJsonResourceReloadListener {
 
         jsonElementMap.forEach((rl, jsonElement) -> {
             JsonObject obj = jsonElement.getAsJsonObject();
-            if (obj.get("id") == null) return;
 
-            //Load quest
-            if(obj.get("goals") != null) {
-                String questId = "_" + obj.get("id").toString().substring(1, obj.get("id").toString().length() - 1);
-                Path path = Path.of(rl.getNamespace() + questId + ".json");
+            //Load dialog
+            if(obj.get("dialog") != null){
+                String dialogID = "_" + rl.getPath();
+                Path path = Path.of(rl.getNamespace() + dialogID + ".json");
 
-                datapackQuestList.put(path.toString(), obj);
+                datapackDialogList.put(path.toString(), obj);
             }
         });
     }
