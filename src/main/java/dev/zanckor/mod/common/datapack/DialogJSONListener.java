@@ -28,7 +28,7 @@ public class DialogJSONListener extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> jsonElementMap, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        QuestApiMain.LOGGER.debug("Loaded quest api datapack");
+        QuestApiMain.LOGGER.debug("Loaded dialog datapack");
 
         jsonElementMap.forEach((rl, jsonElement) -> {
             JsonObject obj = jsonElement.getAsJsonObject();

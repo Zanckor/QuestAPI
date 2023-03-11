@@ -28,7 +28,7 @@ public class QuestJSONListener extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> jsonElementMap, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        QuestApiMain.LOGGER.debug("Loaded quest api datapack");
+        QuestApiMain.LOGGER.debug("Loaded quest datapack");
 
         jsonElementMap.forEach((rl, jsonElement) -> {
             JsonObject obj = jsonElement.getAsJsonObject();
