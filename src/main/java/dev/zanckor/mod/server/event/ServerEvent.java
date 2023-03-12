@@ -31,6 +31,7 @@ public class ServerEvent {
      * TODO: Add auto-save quest's timer so on logout it wont lose the quest, jut will freeze the timer.
      */
 
+
     @SubscribeEvent
     public static void questWithTimer(TickEvent.PlayerTickEvent e) throws IOException {
         if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide)
