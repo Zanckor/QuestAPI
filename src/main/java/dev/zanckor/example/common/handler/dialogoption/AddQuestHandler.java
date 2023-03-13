@@ -6,7 +6,7 @@ import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.mod.common.network.handler.ClientHandler;
@@ -62,7 +62,7 @@ public class AddQuestHandler extends AbstractDialogOption {
 
             //Checks all quest requirements and return if player hasn't any requirement
             for (int requirementIndex = 0; requirementIndex < serverQuest.getRequirements().size(); requirementIndex++) {
-                AbstractQuestRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements().get(requirementIndex).getType()));
+                AbstractQuestRequirement requirement = QuestTemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements().get(requirementIndex).getType()));
 
                 if (!requirement.handler(player, serverQuest, requirementIndex)) {
                     DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.client.screen.AbstractQuestLog;
@@ -234,7 +234,7 @@ public class QuestLog extends AbstractQuestLog {
                 MCUtilClient.renderLines(poseStack, 10, 30, "Quest Type: " + properNoun(questGoalList.get(0).getType()), font);
 
                 for (UserQuest.QuestGoal questGoal : questGoalList) {
-                    AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(questGoal.getType()));
+                    AbstractTargetType targetType = QuestTemplateRegistry.getTargetType(EnumQuestType.valueOf(questGoal.getType()));
                     String translationKey = questGoal.getTarget();
                     if (targetType != null)
                         translationKey = targetType.handler(new ResourceLocation(questGoal.getTarget()));

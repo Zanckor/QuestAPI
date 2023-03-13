@@ -9,7 +9,7 @@ import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 
 import java.util.HashMap;
 
-public class TemplateRegistry {
+public class QuestTemplateRegistry {
 
     /**
      * This class stores quest types, reward types, requirement types... as temporary data to improve access time.

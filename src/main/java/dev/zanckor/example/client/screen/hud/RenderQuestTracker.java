@@ -3,7 +3,7 @@ package dev.zanckor.example.client.screen.hud;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.api.filemanager.quest.UserQuest.QuestGoal;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.client.screen.AbstractQuestTracked;
 import dev.zanckor.mod.common.util.MCUtil;
@@ -70,7 +70,7 @@ public class RenderQuestTracker extends AbstractQuestTracked {
                 MCUtilClient.renderLine(poseStack, (int) xPosition, (int) yPosition, 10, "Quest Type: " + properNoun(questGoalList.get(0).getType()), mc.font);
 
                 for (QuestGoal questGoal : questGoalList) {
-                    AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(questGoal.getType()));
+                    AbstractTargetType targetType = QuestTemplateRegistry.getTargetType(EnumQuestType.valueOf(questGoal.getType()));
                     String translationKey = questGoal.getTarget();
                     if (targetType != null)
                         translationKey = targetType.handler(new ResourceLocation(questGoal.getTarget()));

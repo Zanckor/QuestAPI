@@ -5,8 +5,8 @@ import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
-import dev.zanckor.api.filemanager.quest.register.LoadQuestFromResources;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.api.filemanager.quest.register.LoadQuest;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.common.network.SendQuestPacket;
@@ -33,7 +33,7 @@ import static dev.zanckor.mod.QuestApiMain.*;
 
 public class QuestCommand {
     public static int reloadQuests(CommandContext<CommandSourceStack> context, String identifier){
-        LoadQuestFromResources.registerQuest(context.getSource().getServer(), identifier);
+        LoadQuest.registerQuest(context.getSource().getServer(), identifier);
 
         return 1;
     }
@@ -77,7 +77,7 @@ public class QuestCommand {
 
             //Checks if player has all requirements
             for (int requirementIndex = 0; requirementIndex < serverQuest.getRequirements().size(); requirementIndex++) {
-                AbstractQuestRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements().get(requirementIndex).getType()));
+                AbstractQuestRequirement requirement = QuestTemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements().get(requirementIndex).getType()));
 
                 if (!requirement.handler(player, serverQuest, requirementIndex)) {
                     return 0;

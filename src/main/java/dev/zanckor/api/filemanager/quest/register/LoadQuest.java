@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static dev.zanckor.mod.QuestApiMain.serverQuests;
 
-public class LoadQuestFromResources {
+public class LoadQuest {
 
     /**
      * Each time that server starts running, <code> registerquest </code> is called to copy resource's quest files to minecraft folder.

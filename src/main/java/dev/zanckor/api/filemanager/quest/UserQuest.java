@@ -11,11 +11,7 @@ import java.util.List;
 public class UserQuest extends FileAbstract {
     private String id;
     private String title;
-    private String quest_type;
     private List<QuestGoal> questGoals;
-    private List<String> quest_target;
-    private List<Integer> target_quantity;
-    private List<Integer> target_current_quantity;
     private boolean timeLimit;
     private int timeLimitInSeconds;
     private boolean completed;

@@ -20,7 +20,7 @@ import java.util.UUID;
 public class QuestApiMain {
     public static final String MOD_ID = "questapi";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static Path serverDirectory, questApi, playerData, serverQuests, serverDialogs;
+    public static Path serverDirectory, questApi, playerData, serverQuests, serverDialogs, serverNPC, entity_type_list, compoundTag_List;
 
     public QuestApiMain() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

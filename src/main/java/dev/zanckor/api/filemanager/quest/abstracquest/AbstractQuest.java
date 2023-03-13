@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.quest.ServerQuest;
 import dev.zanckor.api.filemanager.quest.UserQuest;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.ModExample;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
@@ -53,7 +53,7 @@ public abstract class AbstractQuest {
         if (userQuest == null) return;
 
         //Update data
-        AbstractQuest quest = TemplateRegistry.getQuestTemplate(questType);
+        AbstractQuest quest = QuestTemplateRegistry.getQuestTemplate(questType);
         quest.updateData(player, file);
         userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
@@ -89,7 +89,7 @@ public abstract class AbstractQuest {
 
                 //Checks each goal and executes custom complete code
                 for (UserQuest.QuestGoal goals : userQuest.getQuestGoals()) {
-                    for (AbstractQuest goalEnhanced : TemplateRegistry.getAllQuestTemplates().values()) {
+                    for (AbstractQuest goalEnhanced : QuestTemplateRegistry.getAllQuestTemplates().values()) {
                         goalEnhanced.enhancedCompleteQuest(player, file, goals, indexGoal, questType);
                     }
                 }
@@ -115,7 +115,7 @@ public abstract class AbstractQuest {
 
             //Gives each reward to payer
             for (int rewardIndex = 0; rewardIndex < serverQuest.getRewards().size(); rewardIndex++) {
-                AbstractReward reward = TemplateRegistry.getQuestReward(EnumQuestReward.valueOf(serverQuest.getRewards().get(rewardIndex).getType()));
+                AbstractReward reward = QuestTemplateRegistry.getQuestReward(EnumQuestReward.valueOf(serverQuest.getRewards().get(rewardIndex).getType()));
                 reward.handler(player, serverQuest, rewardIndex);
             }
 

@@ -1,10 +1,9 @@
-package dev.zanckor.api.filemanager.dialog.register;
+package dev.zanckor.api.filemanager.npc.entity_type_tag.register;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.FolderManager;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
-import dev.zanckor.mod.common.datapack.DialogJSONListener;
+import dev.zanckor.api.filemanager.npc.entity_type_tag.EntityTypeTagDialog;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -12,34 +11,32 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.util.Map;
 
-import static dev.zanckor.mod.QuestApiMain.serverDialogs;
+import static dev.zanckor.mod.QuestApiMain.compoundTag_List;
 
-public class LoadDialogFromResources {
+public class LoadTagDialogList {
 
     /**
-     * Each time that server starts running, <code> registerDialog </code> is called to copy resource's dialog files to minecraft folder.
+     * Each time that server starts running, <code> registerNPCTagDialogList </code> is called to copy resource's files to minecraft folder.
      */
 
-    static ServerDialog dialogTemplate;
+    static EntityTypeTagDialog entityTypeTagDialog;
 
-    public static void registerDialog(MinecraftServer server, String modid) {
+    public static void registerNPCTagDialogList(MinecraftServer server, String modid) throws IOException {
         ResourceManager resourceManager = server.getResourceManager();
 
-        if (serverDialogs == null) {
+        if (compoundTag_List == null) {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
-        resourceManager.listResources("dialog", (file) -> {
-            if (file.getPath().length() > 7) {
-                String fileName = file.getPath().substring(7);
+        resourceManager.listResources("npc/compound_tag_list", (file) -> {
+            if (file.getPath().length() > 22) {
+                String fileName = file.getPath().substring(22);
                 ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
 
                 if (file.getPath().endsWith(".json")) {
                     read(GsonManager.gson(), resourceLocation, server);
-                    write(GsonManager.gson(), dialogTemplate, modid, fileName);
+                    write(GsonManager.gson(), entityTypeTagDialog, modid, fileName);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
                 }
@@ -47,11 +44,14 @@ public class LoadDialogFromResources {
 
             return false;
         });
+
+        LocateHash.registerDialogPerCompoundTag();
     }
 
 
-    public static void registerDatapackDialog(MinecraftServer server) throws IOException {
-        if (serverDialogs == null) {
+    /*
+    public static void registerDatapackNPCDialogList(MinecraftServer server) throws IOException {
+        if (entity_type_list == null) {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
@@ -61,28 +61,25 @@ public class LoadDialogFromResources {
             writer.close();
         }
     }
+     */
 
     private static void read(Gson gson, ResourceLocation resourceLocation, MinecraftServer server) {
         try {
             InputStream inputStream = server.getResourceManager().getResource(resourceLocation).get().open();
-            dialogTemplate = gson.fromJson(new InputStreamReader(inputStream), ServerDialog.class);
+            entityTypeTagDialog = gson.fromJson(new InputStreamReader(inputStream), EntityTypeTagDialog.class);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void write(Gson gson, ServerDialog dialogTemplate, String modid, String fileName) {
+    private static void write(Gson gson, EntityTypeTagDialog entityTypeDialog, String modid, String fileName) {
         try {
-            File file = new File(serverDialogs.toFile(), modid + "_" + fileName);
+            File file = new File(compoundTag_List.toFile(), modid + "_" + fileName);
 
             FileWriter writer = new FileWriter(file);
 
-            if (dialogTemplate.getIdentifier() == null || dialogTemplate.getIdentifier().isEmpty()) {
-                dialogTemplate.setIdentifier(modid);
-            }
-
-            writer.write(gson.toJson(dialogTemplate));
+            writer.write(gson.toJson(entityTypeDialog));
             writer.flush();
             writer.close();
 

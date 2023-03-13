@@ -5,7 +5,7 @@ import dev.zanckor.api.filemanager.dialog.ServerDialog;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
 import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
@@ -32,7 +32,7 @@ public class ServerHandler {
 
         Path path = LocateHash.getDialogLocation(dialogGlobalID);
         File dialogFile = path.toFile();
-        AbstractDialogOption dialogTemplate = TemplateRegistry.getDialogTemplate(optionType);
+        AbstractDialogOption dialogTemplate = QuestTemplateRegistry.getDialogTemplate(optionType);
 
         try {
             ServerDialog dialog = (ServerDialog) GsonManager.getJsonClass(dialogFile, ServerDialog.class);
@@ -45,7 +45,7 @@ public class ServerHandler {
     }
 
     public static void questHandler(Enum questType, ServerPlayer player, LivingEntity entity) throws IOException {
-        AbstractQuest quest = TemplateRegistry.getQuestTemplate(questType);
+        AbstractQuest quest = QuestTemplateRegistry.getQuestTemplate(questType);
         List<Path> questTypeLocation = LocateHash.getQuestTypeLocation(questType);
 
         if (quest == null || questTypeLocation == null) return;
@@ -73,7 +73,7 @@ public class ServerHandler {
 
         Path path = LocateHash.getDialogLocation(globalDialogID);
         File dialogFile = path.toFile();
-        AbstractDialogOption dialogTemplate = TemplateRegistry.getDialogTemplate(optionType);
+        AbstractDialogOption dialogTemplate = QuestTemplateRegistry.getDialogTemplate(optionType);
 
         try {
             ServerDialog dialog = (ServerDialog) GsonManager.getJsonClass(dialogFile, ServerDialog.class);

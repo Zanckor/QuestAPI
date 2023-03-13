@@ -3,7 +3,7 @@ package dev.zanckor.example.client.event;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.ServerDialog;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.world.entity.Entity;
@@ -34,7 +34,7 @@ public class StartDialog {
             if (dialog.getDialog().get(dialog_id).getRequirements().getType() == null) continue;
 
             EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
-            AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
+            AbstractDialogRequirement dialogRequirement = QuestTemplateRegistry.getDialogRequirement(requirementType);
 
             if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id, entity)) return;
         }

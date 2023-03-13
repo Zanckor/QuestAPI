@@ -1,0 +1,8 @@
+{
+  "entity_type": [
+    "minecraft:cat"
+  ],
+  "dialog_list": [
+    "questapi_collect_items_dialog"
+  ]
+}

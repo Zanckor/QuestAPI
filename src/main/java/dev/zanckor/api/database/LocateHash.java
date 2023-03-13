@@ -1,7 +1,12 @@
 package dev.zanckor.api.database;
 
+import dev.zanckor.api.filemanager.npc.entity_type.EntityTypeDialog;
+import dev.zanckor.mod.QuestApiMain;
+import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.world.entity.player.Player;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +37,10 @@ public class LocateHash {
      * <code> dialogLocation </code>: A path referenced to dialog ID.
      * </p>
      *
+     * <p>
+     * <code> dialogPerEntityType </code>: List of dialogs that an Entity Type will display based on npc/entity_type files.
+     * </p>
+     *
      * <p> <p>
      * As a developer you shouldn't add stuff here to registry more types of quests, dialogs, rewards, etc.
      * </p>
@@ -49,13 +58,52 @@ public class LocateHash {
 
     public static HashMap<String, Path> dialogLocation = new HashMap<>();
 
+    public static HashMap<String, List<String>> dialogPerEntityType = new HashMap<>();
+    public static HashMap<String, File> dialogPerCompoundTag = new HashMap<>();
+
+    public static void registerDialogPerCompoundTag() throws IOException {
+        List<String> dialogs = new ArrayList<>();
+        HashMap<String, String> entityTag = new HashMap<>();
+
+        for (File file : QuestApiMain.compoundTag_List.toFile().listFiles()) {
+            dialogPerCompoundTag.put(file.getName(), file);
+        }
+    }
+
+    public static File getDialogPerCompoundTag(String compoundTag) {
+        if (!dialogPerCompoundTag.containsKey(compoundTag)) return null;
+
+        return dialogPerCompoundTag.get(compoundTag);
+    }
+
+    public static void registerDialogPerEntityType() throws IOException {
+        List<String> dialogs = new ArrayList<>();
+
+        for (File file : QuestApiMain.entity_type_list.toFile().listFiles()) {
+            EntityTypeDialog entityTypeDialog = (EntityTypeDialog) GsonManager.getJsonClass(file, EntityTypeDialog.class);
+
+            for (String entity_type : entityTypeDialog.getEntity_type()) {
+                for (String dialog : entityTypeDialog.getDialog_list()) {
+                    dialogs.add(dialog);
+                }
+
+                dialogPerEntityType.put(entity_type, dialogs);
+            }
+        }
+    }
+
+    public static List<String> getDialogPerEntityType(String entityType) {
+        if (!dialogPerEntityType.containsKey(entityType)) return null;
+
+        return dialogPerEntityType.get(entityType);
+    }
 
     public static void registerQuestTypeLocation(Enum type, Path path) {
         if (clientQuestTypeLocation.get(type) == null) {
             clientQuestTypeLocation.put(type, new ArrayList<>());
         }
 
-        if(getQuestTypeLocation(type).contains(path)) return;
+        if (getQuestTypeLocation(type).contains(path)) return;
 
         List<Path> questList = clientQuestTypeLocation.get(type);
         questList.add(path);

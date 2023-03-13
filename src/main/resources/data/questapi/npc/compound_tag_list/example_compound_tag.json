@@ -1,0 +1,35 @@
+{
+  "entity_type": [
+    "minecraft:villager"
+  ],
+  "conditions": [
+    {
+      "nbt": [
+        {
+          "tag": "VillagerData",
+          "value": "minecraft:librarian"
+        },
+        {
+          "tag": "CustomName",
+          "value": "Jeb"
+        }
+      ],
+      "logic_gate": "OR",
+      "dialog_list": [
+        "questapi_collect_items_dialog"
+      ]
+    },
+    {
+      "nbt": [
+        {
+          "tag": "CustomName",
+          "value": "Jorge"
+        }
+      ],
+      "logic_gate": "OR",
+      "dialog_list": [
+        "questapi_collect_items_dialog"
+      ]
+    }
+  ]
+}
