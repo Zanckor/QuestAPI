@@ -8,6 +8,7 @@ import dev.zanckor.mod.client.screen.AbstractDialog;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.AddQuest;
 import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
+import dev.zanckor.mod.common.network.message.screen.OpenVanillaEntityScreen;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -34,6 +35,7 @@ public class DialogScreen extends AbstractDialog {
     int imageWidth, imageHeight;
     int xButtonPosition, yButtonPosition;
     Entity npc;
+    UUID npcUUID;
 
 
     private final static ResourceLocation DIALOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_background.png");
@@ -53,6 +55,7 @@ public class DialogScreen extends AbstractDialog {
         this.optionStrings = optionStrings;
 
         this.npc = MCUtilClient.getEntityByUUID(npcUUID);
+        this.npcUUID = npcUUID;
 
         return this;
     }
@@ -85,6 +88,9 @@ public class DialogScreen extends AbstractDialog {
 
             xButtonPosition += optionStrings.get(i).get(0).length() * 5.7 + 5;
         }
+
+        addRenderableWidget(new Button((int) (imageWidth * 1.4), (int) (imageHeight * 1.1), 20, 20,
+                Component.literal("↩"), button -> SendQuestPacket.TO_SERVER(new OpenVanillaEntityScreen(npcUUID))));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package dev.zanckor.api.filemanager.dialog;
+package dev.zanckor.api.filemanager.dialog.codec;
 
 import dev.zanckor.api.filemanager.FileAbstract;
 import dev.zanckor.api.database.LocateHash;

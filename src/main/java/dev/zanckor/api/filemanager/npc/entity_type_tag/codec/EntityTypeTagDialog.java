@@ -1,10 +1,12 @@
-package dev.zanckor.api.filemanager.npc.entity_type_tag;
+package dev.zanckor.api.filemanager.npc.entity_type_tag.codec;
 
 import dev.zanckor.api.filemanager.FileAbstract;
+import dev.zanckor.api.filemanager.npc.entity_type_tag.gateenum.LogicGate;
 
 import java.util.List;
 
 public class EntityTypeTagDialog extends FileAbstract {
+    private String id;
     private List<String> entity_type;
     private List<EntityTypeTagDialogCondition> conditions;
 

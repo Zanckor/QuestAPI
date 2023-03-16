@@ -2,8 +2,8 @@ package dev.zanckor.example.client.screen.questlog;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.QuestApiMain;
@@ -174,7 +174,6 @@ public class QuestLog extends AbstractQuestLog {
         int displayedButton = 0;
 
         if (quest != null) {
-
             for (int i = 0; i < quest.size(); i++) {
 
                 if (questSearch != null && !questSearch.isEmpty()) {
@@ -199,7 +198,8 @@ public class QuestLog extends AbstractQuestLog {
     public void renderQuestData(PoseStack poseStack) {
         //TODO: Make multiple pages if quest has a lot of data
         try {
-            if (userQuest == null || MCUtil.isQuestCompleted(userQuest)) return;
+            if (userQuest == null || MCUtil.isQuestCompleted(userQuest) || !(quest.values().toString().contains(userQuest.getId())))
+                return;
 
             HashMap<String, List<UserQuest.QuestGoal>> userQuests = new HashMap<>();
             int xPosition = (int) (width / 1.925);

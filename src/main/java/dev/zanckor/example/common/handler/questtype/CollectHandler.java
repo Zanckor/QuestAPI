@@ -2,15 +2,15 @@ package dev.zanckor.example.common.handler.questtype;
 
 import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.UpdateQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -24,7 +24,7 @@ import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.CO
 
 public class CollectHandler extends AbstractQuest {
 
-    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoal, Enum questType) throws IOException {
+    public void handler(ServerPlayer player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoal, Enum questType) throws IOException {
         String questID = userQuest.getId();
         userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
         if (userQuest == null || (!(questID.equals(userQuest.getId())))) return;
@@ -38,39 +38,35 @@ public class CollectHandler extends AbstractQuest {
     }
 
     @Override
-    public void enhancedCompleteQuest(Player player, File file, UserQuest.QuestGoal goals, int indexGoal, Enum questType) throws IOException {
+    public void enhancedCompleteQuest(ServerPlayer player, File file, UserQuest.QuestGoal goalEnhanced, int indexGoal, Enum questType, AbstractQuest questEnhanced) throws IOException {
         UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
         if (userQuest == null) return;
 
         //Gives rewards and send a notification to player
         if (MCUtil.isQuestCompleted(userQuest)) {
-            removeItems(player, LocateHash.getQuestByID(userQuest.getId()));
+            removeItems(player, LocateHash.getQuestByID(userQuest.getId()), goalEnhanced);
             updateData(player, file);
         }
     }
 
     @Override
-    public void giveReward(Player player, File file, UserQuest userQuest, Path userFolder) throws IOException {
+    public void giveReward(ServerPlayer player, File file, UserQuest userQuest, Path userFolder) throws IOException {
         super.giveReward(player, file, userQuest, userFolder);
     }
 
-    public static void removeItems(Player player, Path questByID) throws IOException {
-        UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(questByID.toFile(), UserQuest.class);
+    public static void removeItems(ServerPlayer player, Path questByID, UserQuest.QuestGoal goalEnhanced) throws IOException {
+        if (!(goalEnhanced.getType().contains(COLLECT.name()))) return;
 
-        for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
-            if (!(questGoal.getType().contains(COLLECT.name()))) continue;
+        String valueItem = goalEnhanced.getTarget();
+        Item itemTarget = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
 
-            String valueItem = questGoal.getTarget();
-            Item itemTarget = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
+        int itemSlot = player.getInventory().findSlotMatchingItem(itemTarget.getDefaultInstance());
 
-            int itemSlot = player.getInventory().findSlotMatchingItem(itemTarget.getDefaultInstance());
-
-            if(itemSlot < 0) return;
-            player.getInventory().removeItem(itemSlot, questGoal.getAmount());
-        }
+        if (itemSlot < 0) return;
+        player.getInventory().removeItem(itemSlot, goalEnhanced.getAmount());
     }
 
-    public void updateData(Player player, File file) throws IOException {
+    public void updateData(ServerPlayer player, File file) throws IOException {
         UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
         if (userQuest == null) return;
 

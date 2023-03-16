@@ -2,19 +2,18 @@ package dev.zanckor.example.common.handler.dialogoption;
 
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
+import dev.zanckor.api.filemanager.dialog.codec.ServerDialog;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
 import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.IOException;
 
-public class OpenDialogHandler extends AbstractDialogOption {
+public class DialogCloseDialog extends AbstractDialogOption {
 
     /**
-     * When player clicks on an option which type is "OPEN_DIALOG" will try to change current screen to the dialog specified on that option.
+     * When player clicks on an option which type is "CLOSE_DIALOG" will close the screen.
      *
      * @param player            The player
      * @param dialog            DialogTemplate class with all dialog data
@@ -27,8 +26,8 @@ public class OpenDialogHandler extends AbstractDialogOption {
         int currentDialog = LocateHash.currentDialog.get(player);
         ServerDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
 
-        if (option.getType().equals(EnumOptionType.OPEN_DIALOG.toString())) {
-            SendQuestPacket.TO_CLIENT(player, new DisplayDialog(dialog, dialog.getIdentifier(), option.getDialog(), player, npc));
+        if (option.getType().equals(EnumOptionType.CLOSE_DIALOG.toString())) {
+            SendQuestPacket.TO_CLIENT(player, new dev.zanckor.mod.common.network.message.dialogoption.CloseDialog());
         }
     }
 }

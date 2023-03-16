@@ -1,7 +1,7 @@
 package dev.zanckor.example.client.screen.hud;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.zanckor.api.filemanager.quest.UserQuest.QuestGoal;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest.QuestGoal;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;

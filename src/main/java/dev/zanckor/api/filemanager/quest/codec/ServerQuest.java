@@ -1,4 +1,4 @@
-package dev.zanckor.api.filemanager.quest;
+package dev.zanckor.api.filemanager.quest.codec;
 
 import dev.zanckor.api.filemanager.FileAbstract;
 

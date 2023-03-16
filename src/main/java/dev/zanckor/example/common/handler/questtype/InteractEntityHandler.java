@@ -1,23 +1,22 @@
 package dev.zanckor.example.common.handler.questtype;
 
 import com.google.gson.Gson;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.UpdateQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class InteractEntityHandler extends AbstractQuest {
 
-    public void handler(Player player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoal, Enum questType) throws IOException {
+    public void handler(ServerPlayer player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoal, Enum questType) throws IOException {
         userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
         UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoal);
 
@@ -39,12 +38,12 @@ public class InteractEntityHandler extends AbstractQuest {
     }
 
     @Override
-    public void enhancedCompleteQuest(Player player, File file, UserQuest.QuestGoal goals, int indexGoal, Enum questType) throws IOException {
+    public void enhancedCompleteQuest(ServerPlayer player, File file, UserQuest.QuestGoal goals, int indexGoal, Enum questType, AbstractQuest goalEnhanced) throws IOException {
 
     }
 
     @Override
-    public void updateData(Player player, File file) throws IOException {
+    public void updateData(ServerPlayer player, File file) throws IOException {
 
     }
 }

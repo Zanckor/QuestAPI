@@ -1,9 +1,9 @@
 package dev.zanckor.mod.common.network.handler;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
+import dev.zanckor.api.filemanager.dialog.codec.ServerDialog;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.mod.QuestApiMain;

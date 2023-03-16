@@ -1,10 +1,10 @@
 package dev.zanckor.example.common.handler.dialogoption;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
+import dev.zanckor.api.filemanager.dialog.codec.ServerDialog;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
-import dev.zanckor.api.filemanager.quest.ServerQuest;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 
 import static dev.zanckor.mod.QuestApiMain.*;
 
-public class AddQuestHandler extends AbstractDialogOption {
+public class DialogAddQuest extends AbstractDialogOption {
 
     /**
      * When player clicks on an option which type is "ADD_QUEST" will try to give it if player has the requirements.

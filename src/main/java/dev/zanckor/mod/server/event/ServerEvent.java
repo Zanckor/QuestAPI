@@ -2,11 +2,11 @@ package dev.zanckor.mod.server.event;
 
 import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
-import dev.zanckor.api.filemanager.npc.entity_type_tag.EntityTypeTagDialog;
-import dev.zanckor.api.filemanager.npc.entity_type_tag.EntityTypeTagDialog.EntityTypeTagDialogCondition;
-import dev.zanckor.api.filemanager.npc.entity_type_tag.EntityTypeTagDialog.EntityTypeTagDialogCondition.EntityTypeTagDialogNBT;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.dialog.codec.ServerDialog;
+import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog;
+import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition;
+import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition.EntityTypeTagDialogNBT;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.example.client.event.StartDialog;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
 import dev.zanckor.mod.QuestApiMain;
@@ -159,7 +159,7 @@ public class ServerEvent {
         String targetEntityType = EntityType.getKey(target.getType()).toString();
 
         List<String> dialogPerEntityType = LocateHash.getDialogPerEntityType(targetEntityType);
-        if (!player.level.isClientSide && dialogPerEntityType != null && e.getHand().equals(InteractionHand.MAIN_HAND)) {
+        if (!player.level.isClientSide && dialogPerEntityType != null && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
             String selectedDialog = target.getPersistentData().getString("dialog");
 
             if (target.getPersistentData().get("dialog") == null) {
@@ -179,7 +179,7 @@ public class ServerEvent {
         Entity target = e.getTarget();
         List<String> dialogs = new ArrayList<>();
 
-        if (!player.level.isClientSide && e.getHand().equals(InteractionHand.MAIN_HAND)) {
+        if (!player.level.isClientSide && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
 
             for (Map.Entry<String, File> entry : LocateHash.dialogPerCompoundTag.entrySet()) {
                 CompoundTag entityNBT = NbtPredicate.getEntityTagToCompare(target);
@@ -250,5 +250,15 @@ public class ServerEvent {
                 StartDialog.loadDialog(player, selectedDialog, target);
             }
         }
+    }
+
+
+    public static boolean openVanillaMenu(Player player){
+        if (player.isShiftKeyDown()) {
+            player.setShiftKeyDown(false);
+            return true;
+        }
+
+        return false;
     }
 }

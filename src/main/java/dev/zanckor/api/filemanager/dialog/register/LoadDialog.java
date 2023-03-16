@@ -3,7 +3,7 @@ package dev.zanckor.api.filemanager.dialog.register;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.zanckor.api.filemanager.FolderManager;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
+import dev.zanckor.api.filemanager.dialog.codec.ServerDialog;
 import dev.zanckor.mod.common.datapack.DialogJSONListener;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;

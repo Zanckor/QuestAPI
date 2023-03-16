@@ -1,21 +1,17 @@
 package dev.zanckor.example.common.handler.questreward;
 
-import dev.zanckor.api.filemanager.quest.codec.ServerQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractReward;
+import dev.zanckor.api.filemanager.quest.codec.ServerQuest;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
 
-public class ItemReward extends AbstractReward {
+public class CommandReward extends AbstractReward {
 
     /**
-     * Type of reward, gives player whatever item is set on quest.json as reward
+     * Type of reward, executes command set on quest.json as reward
      *
      * @param player      The player
      * @param serverQuest ServerQuestBase with global quest data
@@ -26,12 +22,15 @@ public class ItemReward extends AbstractReward {
 
     @Override
     public void handler(ServerPlayer player, ServerQuest serverQuest, int rewardIndex) throws IOException {
-        String valueItem = serverQuest.getRewards().get(rewardIndex).getTag();
+        String command = serverQuest.getRewards().get(rewardIndex).getTag();
+        if(command.contains("@p")) command.replace("@p", player.getScoreboardName());
+
         int quantity = serverQuest.getRewards().get(rewardIndex).getAmount();
 
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
-        ItemStack stack = new ItemStack(item, quantity);
+        CommandSourceStack sourceStack = player.getServer().createCommandSourceStack();
 
-        player.addItem(stack);
+        for (int timesExecuted = 0; timesExecuted < quantity; timesExecuted++) {
+            sourceStack.getServer().getCommands().performCommand(sourceStack, command);
+        }
     }
 }

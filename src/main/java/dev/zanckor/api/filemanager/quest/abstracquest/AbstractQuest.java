@@ -2,8 +2,8 @@ package dev.zanckor.api.filemanager.quest.abstracquest;
 
 import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.quest.ServerQuest;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.ModExample;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
@@ -13,8 +13,8 @@ import dev.zanckor.mod.common.network.message.quest.ToastPacket;
 import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 
 import java.io.File;
 import java.io.FileReader;
@@ -43,9 +43,9 @@ public abstract class AbstractQuest {
      * @see ModExample Main class where you should register quest's types
      */
 
-    public abstract void handler(Player player, Entity entity, Gson gson, File file, UserQuest playerQuest, int indexGoal, Enum questType) throws IOException;
+    public abstract void handler(ServerPlayer player, Entity entity, Gson gson, File file, UserQuest playerQuest, int indexGoal, Enum questType) throws IOException;
 
-    public void completeQuest(Player player, File file, UserQuest.QuestGoal questGoal, int indexGoal, Enum questType) throws IOException {
+    public void completeQuest(ServerPlayer player, File file, UserQuest.QuestGoal questGoal, int indexGoal, Enum questType) throws IOException {
         Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
         UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
         int indexGoals = 0;
@@ -88,9 +88,9 @@ public abstract class AbstractQuest {
             if (userQuest.isCompleted() && MCUtil.isQuestCompleted(userQuest)) {
 
                 //Checks each goal and executes custom complete code
-                for (UserQuest.QuestGoal goals : userQuest.getQuestGoals()) {
-                    for (AbstractQuest goalEnhanced : QuestTemplateRegistry.getAllQuestTemplates().values()) {
-                        goalEnhanced.enhancedCompleteQuest(player, file, goals, indexGoal, questType);
+                for (UserQuest.QuestGoal goalEnhanced : userQuest.getQuestGoals()) {
+                    for (AbstractQuest questEnhanced : QuestTemplateRegistry.getAllQuestTemplates().values()) {
+                        questEnhanced.enhancedCompleteQuest(player, file, goalEnhanced, indexGoal, questType, questEnhanced);
                     }
                 }
 
@@ -100,10 +100,10 @@ public abstract class AbstractQuest {
         }
     }
 
-    public abstract void enhancedCompleteQuest(Player player, File file, UserQuest.QuestGoal goals, int indexGoal, Enum questType) throws IOException;
+    public abstract void enhancedCompleteQuest(ServerPlayer player, File file, UserQuest.QuestGoal goals, int indexGoal, Enum questType, AbstractQuest goalEnhanced) throws IOException;
 
-    public void giveReward(Player player, File file, UserQuest userQuest, Path userFolder) throws IOException {
-        if (!(userQuest.isCompleted())) return;
+    public void giveReward(ServerPlayer player, File file, UserQuest userQuest, Path userFolder) throws IOException {
+        if (!(userQuest.isCompleted()) || player.level.isClientSide) return;
         String questName = userQuest.getId() + ".json";
 
         for (File serverFile : serverQuests.toFile().listFiles()) {
@@ -128,5 +128,5 @@ public abstract class AbstractQuest {
         }
     }
 
-    public abstract void updateData(Player player, File file) throws IOException;
+    public abstract void updateData(ServerPlayer player, File file) throws IOException;
 }

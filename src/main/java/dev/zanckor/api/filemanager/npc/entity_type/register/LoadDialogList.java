@@ -1,9 +1,11 @@
 package dev.zanckor.api.filemanager.npc.entity_type.register;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.FolderManager;
-import dev.zanckor.api.filemanager.npc.entity_type.EntityTypeDialog;
+import dev.zanckor.api.filemanager.npc.entity_type.codec.EntityTypeDialog;
+import dev.zanckor.mod.common.datapack.DialogJSONListener;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -11,8 +13,12 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.util.Map;
 
-import static dev.zanckor.mod.QuestApiMain.*;
+import static dev.zanckor.mod.QuestApiMain.entity_type_list;
+import static dev.zanckor.mod.QuestApiMain.serverDialogs;
+import static dev.zanckor.mod.common.datapack.EntityTypeDialogJSONListener.datapackDialogPerEntityTypeList;
 
 public class LoadDialogList {
 
@@ -49,19 +55,18 @@ public class LoadDialogList {
     }
 
 
-    /*
-    public static void registerDatapackNPCDialogList(MinecraftServer server) throws IOException {
+    public static void registerDatapackDialogList(MinecraftServer server) throws IOException {
         if (entity_type_list == null) {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
-        for(Map.Entry<String, JsonObject> entry : DialogJSONListener.datapackDialogList.entrySet()){
-            FileWriter writer = new FileWriter(String.valueOf(Path.of(serverDialogs + "/" + entry.getKey())));
+        for (Map.Entry<String, JsonObject> entry : datapackDialogPerEntityTypeList.entrySet()) {
+            FileWriter writer = new FileWriter(String.valueOf(Path.of(entity_type_list + "/" + entry.getKey())));
             writer.write(entry.getValue().toString());
             writer.close();
         }
     }
-     */
+
 
     private static void read(Gson gson, ResourceLocation resourceLocation, MinecraftServer server) {
         try {

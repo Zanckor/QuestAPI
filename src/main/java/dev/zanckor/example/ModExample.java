@@ -14,13 +14,15 @@ import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
-import dev.zanckor.example.common.handler.dialogoption.AddQuestHandler;
-import dev.zanckor.example.common.handler.dialogoption.CloseDialogHandler;
-import dev.zanckor.example.common.handler.dialogoption.OpenDialogHandler;
-import dev.zanckor.example.common.handler.dialogrequirement.DialogRequirementHandler;
-import dev.zanckor.example.common.handler.dialogrequirement.QuestRequirementHandler;
+import dev.zanckor.example.common.handler.dialogoption.DialogAddQuest;
+import dev.zanckor.example.common.handler.dialogoption.DialogCloseDialog;
+import dev.zanckor.example.common.handler.dialogoption.DialogOpenDialog;
+import dev.zanckor.example.common.handler.dialogrequirement.DialogRequirement;
+import dev.zanckor.example.common.handler.dialogrequirement.QuestRequirement;
 import dev.zanckor.example.common.handler.questrequirement.XpRequirement;
+import dev.zanckor.example.common.handler.questreward.CommandReward;
 import dev.zanckor.example.common.handler.questreward.ItemReward;
+import dev.zanckor.example.common.handler.questreward.QuestReward;
 import dev.zanckor.example.common.handler.questtype.CollectHandler;
 import dev.zanckor.example.common.handler.questtype.InteractEntityHandler;
 import dev.zanckor.example.common.handler.questtype.KillHandler;
@@ -74,19 +76,21 @@ public class ModExample {
 
     public static void registerReward() {
         QuestTemplateRegistry.registerReward(EnumQuestReward.ITEM, new ItemReward());
+        QuestTemplateRegistry.registerReward(EnumQuestReward.COMMAND, new CommandReward());
+        QuestTemplateRegistry.registerReward(EnumQuestReward.QUEST, new QuestReward());
     }
 
     public static void registerRequirement() {
         QuestTemplateRegistry.registerQuestRequirement(EnumQuestRequirement.XP, new XpRequirement());
 
-        QuestTemplateRegistry.registerDialogRequirement(EnumRequirementType.DIALOG, new DialogRequirementHandler());
-        QuestTemplateRegistry.registerDialogRequirement(EnumRequirementType.QUEST, new QuestRequirementHandler());
+        QuestTemplateRegistry.registerDialogRequirement(EnumRequirementType.DIALOG, new DialogRequirement());
+        QuestTemplateRegistry.registerDialogRequirement(EnumRequirementType.QUEST, new QuestRequirement());
     }
 
     public static void registerDialog() {
-        QuestTemplateRegistry.registerDialog(EnumOptionType.OPEN_DIALOG, new OpenDialogHandler());
-        QuestTemplateRegistry.registerDialog(EnumOptionType.CLOSE_DIALOG, new CloseDialogHandler());
-        QuestTemplateRegistry.registerDialog(EnumOptionType.ADD_QUEST, new AddQuestHandler());
+        QuestTemplateRegistry.registerDialog(EnumOptionType.OPEN_DIALOG, new DialogOpenDialog());
+        QuestTemplateRegistry.registerDialog(EnumOptionType.CLOSE_DIALOG, new DialogCloseDialog());
+        QuestTemplateRegistry.registerDialog(EnumOptionType.ADD_QUEST, new DialogAddQuest());
 
     }
 

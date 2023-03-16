@@ -3,7 +3,7 @@ package dev.zanckor.api.filemanager.quest.register;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.zanckor.api.filemanager.FolderManager;
-import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.ServerQuest;
 import dev.zanckor.mod.common.datapack.QuestJSONListener;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.resources.ResourceLocation;

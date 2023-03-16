@@ -1,6 +1,6 @@
 package dev.zanckor.api.database;
 
-import dev.zanckor.api.filemanager.npc.entity_type.EntityTypeDialog;
+import dev.zanckor.api.filemanager.npc.entity_type.codec.EntityTypeDialog;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.world.entity.player.Player;

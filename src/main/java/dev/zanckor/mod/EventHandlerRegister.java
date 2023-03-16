@@ -4,7 +4,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import dev.zanckor.mod.common.datapack.CompoundTagDialogJSONListener;
 import dev.zanckor.mod.common.datapack.DialogJSONListener;
+import dev.zanckor.mod.common.datapack.EntityTypeDialogJSONListener;
 import dev.zanckor.mod.common.datapack.QuestJSONListener;
 import dev.zanckor.mod.server.command.QuestCommand;
 import net.minecraft.commands.CommandSourceStack;
@@ -150,5 +152,7 @@ public class EventHandlerRegister {
     public static void jsonListener(AddReloadListenerEvent e){
         QuestJSONListener.register(e);
         DialogJSONListener.register(e);
+        CompoundTagDialogJSONListener.register(e);
+        EntityTypeDialogJSONListener.register(e);
     }
 }

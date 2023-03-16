@@ -1,11 +1,16 @@
 package dev.zanckor.mod.common.network.message.dialogoption;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
+import dev.zanckor.api.filemanager.dialog.codec.ServerDialog;
 import dev.zanckor.mod.common.network.handler.ClientHandler;
 import dev.zanckor.mod.common.util.MCUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -87,8 +92,6 @@ public class DisplayDialog {
 
     public static void handler(DisplayDialog msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-
-
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
                     ClientHandler.displayDialog(msg.modid, msg.dialogID, msg.questDialog, msg.optionSize, msg.optionIntegers, msg.optionStrings, msg.npcUUID));
         });

@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-@Mod(QuestApiMain.MOD_ID)
+import static dev.zanckor.mod.QuestApiMain.MOD_ID;
+
+@Mod(MOD_ID)
 public class QuestApiMain {
     public static final String MOD_ID = "questapi";
     public static final Logger LOGGER = LogUtils.getLogger();

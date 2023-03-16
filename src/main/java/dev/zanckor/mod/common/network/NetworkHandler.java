@@ -36,7 +36,6 @@ public class NetworkHandler {
                 .encoder(TimerPacket::encodeBuffer).decoder(TimerPacket::new)
                 .consumerNetworkThread(TimerPacket::handler).add();
 
-
         CHANNEL.messageBuilder(RequestQuestTracked.class, index++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(RequestQuestTracked::encodeBuffer).decoder(RequestQuestTracked::new)
                 .consumerNetworkThread(RequestQuestTracked::handler).add();
@@ -53,11 +52,14 @@ public class NetworkHandler {
                 .encoder(RequestQuestList::encodeBuffer).decoder(RequestQuestList::new)
                 .consumerNetworkThread(RequestQuestList::handler).add();
 
+        CHANNEL.messageBuilder(OpenVanillaEntityScreen.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(OpenVanillaEntityScreen::encodeBuffer).decoder(OpenVanillaEntityScreen::new)
+                .consumerNetworkThread(OpenVanillaEntityScreen::handler).add();
+
 
         CHANNEL.messageBuilder(ToastPacket.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(ToastPacket::encodeBuffer).decoder(ToastPacket::new)
                 .consumerNetworkThread(ToastPacket::handler).add();
-
 
         CHANNEL.messageBuilder(DisplayDialog.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(DisplayDialog::encodeBuffer).decoder(DisplayDialog::new)

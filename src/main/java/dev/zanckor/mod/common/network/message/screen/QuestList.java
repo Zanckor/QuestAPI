@@ -1,6 +1,6 @@
 package dev.zanckor.mod.common.network.message.screen;
 
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.handler.ClientHandler;
 import dev.zanckor.mod.common.util.GsonManager;

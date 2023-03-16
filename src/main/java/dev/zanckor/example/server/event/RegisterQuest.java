@@ -23,5 +23,7 @@ public class RegisterQuest {
 
         LoadQuest.registerDatapackQuest(e.getServer());
         LoadDialog.registerDatapackDialog(e.getServer());
+        LoadDialogList.registerDatapackDialogList(e.getServer());
+        LoadTagDialogList.registerDatapackTagDialogList(e.getServer());
     }
 }

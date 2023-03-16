@@ -12,9 +12,9 @@
   ],
   "rewards": [
     {
-      "type": "ITEM",
-      "tag": "minecraft:coal",
-      "amount": 64
+      "type": "QUEST",
+      "tag": "questapi_kill_entity",
+      "amount": 1
     }
   ],
   "requirements": [

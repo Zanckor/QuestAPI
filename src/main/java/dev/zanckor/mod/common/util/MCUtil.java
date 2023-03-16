@@ -1,8 +1,8 @@
 package dev.zanckor.mod.common.util;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.ReadDialog;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.dialog.codec.ReadDialog;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;

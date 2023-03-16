@@ -2,8 +2,8 @@ package dev.zanckor.mod.server.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.quest.ServerQuest;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
 import dev.zanckor.api.filemanager.quest.register.LoadQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;

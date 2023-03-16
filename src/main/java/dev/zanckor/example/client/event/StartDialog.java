@@ -1,11 +1,12 @@
 package dev.zanckor.example.client.event;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
+import dev.zanckor.api.filemanager.dialog.codec.ServerDialog;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
 import dev.zanckor.mod.common.util.GsonManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 

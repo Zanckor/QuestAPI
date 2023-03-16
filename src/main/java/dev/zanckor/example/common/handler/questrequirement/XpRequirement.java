@@ -1,6 +1,6 @@
 package dev.zanckor.example.common.handler.questrequirement;
 
-import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.ServerQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
 import net.minecraft.network.chat.Component;

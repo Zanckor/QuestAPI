@@ -1,11 +1,10 @@
 package dev.zanckor.api.filemanager.dialog.abstractdialog;
 
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
+import dev.zanckor.api.filemanager.dialog.codec.ServerDialog;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.IOException;
-import java.util.Optional;
 
 public abstract class AbstractDialogOption {
 
