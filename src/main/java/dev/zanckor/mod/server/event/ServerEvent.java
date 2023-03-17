@@ -213,6 +213,7 @@ public class ServerEvent {
                             boolean shouldAddDialogList = false;
 
                             for (EntityTypeTagDialogNBT nbt : conditions.getNbt()) {
+
                                 if (entityNBT.get(nbt.getTag()) != null) {
                                     tagCompare = entityNBT.get(nbt.getTag()).getAsString().contains(nbt.getValue());
                                 } else {
@@ -253,7 +254,7 @@ public class ServerEvent {
     }
 
 
-    public static boolean openVanillaMenu(Player player){
+    public static boolean openVanillaMenu(Player player) {
         if (player.isShiftKeyDown()) {
             player.setShiftKeyDown(false);
             return true;

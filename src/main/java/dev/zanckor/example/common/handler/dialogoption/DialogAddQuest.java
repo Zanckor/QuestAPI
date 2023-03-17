@@ -55,7 +55,7 @@ public class DialogAddQuest extends AbstractDialogOption {
 
 
         for (File file : serverQuests.toFile().listFiles()) {
-            if (!(file.getName().equals(quest))) return;
+            if (!(file.getName().equals(quest))) continue;
 
             Path path = Paths.get(getActiveQuest(userFolder).toString(), "\\", file.getName());
             ServerQuest serverQuest = (ServerQuest) GsonManager.getJsonClass(file, ServerQuest.class);

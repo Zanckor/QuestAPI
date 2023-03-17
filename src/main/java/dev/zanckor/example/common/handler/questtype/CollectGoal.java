@@ -22,7 +22,7 @@ import java.nio.file.Path;
 
 import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.COLLECT;
 
-public class CollectHandler extends AbstractQuest {
+public class CollectGoal extends AbstractQuest {
 
     public void handler(ServerPlayer player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoal, Enum questType) throws IOException {
         String questID = userQuest.getId();

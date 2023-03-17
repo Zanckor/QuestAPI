@@ -80,7 +80,7 @@ public class LoadTagDialogList {
 
     private static void write(Gson gson, EntityTypeTagDialog entityTypeDialog, String modid, String fileName) {
         try {
-            File file = new File(compoundTag_List.toFile(), modid + "_" + fileName);
+            File file = new File(compoundTag_List.toFile(), modid + "." + fileName);
 
             FileWriter writer = new FileWriter(file);
 

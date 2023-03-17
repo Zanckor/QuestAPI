@@ -23,15 +23,14 @@ import dev.zanckor.example.common.handler.questrequirement.XpRequirement;
 import dev.zanckor.example.common.handler.questreward.CommandReward;
 import dev.zanckor.example.common.handler.questreward.ItemReward;
 import dev.zanckor.example.common.handler.questreward.QuestReward;
-import dev.zanckor.example.common.handler.questtype.CollectHandler;
-import dev.zanckor.example.common.handler.questtype.InteractEntityHandler;
-import dev.zanckor.example.common.handler.questtype.KillHandler;
-import dev.zanckor.example.common.handler.questtype.MoveToHandler;
+import dev.zanckor.example.common.handler.questreward.XpReward;
+import dev.zanckor.example.common.handler.questtype.*;
 import dev.zanckor.example.common.handler.targettype.EntityTargetType;
 import dev.zanckor.example.common.handler.targettype.ItemTargetType;
 import dev.zanckor.example.client.screen.dialog.DialogScreen;
 import dev.zanckor.example.client.screen.hud.RenderQuestTracker;
 import dev.zanckor.example.client.screen.questlog.QuestLog;
+import dev.zanckor.example.common.handler.targettype.XPTargetType;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -68,16 +67,18 @@ public class ModExample {
      */
 
     public static void registerQuest() {
-        QuestTemplateRegistry.registerQuest(EnumQuestType.KILL, new KillHandler());
-        QuestTemplateRegistry.registerQuest(EnumQuestType.INTERACT_ENTITY, new InteractEntityHandler());
-        QuestTemplateRegistry.registerQuest(EnumQuestType.MOVE_TO, new MoveToHandler());
-        QuestTemplateRegistry.registerQuest(EnumQuestType.COLLECT, new CollectHandler());
+        QuestTemplateRegistry.registerQuest(EnumQuestType.KILL, new KillGoal());
+        QuestTemplateRegistry.registerQuest(EnumQuestType.INTERACT_ENTITY, new InteractEntityGoal());
+        QuestTemplateRegistry.registerQuest(EnumQuestType.MOVE_TO, new MoveToGoal());
+        QuestTemplateRegistry.registerQuest(EnumQuestType.COLLECT, new CollectGoal());
+        QuestTemplateRegistry.registerQuest(EnumQuestType.XP, new XpGoal());
     }
 
     public static void registerReward() {
         QuestTemplateRegistry.registerReward(EnumQuestReward.ITEM, new ItemReward());
         QuestTemplateRegistry.registerReward(EnumQuestReward.COMMAND, new CommandReward());
         QuestTemplateRegistry.registerReward(EnumQuestReward.QUEST, new QuestReward());
+        QuestTemplateRegistry.registerReward(EnumQuestReward.XP, new XpReward());
     }
 
     public static void registerRequirement() {
@@ -96,6 +97,7 @@ public class ModExample {
 
     public static void registerTarget() {
         QuestTemplateRegistry.registerTargetType(EnumQuestType.COLLECT, new ItemTargetType());
+        QuestTemplateRegistry.registerTargetType(EnumQuestType.XP, new XPTargetType());
         QuestTemplateRegistry.registerTargetType(EnumQuestType.KILL, new EntityTargetType());
         QuestTemplateRegistry.registerTargetType(EnumQuestType.INTERACT_ENTITY, new EntityTargetType());
     }

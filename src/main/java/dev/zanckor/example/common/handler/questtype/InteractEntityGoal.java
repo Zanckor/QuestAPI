@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class InteractEntityHandler extends AbstractQuest {
+public class InteractEntityGoal extends AbstractQuest {
 
     public void handler(ServerPlayer player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoal, Enum questType) throws IOException {
         userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);

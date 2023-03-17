@@ -35,7 +35,7 @@ public class DialogJSONListener extends SimpleJsonResourceReloadListener {
 
             //Load dialog
             if(obj.get("dialog") != null){
-                String dialogID = "_" + rl.getPath();
+                String dialogID = "." + rl.getPath();
                 Path path = Path.of(rl.getNamespace() + dialogID + ".json");
 
                 datapackDialogList.put(path.toString(), obj);

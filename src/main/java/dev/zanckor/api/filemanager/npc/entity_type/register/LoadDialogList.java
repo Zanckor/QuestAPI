@@ -80,7 +80,7 @@ public class LoadDialogList {
 
     private static void write(Gson gson, EntityTypeDialog entityTypeDialog, String modid, String fileName) {
         try {
-            File file = new File(entity_type_list.toFile(), modid + "_" + fileName);
+            File file = new File(entity_type_list.toFile(), modid + "." + fileName);
 
             FileWriter writer = new FileWriter(file);
 

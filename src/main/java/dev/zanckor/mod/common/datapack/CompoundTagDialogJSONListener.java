@@ -36,7 +36,7 @@ public class CompoundTagDialogJSONListener extends SimpleJsonResourceReloadListe
 
             //Load quest
             if(obj.get("entity_type") != null) {
-                String questId = "_" + obj.get("id").toString().substring(1, obj.get("id").toString().length() - 1);
+                String questId = "." + obj.get("id").toString().substring(1, obj.get("id").toString().length() - 1);
                 Path path = Path.of(rl.getNamespace() + questId + ".json");
 
                 datapackDialogPerCompoundTagList.put(path.toString(), obj);

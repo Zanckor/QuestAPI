@@ -13,7 +13,7 @@
   "rewards": [
     {
       "type": "QUEST",
-      "tag": "questapi_kill_entity",
+      "tag": "questapi.kill_entity",
       "amount": 1
     }
   ],

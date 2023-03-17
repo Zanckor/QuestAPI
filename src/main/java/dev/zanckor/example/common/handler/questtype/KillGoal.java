@@ -8,26 +8,28 @@ import dev.zanckor.mod.common.network.message.screen.UpdateQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.MOVE_TO;
-
-public class MoveToHandler extends AbstractQuest {
+public class KillGoal extends AbstractQuest {
 
     public void handler(ServerPlayer player, Entity entity, Gson gson, File file, UserQuest userQuest, int indexGoal, Enum questType) throws IOException {
-
+        userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
         UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoal);
 
-        if (!(questGoal.getType().equals(MOVE_TO.toString()))) return;
-        questGoal.setCurrentAmount(1);
+        //Checks if killed entity equals to target and if it is, checks if current progress is more than target amount
+        if (questGoal.getCurrentAmount() >= questGoal.getAmount() || !(questGoal.getTarget().equals(EntityType.getKey(entity.getType()).toString())))
+            return;
 
-        FileWriter moveToCoordWriter = new FileWriter(file);
-        gson.toJson(userQuest, moveToCoordWriter);
-        moveToCoordWriter.flush();
-        moveToCoordWriter.close();
+        questGoal.incrementCurrentAmount(1);
+
+        FileWriter interactWriter = new FileWriter(file);
+        gson.toJson(userQuest, interactWriter);
+        interactWriter.flush();
+        interactWriter.close();
 
         userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 

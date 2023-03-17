@@ -74,7 +74,7 @@ public class LoadDialog {
 
     private static void write(Gson gson, ServerDialog dialogTemplate, String identifier, String fileName) {
         try {
-            File file = new File(serverDialogs.toFile(), identifier + "_" + fileName);
+            File file = new File(serverDialogs.toFile(), identifier + "." + fileName);
 
             FileWriter writer = new FileWriter(file);
 

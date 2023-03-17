@@ -21,6 +21,11 @@
       "type": "COLLECT",
       "target": "minecraft:gold_ingot",
       "amount": 1
+    },
+    {
+      "type": "XP",
+      "target": "",
+      "amount": 1
     }
   ],
   "hasTimeLimit": false,

@@ -22,9 +22,9 @@
   ],
   "rewards": [
     {
-      "type": "COMMAND",
-      "tag": "say Hello there @p",
-      "amount": 1
+      "type": "XP",
+      "tag": "LEVEL",
+      "amount": 10
     }
   ],
   "requirements": [

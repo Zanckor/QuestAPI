@@ -40,7 +40,7 @@ public class LoadQuest {
 
                 if (file.getPath().endsWith(".json")) {
                     read(GsonManager.gson(), resourceLocation, resourceManager);
-                    write(GsonManager.gson(), playerQuest, modid + "_" + fileName);
+                    write(GsonManager.gson(), playerQuest, fileName, modid);
                 } else {
                     throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
                 }
@@ -72,9 +72,9 @@ public class LoadQuest {
         }
     }
 
-    private static void write(Gson gson, ServerQuest questTemplate, String fileName) {
+    private static void write(Gson gson, ServerQuest questTemplate, String fileName, String identifier) {
         try {
-            FileWriter writer = new FileWriter(new File(serverQuests.toFile(), fileName));
+            FileWriter writer = new FileWriter(new File(serverQuests.toFile(), identifier + "." + fileName));
             questTemplate.setId(fileName.substring(0, fileName.length() - 5));
 
             writer.write(gson.toJson(questTemplate));
