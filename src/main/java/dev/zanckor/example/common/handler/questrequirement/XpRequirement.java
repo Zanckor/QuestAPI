@@ -1,8 +1,9 @@
 package dev.zanckor.example.common.handler.questrequirement;
 
-import dev.zanckor.api.filemanager.quest.ServerQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
-import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
+import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.server.ServerRequirement;
+import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogReq;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
@@ -17,12 +18,13 @@ public class XpRequirement extends AbstractQuestRequirement {
      * @param serverQuest      ServerQuestBase with global quest data
      * @param requirementIndex
      * @throws IOException Exception fired when server cannot read json file
-     * @see EnumRequirementType Requirement types
+     * @see EnumDialogReq Requirement types
      */
 
     @Override
     public boolean handler(Player player, ServerQuest serverQuest, int requirementIndex) throws IOException {
-        ServerQuest.Requirement requirement = serverQuest.getRequirements().get(requirementIndex);
+        ServerRequirement requirement = serverQuest.getRequirements().get(requirementIndex);
+        if (player.experienceLevel < 0) player.experienceLevel = 0;
 
         boolean hasReqs = player.experienceLevel >= requirement.getRequirements_min() && player.experienceLevel <= requirement.getRequirements_max();
 

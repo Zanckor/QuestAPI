@@ -1,9 +1,9 @@
 package dev.zanckor.api.screen;
 
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.client.screen.AbstractDialog;
-import dev.zanckor.mod.client.screen.AbstractQuestLog;
-import dev.zanckor.mod.client.screen.AbstractQuestTracked;
+import dev.zanckor.mod.client.screen.abstractscreen.AbstractDialog;
+import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestLog;
+import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestTracked;
 
 import java.util.HashMap;
 

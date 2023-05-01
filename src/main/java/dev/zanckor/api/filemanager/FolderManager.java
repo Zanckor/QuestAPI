@@ -29,13 +29,16 @@ public class FolderManager {
         createAPIFolder(serverDirectory);
     }
 
-    public static void createAPIFolder(Path serverDirectory){
+    public static void createAPIFolder(Path serverDirectory) {
         File questApi = new File(serverDirectory.toString(), "quest-api");
         File playerData = new File(questApi.toString(), "player-data");
         File serverQuests = new File(questApi.toString(), "server-quests");
         File serverDialogs = new File(questApi.toString(), "server-dialogs");
+        File serverNPC = new File(questApi.toString(), "server-npc");
+        File entity_type_list = new File(serverNPC.toString(), "entity_type_list");
+        File compoundTag_list = new File(serverNPC.toString(), "compound_tag_list");
 
-        File[] paths = {questApi, playerData, serverQuests, serverDialogs};
+        File[] paths = {questApi, playerData, serverQuests, serverDialogs, serverNPC, entity_type_list, compoundTag_list};
 
         for (File file : paths) {
             if (!file.exists()) {
@@ -48,6 +51,9 @@ public class FolderManager {
         QuestApiMain.playerData = playerData.toPath();
         QuestApiMain.serverQuests = serverQuests.toPath();
         QuestApiMain.serverDialogs = serverDialogs.toPath();
+        QuestApiMain.serverNPC = serverNPC.toPath();
+        QuestApiMain.entity_type_list = entity_type_list.toPath();
+        QuestApiMain.compoundTag_List = compoundTag_list.toPath();
     }
 
 

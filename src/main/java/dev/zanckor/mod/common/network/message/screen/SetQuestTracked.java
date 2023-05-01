@@ -1,6 +1,6 @@
 package dev.zanckor.mod.common.network.message.screen;
 
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.mod.common.network.handler.ClientHandler;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +18,7 @@ public class SetQuestTracked {
 
 
     public SetQuestTracked(UserQuest userQuest) {
-        this.userQuest = GsonManager.gson().toJson(userQuest);
+        this.userQuest = GsonManager.gson.toJson(userQuest);
     }
 
     public SetQuestTracked(FriendlyByteBuf buffer) {

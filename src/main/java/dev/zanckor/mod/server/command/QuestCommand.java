@@ -2,23 +2,29 @@ package dev.zanckor.mod.server.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.quest.ServerQuest;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.dialog.codec.ReadDialog;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
-import dev.zanckor.api.filemanager.quest.register.LoadQuestFromResources;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
-import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
-import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
+import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
+import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
+import dev.zanckor.api.filemanager.quest.register.LoadQuest;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
+import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
+import dev.zanckor.mod.common.network.message.quest.ActiveQuestList;
+import dev.zanckor.mod.common.network.message.quest.ServerQuestList;
 import dev.zanckor.mod.common.network.message.screen.RemovedQuest;
+import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.Timer;
+import dev.zanckor.mod.server.menu.questmaker.QuestMakerMenu;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkHooks;
 
 import java.io.File;
 import java.io.FileReader;
@@ -32,8 +38,8 @@ import java.util.UUID;
 import static dev.zanckor.mod.QuestApiMain.*;
 
 public class QuestCommand {
-    public static int reloadQuests(CommandContext<CommandSourceStack> context, String identifier){
-        LoadQuestFromResources.registerQuest(context.getSource().getServer(), identifier);
+    public static int reloadQuests(CommandContext<CommandSourceStack> context, String identifier) {
+        LoadQuest.registerQuest(context.getSource().getServer(), identifier);
 
         return 1;
     }
@@ -45,12 +51,10 @@ public class QuestCommand {
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
         for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
-            if (file.getName().equals(quest)) {
-                UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
+            if (!(file.getName().equals(quest))) continue;
+            UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
 
-
-                SendQuestPacket.TO_CLIENT(player, new SetQuestTracked(userQuest));
-            }
+            SendQuestPacket.TO_CLIENT(player, new SetQuestTracked(userQuest));
         }
 
         return 1;
@@ -77,15 +81,18 @@ public class QuestCommand {
 
             //Checks if player has all requirements
             for (int requirementIndex = 0; requirementIndex < serverQuest.getRequirements().size(); requirementIndex++) {
-                AbstractQuestRequirement requirement = TemplateRegistry.getQuestRequirement(EnumQuestRequirement.valueOf(serverQuest.getRequirements().get(requirementIndex).getType()));
+                Enum questRequirementEnum = EnumRegistry.getEnum(serverQuest.getRequirements().get(requirementIndex).getType(), EnumRegistry.getQuestRequirement());
+                AbstractQuestRequirement requirement = QuestTemplateRegistry.getQuestRequirement(questRequirementEnum);
 
                 if (!requirement.handler(player, serverQuest, requirementIndex)) {
                     return 0;
                 }
             }
 
-            createQuest(serverQuest, player, level, path);
+            createQuest(serverQuest, player, path);
             LocateHash.registerQuestByID(questID, path);
+            SendQuestPacket.TO_CLIENT(player, new ActiveQuestList(player.getUUID()));
+
             trackedQuest(context, playerUUID, questID);
             return 1;
         }
@@ -93,17 +100,14 @@ public class QuestCommand {
         return 0;
     }
 
-    private static int createQuest(ServerQuest serverQuest, Player player, Level level, Path path) throws IOException {
+    private static int createQuest(ServerQuest serverQuest, Player player, Path path) throws IOException {
         UserQuest userQuest = UserQuest.createQuest(serverQuest, path);
 
         if (userQuest.hasTimeLimit()) {
             Timer.updateCooldown(player.getUUID(), userQuest.getId(), userQuest.getTimeLimitInSeconds());
         }
 
-        FileWriter writer = new FileWriter(path.toFile());
-        GsonManager.gson().toJson(userQuest, writer);
-        writer.flush();
-        writer.close();
+        GsonManager.writeJson(path.toFile(), userQuest);
 
         return 1;
     }
@@ -111,23 +115,31 @@ public class QuestCommand {
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
         ServerLevel level = context.getSource().getLevel();
         Player player = level.getPlayerByUUID(playerUUID);
-
         Path path = LocateHash.getQuestByID(questID);
-
-        FileReader reader = new FileReader(path.toFile());
-        UserQuest userQuest = GsonManager.gson().fromJson(reader, UserQuest.class);
-        reader.close();
+        UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(path.toFile(), UserQuest.class);
 
         SendQuestPacket.TO_CLIENT(player, new RemovedQuest(userQuest.getId()));
 
         for (int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
-            UserQuest.QuestGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
+            UserGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
+            Enum goalEnum = EnumRegistry.getEnum(questGoal.getType(), EnumRegistry.getQuestGoal());
 
-            LocateHash.removeQuest(questID, EnumQuestType.valueOf(questGoal.getType()));
+            LocateHash.removeQuest(questID, goalEnum);
         }
 
         path.toFile().delete();
 
+        SendQuestPacket.TO_CLIENT(player, new ActiveQuestList(player.getUUID()));
+        return 1;
+    }
+
+
+    public static int openQuestMaker(CommandContext<CommandSourceStack> context){
+        SimpleMenuProvider menuProvider =
+                new SimpleMenuProvider((id, inventory, p) -> new QuestMakerMenu(id), Component.literal("quest_default_menu"));
+
+        SendQuestPacket.TO_CLIENT(context.getSource().getPlayer(), new ServerQuestList());
+        NetworkHooks.openScreen(context.getSource().getPlayer(), menuProvider);
         return 1;
     }
 }

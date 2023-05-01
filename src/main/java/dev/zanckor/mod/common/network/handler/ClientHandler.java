@@ -1,23 +1,28 @@
 package dev.zanckor.mod.common.network.handler;
 
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
+import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.client.screen.AbstractDialog;
-import dev.zanckor.mod.client.screen.AbstractQuestLog;
-import dev.zanckor.mod.common.config.client.ScreenConfig;
+import dev.zanckor.mod.client.screen.abstractscreen.AbstractDialog;
+import dev.zanckor.mod.client.screen.questmaker.QuestMakerManager;
+import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class ClientHandler {
@@ -25,31 +30,34 @@ public class ClientHandler {
     public static UserQuest userQuest;
     public static String questID;
     public static String questTitle;
-    public static List<UserQuest.QuestGoal> questGoals;
+    public static List<UserGoal> questGoals;
     public static boolean questHasTimeLimit;
     public static int questTimeLimit;
+    public static List<String> activeQuestList;
 
+    public static List<EntityType> availableEntityTypeForQuest = new ArrayList<>();
+    public static Map<String, String> availableEntityTagForQuest = new HashMap<>();
 
     public static void toastQuestCompleted(String questName) {
-        SystemToast.add(Minecraft.getInstance().getToasts(),
-                SystemToast.SystemToastIds.PERIODIC_NOTIFICATION,
-                Component.literal("Quest Completed"),
-                Component.literal(questName));
+        String title = questTitle;
+        if (questTitle.startsWith("#")) {
+            title = I18n.get("quest_name.questapi." + questTitle.substring(1));
+        }
 
-        MCUtilClient.playSound(SoundEvents.NOTE_BLOCK_PLING, 1, 2);
+        SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, Component.literal("Quest Completed"), Component.literal(title));
+
+        MCUtilClient.playSound(SoundEvents.NOTE_BLOCK_PLING.get(), 1, 2);
     }
 
     public static void displayDialog(String dialogIdentifier, int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings, UUID npc) {
         AbstractDialog dialogScreen = ScreenRegistry.getDialogScreen(dialogIdentifier);
 
-        Minecraft.getInstance().setScreen(dialogScreen.modifyScreen(dialogID, text,
-                optionSize, optionIntegers, optionStrings, npc));
+        Minecraft.getInstance().setScreen(dialogScreen.modifyScreen(dialogID, text, optionSize, optionIntegers, optionStrings, npc));
     }
 
     public static void closeDialog() {
         Minecraft.getInstance().setScreen(null);
     }
-
 
     public static void setQuestTracked(UserQuest userQuest) {
         ClientHandler.userQuest = userQuest;
@@ -86,9 +94,34 @@ public class ClientHandler {
     }
 
 
-    public static void displayQuestList(List<String> id, List<String> title) {
-        AbstractQuestLog questLogScreen = ScreenRegistry.getQuestLogScreen(ScreenConfig.QUEST_LOG_SCREEN.get());
+    public static void setActiveQuestList(List<String> activeQuestList) {
+        ClientHandler.activeQuestList = activeQuestList;
+    }
 
-        Minecraft.getInstance().setScreen(questLogScreen.modifyScreen(id, title));
+    public static void setAvailableServerQuestList(List<String> availableServerQuestList) {
+        try {
+            QuestMakerManager.availableQuests.clear();
+
+            for (int i = 0; i < availableServerQuestList.size(); i++) {
+                ServerQuest quest = (ServerQuest) GsonManager.getJsonClass(availableServerQuestList.get(i), ServerQuest.class);
+                QuestMakerManager.availableQuests.add(quest);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void setAvailableEntityTypeForQuest(List<String> entityTypeForQuest, Map<String, String> entityTagMap) {
+        for (String entityTypeString : entityTypeForQuest) {
+            ResourceLocation entityResourceLocation = new ResourceLocation(entityTypeString.strip());
+
+            EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(entityResourceLocation);
+
+            availableEntityTypeForQuest.add(entityType);
+        }
+
+        availableEntityTagForQuest = entityTagMap;
     }
 }

@@ -1,6 +1,6 @@
 package dev.zanckor.mod.common.network.message.dialogoption;
 
-import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
+import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogOption;
 import dev.zanckor.mod.common.network.handler.ServerHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,18 +11,18 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class DialogRequestPacket {
-    EnumOptionType optionType;
+    EnumDialogOption optionType;
     int optionID;
     UUID npc;
 
-    public DialogRequestPacket(EnumOptionType optionType, int optionID, Entity npc) {
+    public DialogRequestPacket(EnumDialogOption optionType, int optionID, Entity npc) {
         this.optionType = optionType;
         this.optionID = optionID;
         this.npc = npc.getUUID();
     }
 
     public DialogRequestPacket(FriendlyByteBuf buffer) {
-        optionType = buffer.readEnum(EnumOptionType.class);
+        optionType = buffer.readEnum(EnumDialogOption.class);
         optionID = buffer.readInt();
         npc = buffer.readUUID();
     }

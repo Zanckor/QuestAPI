@@ -1,6 +1,6 @@
 {
   "id": "kill_entities",
-  "title": "Kill entities",
+  "title": "#kill_entities",
   "hasTimeLimit": true,
   "timeLimitInSeconds": 10,
   "goals": [
@@ -8,13 +8,18 @@
       "type": "KILL",
       "target": "minecraft:pig",
       "amount": 1
+    },
+    {
+      "type": "KILL",
+      "target": "minecraft:cow",
+      "amount": 1
     }
   ],
   "rewards": [
     {
-      "type": "ITEM",
-      "tag": "minecraft:coal",
-      "amount": 64
+      "type": "LOOT_TABLE",
+      "tag": "minecraft:chests/bastion_treasure",
+      "amount": 1
     }
   ],
   "requirements": [
