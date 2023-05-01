@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
 
-import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.KILL;
+import static dev.zanckor.example.common.enumregistry.enumquest.EnumGoalType.KILL;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class KillEvent {

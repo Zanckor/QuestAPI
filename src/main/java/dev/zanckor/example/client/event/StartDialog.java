@@ -1,10 +1,10 @@
 package dev.zanckor.example.client.event;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.ServerDialog;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
-import dev.zanckor.example.common.enumregistry.enumdialog.EnumRequirementType;
+import dev.zanckor.api.filemanager.dialog.codec.NPCConversation;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
+import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -27,14 +27,14 @@ public class StartDialog {
         File dialogFile = path.toFile();
         LocateHash.currentGlobalDialog.put(player, dialogFile.getName().substring(0, dialogFile.getName().length() - 5));
 
-        ServerDialog dialog = (ServerDialog) GsonManager.getJsonClass(dialogFile, ServerDialog.class);
+        NPCConversation dialog = (NPCConversation) GsonManager.getJsonClass(dialogFile, NPCConversation.class);
 
 
         for (int dialog_id = dialog.getDialog().size() - 1; dialog_id >= 0; dialog_id--) {
-            if (dialog.getDialog().get(dialog_id).getRequirements().getType() == null) continue;
+            if (dialog.getDialog().get(dialog_id).getServerRequirements().getType() == null) continue;
+            Enum requirementEnum = EnumRegistry.getEnum(dialog.getDialog().get(dialog_id).getServerRequirements().getType(), EnumRegistry.getDialogRequirement());
 
-            EnumRequirementType requirementType = EnumRequirementType.valueOf(dialog.getDialog().get(dialog_id).getRequirements().getType());
-            AbstractDialogRequirement dialogRequirement = TemplateRegistry.getDialogRequirement(requirementType);
+            AbstractDialogRequirement dialogRequirement = QuestTemplateRegistry.getDialogRequirement(requirementEnum);
 
             if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id, entity)) return;
         }

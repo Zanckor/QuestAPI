@@ -6,23 +6,21 @@
       "dialogText": "Hello adventurer, I need help with a task, would you help me?",
       "requirements": {
         "type": "QUEST",
-        "global_id": "",
-        "dialog_id": null,
-        "quest_id": "questapi_collect_items",
+        "quest_id": "questapi.collect_items",
         "requirement_status": "NOT_OBTAINED"
       },
       "options": [
         {
           "text": "Sure, tell me what you need.",
           "type": "OPEN_DIALOG",
-          "global_id": "questapi_collect_items_dialog",
+          "global_id": "questapi.collect_items_dialog",
           "dialog": 1,
           "quest_id": ""
         },
         {
           "text": "No, sorry, I don\u0027t have time.",
           "type": "OPEN_DIALOG",
-          "global_id": "questapi_collect_items_dialog",
+          "global_id": "questapi.collect_items_dialog",
           "dialog": 2,
           "quest_id": ""
         }
@@ -40,7 +38,7 @@
           "type": "ADD_QUEST",
           "global_id": "",
           "dialog": null,
-          "quest_id": "questapi_collect_items"
+          "quest_id": "questapi.collect_items"
         }
       ]
     },
@@ -75,14 +73,14 @@
         {
           "text": "Sure, tell me what you need.",
           "type": "OPEN_DIALOG",
-          "global_id": "questapi_collect_items_dialog",
+          "global_id": "questapi.collect_items_dialog",
           "dialog": 1,
           "quest_id": ""
         },
         {
           "text": "No, sorry, I don\u0027t have time.",
           "type": "OPEN_DIALOG",
-          "global_id": "questapi_collect_items_dialog",
+          "global_id": "questapi.collect_items_dialog",
           "dialog": 2,
           "quest_id": ""
         }
@@ -96,7 +94,7 @@
         "type": "QUEST",
         "global_id": "",
         "dialog_id": null,
-        "quest_id": "questapi_collect_items",
+        "quest_id": "questapi.collect_items",
         "requirement_status": "IN_PROGRESS"
       },
       "options": [
@@ -117,7 +115,7 @@
         "type": "QUEST",
         "global_id": "",
         "dialog_id": null,
-        "quest_id": "questapi_collect_items",
+        "quest_id": "questapi.collect_items",
         "requirement_status": "COMPLETED"
       },
       "options": [

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>net.zanckor.questapi</groupId>
+  <artifactId>QuestAPI</artifactId>
+  <versioning>
+    <latest>1.3.0-1.19</latest>
+    <release>1.3.0-1.19</release>
+    <versions>
+      <version>1.3.0-1.19</version>
+    </versions>
+    <lastUpdated>20230422224113</lastUpdated>
+  </versioning>
+</metadata>

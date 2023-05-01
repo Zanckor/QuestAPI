@@ -1,25 +1,21 @@
 {
   "id": "multiple_quests",
-  "title": "Multiple quests",
+  "title": "#multiple_quests",
   "goals": [
     {
       "type": "MOVE_TO",
-      "target": "x100",
-      "amount": 1
-    },
-    {
-      "type": "MOVE_TO",
-      "target": "y100",
-      "amount": 1
-    },
-    {
-      "type": "MOVE_TO",
-      "target": "z100",
-      "amount": 1
+      "target": "0 / 0 / 0",
+      "amount": 1,
+      "additionalListData": [0, 0, 0]
     },
     {
       "type": "COLLECT",
       "target": "minecraft:gold_ingot",
+      "amount": 1
+    },
+    {
+      "type": "XP",
+      "target": "",
       "amount": 1
     }
   ],

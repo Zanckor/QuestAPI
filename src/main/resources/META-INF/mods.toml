@@ -3,22 +3,11 @@ loaderVersion="[41,)"
 license="MIT License"
 [[mods]]
 modId="questapi"
-version="1.2.0"
+version="1.3.6"
 displayName="Quest API"
 logoFile="questapi.png"
 authors="Zanckor"
 description='''
-
+QuestApi is a forge library that allows modders and modpack makers to add easily quests & dialogs by npc, command...
+just adding a few .json with easy portability between words, servers and versions.
 '''
-[[dependencies.questapi]]
-    modId="forge"
-    mandatory=true
-    versionRange="[41,)"
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.questapi]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.19,1.20)"
-    ordering="NONE"
-    side="BOTH"

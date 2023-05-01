@@ -1,9 +1,9 @@
 package dev.zanckor.api.filemanager.quest.abstracquest;
 
-import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.example.ModExample;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.io.IOException;
 
@@ -20,5 +20,5 @@ public abstract class AbstractReward {
      * @see ModExample Main class where you should register reward's types
      */
 
-    public abstract void handler(Player player, ServerQuest questTemplate, int rewardIndex) throws IOException;
+    public abstract void handler(ServerPlayer player, ServerQuest questTemplate, int rewardIndex) throws IOException;
 }

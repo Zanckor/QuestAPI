@@ -2,30 +2,39 @@ package dev.zanckor.example.client.screen.questlog;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.zanckor.api.filemanager.quest.UserQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
-import dev.zanckor.api.filemanager.quest.register.TemplateRegistry;
-import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType;
+import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
+import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
+import dev.zanckor.example.client.screen.button.TextButton;
+import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.client.screen.AbstractQuestLog;
+import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestLog;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.screen.RequestQuestTracked;
+import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static dev.zanckor.mod.common.network.handler.ClientHandler.*;
-import static dev.zanckor.mod.common.util.MCUtilClient.properNoun;
 
 public class QuestLog extends AbstractQuestLog {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
@@ -36,20 +45,27 @@ public class QuestLog extends AbstractQuestLog {
     int imageWidth, imageHeight;
     EditBox textButton;
     String questSearch;
+    int questInfoScroll;
+    float sin;
 
-    HashMap<Integer, Map.Entry<String, String>> quest = new HashMap<>();
+
+    List<UserQuest> questList = new ArrayList<>();
 
     public QuestLog(Component component) {
         super(component);
     }
 
     @Override
-    public Screen modifyScreen(List<String> id, List<String> title) {
-        quest.clear();
+    public Screen modifyScreen() throws IOException {
+        //Each time screen opens hashMap is deleted and questList
+        questList.clear();
 
-        for (int i = 0; i < title.size(); i++) {
-            quest.put(i, new AbstractMap.SimpleEntry<>(id.get(i), title.get(i)));
+        for (int i = 0; i < activeQuestList.size(); i++) {
+            UserQuest quest = (UserQuest) GsonManager.getJsonClass(activeQuestList.get(i), UserQuest.class);
+
+            questList.add(quest);
         }
+
 
         return this;
     }
@@ -59,54 +75,62 @@ public class QuestLog extends AbstractQuestLog {
         super.init();
         clearWidgets();
 
+        questInfoScroll = 0;
         imageWidth = width / 2;
         imageHeight = width / 3;
         xScreenPos = width - (imageWidth);
         yScreenPos = (double) height / 4;
+        int xButtonPosition = (int) (xScreenPos - (imageWidth / 2.25));
+        int yButtonPosition = (int) (yScreenPos + ((((float) width) / 500) * 40));
 
-        float scale = ((float) width) / 575;
-        int buttonIndent = 16;
-        int maxLength = 22 * 5;
-        float splitIndent = 0;
-        int xButtonPosition = (int) (xScreenPos - (imageWidth / 2.4));
-        int yButtonPosition = (int) (yScreenPos * 1.7);
+        float textLengthScale = ((float) width) / 575;
+        float buttonScale = ((float) width) / 700;
+        int maxLength = 26 * 5;
 
         HashMap<Integer, Integer> displayedButton = new HashMap<>();
 
+        //For each quest, checks if it can be added as a button to display data
+        for (int i = 0; i < activeQuestList.size(); i++) {
+            int buttonIndex = i + (4 * selectedPage);
 
-        for (int i = 0; i < quest.size(); i++) {
-            if (questSearch != null && !questSearch.isEmpty() && !quest.get(i).getValue().toLowerCase().contains(questSearch.toLowerCase()))
-                continue;
+            //Only add widget if there's 4 or fewer buttons added
+            if (displayedButton.size() < 4 && questList.size() > buttonIndex) {
+                String title = (questList.get(buttonIndex).getTitle());
+                if (title.startsWith("#")) {
+                    title = I18n.get("quest_name.questapi." + questList.get(i + (4 * (selectedPage))).getTitle().substring(1));
+                }
 
-            if (displayedButton.size() < 4 && quest.size() > (i + (4 * selectedPage))) {
-                int buttonIndex = i + (4 * selectedPage);
-                int textLines = (quest.get(buttonIndex).getValue().length() * 5) / maxLength;
-                int yButtonIndent = (int) (((8 * (textLines + 1)) * displayedButton.size() * scale) + splitIndent);
-                int buttonWidth = textLines < 1 ? (int) (quest.get(buttonIndex).getValue().length() * 5 * scale) : (int) (maxLength * scale);
 
-                Button questSelect = new Button(xButtonPosition, yButtonPosition + yButtonIndent, buttonWidth, height / 40 * (textLines + 1), Component.literal(""), button -> SendQuestPacket.TO_SERVER(new RequestQuestTracked(quest.get(buttonIndex).getKey())));
+                int textLines = (title.length() * 5) / maxLength;
+                float buttonWidth = textLines < 1 ? questList.get(buttonIndex).getTitle().length() * 5 * textLengthScale : maxLength * textLengthScale;
 
+                Button questSelect = new TextButton(
+                        xButtonPosition, yButtonPosition, (int) buttonWidth, 20 * (textLines + 1), buttonScale,
+
+                        Component.literal(title), 26,
+                        button -> SendQuestPacket.TO_SERVER(new RequestQuestTracked(questList.get(buttonIndex).getId())));
+
+                //If is not first button added, checks if prevButton has 1 or more lines to add an extra indent
                 if (displayedButton.size() > 0) {
                     int prevButton = displayedButton.get(displayedButton.size());
-
-                    if (textLines == 1 && ((quest.get(prevButton).getValue().length() * 5) / maxLength) == 0) {
-                        questSelect.y -= height / 80 * (textLines + 1);
-                        yButtonPosition -= (height / 80) / 8 * (textLines + 1);
+                    String prevButtonTitle = (questList.get(buttonIndex).getTitle());
+                    if (prevButtonTitle.startsWith("#")) {
+                        prevButtonTitle = I18n.get("quest_name.questapi." + questList.get(prevButton).getTitle().substring(1));
                     }
+                    int prevButtonLines = (prevButtonTitle.length() * 5) / maxLength;
 
-                    if (textLines == 0 && ((quest.get(prevButton).getValue().length() * 5) / maxLength) == 1) {
-                        questSelect.y += (buttonIndent / 2) * scale;
-                        splitIndent += (buttonIndent / 2) * scale;
+
+                    if (prevButtonLines > 0) {
+                        questSelect.y += 13 * (prevButtonLines) * buttonScale;
                     }
                 }
 
-                splitIndent += buttonIndent / 2 * scale;
                 displayedButton.put(displayedButton.size() + 1, i);
 
-                addWidget(questSelect);
+                questSelect.y += buttonIndex * 27 * buttonScale;
+                addRenderableWidget(questSelect);
             }
         }
-
 
         Button prevPage = new Button((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
             if (selectedPage > 0) {
@@ -116,7 +140,7 @@ public class QuestLog extends AbstractQuestLog {
             }
         });
         Button nextPage = new Button((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
-            if (selectedPage + 1 < Math.ceil(quest.size()) / 4) {
+            if (selectedPage + 1 < Math.ceil(questList.size()) / 4) {
                 selectedPage++;
 
                 init();
@@ -157,105 +181,112 @@ public class QuestLog extends AbstractQuestLog {
         blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
         poseStack.pushPose();
-        renderQuestTitles(poseStack);
         renderQuestData(poseStack);
 
-        MCUtilClient.renderText(poseStack, (float) (xScreenPos - imageWidth / 2.9), (float) (yScreenPos * 1.35), 0, scale, 40, "Quest Title", font);
-        MCUtilClient.renderText(poseStack, (float) (xScreenPos + imageWidth * 0.135), (float) (yScreenPos * 1.35), 0, scale, 40, "Quest Info", font);
+        MCUtilClient.renderText(poseStack, (float) (xScreenPos - imageWidth / 2.9), (float) (yScreenPos + (20 * scale)), 0, scale, 40, "Quest Title", font);
+        MCUtilClient.renderText(poseStack, (float) (xScreenPos + imageWidth * 0.135), (float) (yScreenPos + (20 * scale)), 0, scale, 40, "Quest Info", font);
 
         poseStack.popPose();
-
         Minecraft.getInstance().getProfiler().pop();
+
         super.render(poseStack, x, y, partialTicks);
     }
 
-    public void renderQuestTitles(PoseStack poseStack) {
-        List<String> questList = new ArrayList<>();
-        int displayedButton = 0;
+    public void renderQuestData(PoseStack poseStack) {
+        if (userQuest == null || userQuest.isCompleted())
+            return;
 
-        if (quest != null) {
+        HashMap<String, List<UserGoal>> userQuestHashMap = new HashMap<>();
+        int xPosition = (int) (width / 1.925);
+        float scale = ((float) width) / 700;
 
-            for (int i = 0; i < quest.size(); i++) {
+        poseStack.pushPose();
+        poseStack.translate(xPosition, yScreenPos + ((((float) width) / 500) * 40), 0);
+        poseStack.scale(scale, scale, 0);
 
-                if (questSearch != null && !questSearch.isEmpty()) {
-                    if (!quest.get(i).getValue().toLowerCase().contains(questSearch.toLowerCase())) {
-                        continue;
-                    }
-                }
+        //Gets all quest types on json and creates a HashMap with a list of goals
+        for (UserGoal questGoal : userQuest.getQuestGoals()) {
+            String type = questGoal.getType();
+            List<UserGoal> questGoalList = userQuestHashMap.get(type);
 
-                if (displayedButton < 4 && quest.size() > (i + (4 * (selectedPage)))) {
-                    questList.add(quest.get(i + (4 * (selectedPage))).getValue());
-                }
 
-                displayedButton++;
+            if (questGoalList == null) {
+                questGoalList = new ArrayList<>();
             }
 
+            questGoalList.add(questGoal);
 
-            MCUtilClient.renderText(poseStack, xScreenPos - (imageWidth / 2.4), yScreenPos * 1.7, 16, ((float) width) / 575, 23, questList, font);
-
+            userQuestHashMap.put(type, questGoalList);
         }
+
+        //Displays quest goals
+        renderTitle(poseStack, minecraft);
+        renderQuestType(poseStack, minecraft, userQuestHashMap);
+
+        if (questHasTimeLimit) {
+            MCUtilClient.renderLine(poseStack, 0, 0, 30, I18n.get("tracker.questapi.time_limit") + questTimeLimit, font);
+        }
+
+
+        poseStack.popPose();
     }
 
-    public void renderQuestData(PoseStack poseStack) {
-        //TODO: Make multiple pages if quest has a lot of data
-        try {
-            if (userQuest == null || MCUtil.isQuestCompleted(userQuest)) return;
-
-            HashMap<String, List<UserQuest.QuestGoal>> userQuests = new HashMap<>();
-            int xPosition = (int) (width / 1.925);
-            int yPosition = (int) (width / 4.25);
-            float scale = ((float) width) / 700;
-
-            poseStack.pushPose();
-            poseStack.translate(xPosition, yPosition, 0);
-            poseStack.scale(scale, scale, 0);
-
-
-            //Gets all quest types on json and creates a HashMap with a list of goals
-            for (UserQuest.QuestGoal questGoal : userQuest.getQuestGoals()) {
-                String type = questGoal.getType();
-                List<UserQuest.QuestGoal> questGoalList = userQuests.get(type);
-
-
-                if (questGoalList == null) {
-                    questGoalList = new ArrayList<>();
-                }
-
-                questGoalList.add(questGoal);
-
-                userQuests.put(type, questGoalList);
-            }
-
-            //Displays quest goals
-            MCUtilClient.renderLines(poseStack, 20, 30, "Quest: " + properNoun(questTitle), font);
-
-            for (Map.Entry<String, List<UserQuest.QuestGoal>> entry : userQuests.entrySet()) {
-                List<UserQuest.QuestGoal> questGoalList = entry.getValue();
-                MCUtilClient.renderLines(poseStack, 10, 30, "Quest Type: " + properNoun(questGoalList.get(0).getType()), font);
-
-                for (UserQuest.QuestGoal questGoal : questGoalList) {
-                    AbstractTargetType targetType = TemplateRegistry.getTargetType(EnumQuestType.valueOf(questGoal.getType()));
-                    String translationKey = questGoal.getTarget();
-                    if (targetType != null)
-                        translationKey = targetType.handler(new ResourceLocation(questGoal.getTarget()));
-
-                    MCUtilClient.renderLines(poseStack, 10, 30, properNoun(I18n.get(translationKey)) + ": " + questGoal.getCurrentAmount() + "/" + questGoal.getAmount(), font);
-                }
-
-
-                poseStack.translate(0, 10, 0);
-            }
-
-
-            if (questHasTimeLimit) {
-                MCUtilClient.renderLines(poseStack, 10, 30, "Time limit: " + questTimeLimit, font);
-            }
-
-
-            poseStack.popPose();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void renderTitle(PoseStack poseStack, Minecraft minecraft) {
+        //If quest title on quest.json starts with # means that is a translatable string, else is rendered literally
+        String title = questTitle;
+        if (questTitle.startsWith("#")) {
+            title = I18n.get("quest_name.questapi." + questTitle.substring(1));
         }
+
+        MCUtilClient.renderLines(poseStack, 25, 10, 30, I18n.get("tracker.questapi.quest") + title, minecraft.font);
+    }
+
+    public void renderQuestType(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
+        int scissorBottom = (int) (height - (yScreenPos + imageHeight) + 15) * 2;
+        int scissorTop = (int) (imageHeight * 1.25) - 15;
+
+        RenderSystem.enableScissor(width, scissorBottom, (width / 2) + (imageWidth / 2), scissorTop);
+
+        Font font = minecraft.font;
+        Player player = minecraft.player;
+        poseStack.translate(0, questInfoScroll + 20, 0);
+        sin += 0.5;
+
+        for (Map.Entry<String, List<UserGoal>> entry : userQuestHashMap.entrySet()) {
+            List<UserGoal> questGoalList = entry.getValue();
+
+            //Render quest type
+            MCUtilClient.renderLine(poseStack, 30, 0, 0, 10, Component.literal(I18n.get("tracker.questapi.quest_type") +
+                    I18n.get("quest_type.questapi." + questGoalList.get(0).getType().toLowerCase())).withStyle(ChatFormatting.BLACK), font);
+
+            //Render each quest goal of a single type and render target
+            for (UserGoal questGoal : questGoalList) {
+                Enum goalEnum = EnumRegistry.getEnum(questGoal.getType(), EnumRegistry.getQuestGoal());
+
+                AbstractTargetType translatableTargetType = QuestTemplateRegistry.getTranslatableTargetType(goalEnum);
+                MutableComponent goalComponentTarget = translatableTargetType.handler(questGoal.getTarget(), questGoal, player, ChatFormatting.GRAY, ChatFormatting.BLACK);
+
+                translatableTargetType.renderTarget(poseStack, (goalComponentTarget.getString().length() * 6 - 4), 3, 0.7, Math.sin(sin), questGoal, questGoal.getTarget());
+                MCUtilClient.renderLine(poseStack, 30, 0, 0, 10, goalComponentTarget.withStyle(ChatFormatting.ITALIC), font);
+            }
+
+            poseStack.translate(0, 10, 0);
+        }
+
+        RenderSystem.disableScissor();
+    }
+
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+        boolean mouseXInBox = (mouseX > xScreenPos) && (mouseX < (xScreenPos + imageWidth / 2));
+        boolean mouseYInBox = (mouseY > yScreenPos) && (mouseY < (yScreenPos + imageHeight));
+
+        if (mouseXInBox && mouseYInBox) {
+            questInfoScroll += scroll * 4;
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, scroll);
     }
 
     @Override

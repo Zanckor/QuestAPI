@@ -1,0 +1,33 @@
+{
+    "dialog": [
+        {
+            "id": 0,
+            "dialogTitle": "New Beginnings!",
+            "dialogText": "Hey there, adventurer! You look like you could use a little help. We've got a really bad problem here in the village. The monsters are getting stronger and stronger, and we're running out of food. We need you to go out and kill some monsters for us. We'll pay you for every monster you kill!",
+            "requirements": {
+                "type": "QUEST",
+                "global_id": "",
+                "dialog_id": null,
+                "quest_id": "erosia_kill_zombies",
+                "requirement_status": "NOT_OBTAINED"
+            },
+            "options": [
+                {
+                    "text": "I'll do it!",
+                    "type": "ADD_QUEST",
+                    "global_id": "",
+                    "dialog_id": null,
+                    "quest_id": "erosia_kill_zombies"
+                },
+                {
+                    "text": "I'm not interested.",
+                    "type": "CLOSE_DIALOG",
+                    "global_id": "",
+                    "dialog_id": null,
+                    "quest_id": ""
+                }
+            ]
+        }
+    ],
+    "identifier": "questapi"
+}

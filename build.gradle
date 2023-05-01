@@ -4,7 +4,9 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-version = '1.2.0-1.19'
+apply plugin: 'java'
+
+version = '1.3.0-1.19'
 group = 'net.zanckor.questapi' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'questapi'
 
@@ -93,14 +95,13 @@ repositories {
     maven {
         url "https://raw.githubusercontent.com/Zanckor/QuestAPI/master"
     }
-    //maven {
-    //    url "https://www.cursemaven.com"
-    //}
+    maven {
+        url "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19-41.1.0'
-    //implementation fg.deobf('curse.maven:configured-457570:3947885')
 }
 
 jar {
@@ -122,14 +123,34 @@ jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact jar
+            from components.java
+            fg.component(it)
         }
     }
+
     repositories {
         maven {
-            url "file://${project.projectDir}/mcmodsrepo"
+            name = "cloudsmith"
+            url = "https://maven.cloudsmith.io/questapi/QuestAPI/"
+            def releasesRepoUrl = "https://maven.cloudsmith.io/questapi/QuestAPI/"
+            def snapshotsRepoUrl = "https://maven.cloudsmith.io/questapi/QuestAPI/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = 'enric-velasco'
+                password = '10591c9507cca378bac69c62507d42ae475dd4ff'
+            }
         }
     }
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
 }
 
 tasks.withType(JavaCompile).configureEach {

@@ -1,6 +1,6 @@
 {
   "id": "interact_entity",
-  "title": "Interact with cow and pig",
+  "title": "#interact_with_cow_and_pig",
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,
   "goals": [
@@ -12,9 +12,9 @@
   ],
   "rewards": [
     {
-      "type": "ITEM",
-      "tag": "minecraft:coal",
-      "amount": 64
+      "type": "QUEST",
+      "tag": "questapi.kill_entities",
+      "amount": 1
     }
   ],
   "requirements": [

@@ -1,0 +1,22 @@
+package dev.zanckor.mod.common.config.client;
+
+import net.minecraftforge.common.ForgeConfigSpec;
+
+public class RendererConfig {
+    public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+
+    public static ForgeConfigSpec SPEC;
+
+    public static ForgeConfigSpec.ConfigValue<Integer> QUEST_MARK_UPDATE_COOLDOWN;
+
+    static {
+        BUILDER.push("Renderer configuration");
+
+        QUEST_MARK_UPDATE_COOLDOWN = BUILDER.comment("How long ! mark takes to update on change entity data.")
+                .comment("Lower value = Smoothness + Lager")
+                .define("Quest Mark ! Update Cooldown", 5);
+
+        BUILDER.pop();
+        SPEC = BUILDER.build();
+    }
+}

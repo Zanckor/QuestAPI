@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class NPCEntity extends Villager {
 
         return super.mobInteract(player, interactionHand);
     }
+
 
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new LookAtPlayerGoal(this, Player.class, 8.0F));
