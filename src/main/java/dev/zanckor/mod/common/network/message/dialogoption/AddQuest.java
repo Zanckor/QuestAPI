@@ -1,6 +1,6 @@
 package dev.zanckor.mod.common.network.message.dialogoption;
 
-import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
+import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogOption;
 import dev.zanckor.mod.common.network.handler.ServerHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -14,16 +14,16 @@ public class AddQuest {
      * Add question
      */
 
-    EnumOptionType optionType;
+    EnumDialogOption optionType;
     int optionID;
 
-    public AddQuest(EnumOptionType optionType, int optionID) {
+    public AddQuest(EnumDialogOption optionType, int optionID) {
         this.optionType = optionType;
         this.optionID = optionID;
     }
 
     public AddQuest(FriendlyByteBuf buffer) {
-        optionType = buffer.readEnum(EnumOptionType.class);
+        optionType = buffer.readEnum(EnumDialogOption.class);
         optionID = buffer.readInt();
     }
 

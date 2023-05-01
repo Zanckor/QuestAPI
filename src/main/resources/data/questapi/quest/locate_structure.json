@@ -1,0 +1,27 @@
+{
+  "id": "locate_structure",
+  "title": "#locate_structure",
+  "hasTimeLimit": false,
+  "timeLimitInSeconds": 0,
+  "goals": [
+    {
+      "type": "LOCATE_STRUCTURE",
+      "target": "minecraft:ocean_ruin",
+      "amount": 1
+    }
+  ],
+  "rewards": [
+    {
+      "type": "XP",
+      "tag": "LEVEL",
+      "amount": 10
+    }
+  ],
+  "requirements": [
+    {
+      "type": "XP",
+      "requirements_min": 0,
+      "requirements_max": 10
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 package dev.zanckor.mod.common.network.message.screen;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.quest.UserQuest;
+import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.util.GsonManager;

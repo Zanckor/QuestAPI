@@ -2,14 +2,15 @@ package dev.zanckor.example.client.screen.dialog;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.zanckor.example.common.enumregistry.enumdialog.EnumOptionType;
+import dev.zanckor.example.client.screen.button.TextButton;
+import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogOption;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.client.screen.AbstractDialog;
+import dev.zanckor.mod.client.screen.abstractscreen.AbstractDialog;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.AddQuest;
 import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
+import dev.zanckor.mod.common.network.message.screen.OpenVanillaEntityScreen;
 import dev.zanckor.mod.common.util.MCUtilClient;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -34,6 +35,7 @@ public class DialogScreen extends AbstractDialog {
     int imageWidth, imageHeight;
     int xButtonPosition, yButtonPosition;
     Entity npc;
+    UUID npcUUID;
 
 
     private final static ResourceLocation DIALOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_background.png");
@@ -53,6 +55,7 @@ public class DialogScreen extends AbstractDialog {
         this.optionStrings = optionStrings;
 
         this.npc = MCUtilClient.getEntityByUUID(npcUUID);
+        this.npcUUID = npcUUID;
 
         return this;
     }
@@ -80,11 +83,14 @@ public class DialogScreen extends AbstractDialog {
                 yButtonPosition += 22;
             }
 
-            addRenderableWidget(new Button(xButtonPosition, yButtonPosition, stringLength, 20,
-                    Component.literal(optionStrings.get(i).get(0)), button -> button(index, dialogID)));
+            addRenderableWidget(new TextButton(xButtonPosition, yButtonPosition, stringLength, 20,  ((float) width) / 675,
+                    Component.literal(optionStrings.get(i).get(0)), 26, button -> button(index, dialogID)));
 
-            xButtonPosition += optionStrings.get(i).get(0).length() * 5.7 + 5;
+            xButtonPosition += optionStrings.get(i).get(0).length() * 5.7 + 20;
         }
+
+        addRenderableWidget(new TextButton((int) (imageWidth * 1.4), (int) (imageHeight * 1.1), 20, 20,  ((float) width) / 300,
+                Component.literal("↩"), 26, button -> SendQuestPacket.TO_SERVER(new OpenVanillaEntityScreen(npcUUID))));
     }
 
     @Override
@@ -132,7 +138,7 @@ public class DialogScreen extends AbstractDialog {
     }
 
     private void button(int optionID, int dialogID) {
-        EnumOptionType optionType = EnumOptionType.valueOf(optionStrings.get(optionID).get(1));
+        EnumDialogOption optionType = EnumDialogOption.valueOf(optionStrings.get(optionID).get(1));
 
         switch (optionType) {
             case OPEN_DIALOG, CLOSE_DIALOG:

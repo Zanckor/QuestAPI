@@ -1,10 +1,10 @@
 package dev.zanckor.example.common.handler.questreward;
 
-import dev.zanckor.api.filemanager.quest.ServerQuest;
+import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractReward;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -24,7 +24,7 @@ public class ItemReward extends AbstractReward {
      */
 
     @Override
-    public void handler(Player player, ServerQuest serverQuest, int rewardIndex) throws IOException {
+    public void handler(ServerPlayer player, ServerQuest serverQuest, int rewardIndex) throws IOException {
         String valueItem = serverQuest.getRewards().get(rewardIndex).getTag();
         int quantity = serverQuest.getRewards().get(rewardIndex).getAmount();
 
