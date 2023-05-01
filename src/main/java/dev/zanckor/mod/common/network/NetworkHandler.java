@@ -5,9 +5,8 @@ import dev.zanckor.mod.common.network.message.dialogoption.AddQuest;
 import dev.zanckor.mod.common.network.message.dialogoption.CloseDialog;
 import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
-import dev.zanckor.mod.common.network.message.quest.QuestDataPacket;
-import dev.zanckor.mod.common.network.message.quest.TimerPacket;
-import dev.zanckor.mod.common.network.message.quest.ToastPacket;
+import dev.zanckor.mod.common.network.message.npcmarker.ValidNPCMarker;
+import dev.zanckor.mod.common.network.message.quest.*;
 import dev.zanckor.mod.common.network.message.screen.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
@@ -16,7 +15,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkHandler {
 
-    private static final String PROTOCOL_VERSION = "1.0";
+    private static final String PROTOCOL_VERSION = "2.0";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(QuestApiMain.MOD_ID, "questapinetwork"),
@@ -36,7 +35,6 @@ public class NetworkHandler {
                 .encoder(TimerPacket::encodeBuffer).decoder(TimerPacket::new)
                 .consumerNetworkThread(TimerPacket::handler).add();
 
-
         CHANNEL.messageBuilder(RequestQuestTracked.class, index++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(RequestQuestTracked::encodeBuffer).decoder(RequestQuestTracked::new)
                 .consumerNetworkThread(RequestQuestTracked::handler).add();
@@ -49,15 +47,13 @@ public class NetworkHandler {
                 .encoder(AddQuest::encodeBuffer).decoder(AddQuest::new)
                 .consumerNetworkThread(AddQuest::handler).add();
 
-        CHANNEL.messageBuilder(RequestQuestList.class, index++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(RequestQuestList::encodeBuffer).decoder(RequestQuestList::new)
-                .consumerNetworkThread(RequestQuestList::handler).add();
-
+        CHANNEL.messageBuilder(OpenVanillaEntityScreen.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(OpenVanillaEntityScreen::encodeBuffer).decoder(OpenVanillaEntityScreen::new)
+                .consumerNetworkThread(OpenVanillaEntityScreen::handler).add();
 
         CHANNEL.messageBuilder(ToastPacket.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(ToastPacket::encodeBuffer).decoder(ToastPacket::new)
                 .consumerNetworkThread(ToastPacket::handler).add();
-
 
         CHANNEL.messageBuilder(DisplayDialog.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(DisplayDialog::encodeBuffer).decoder(DisplayDialog::new)
@@ -79,8 +75,16 @@ public class NetworkHandler {
                 .encoder(RemovedQuest::encodeBuffer).decoder(RemovedQuest::new)
                 .consumerNetworkThread(RemovedQuest::handler).add();
 
-        CHANNEL.messageBuilder(QuestList.class, index++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(QuestList::encodeBuffer).decoder(QuestList::new)
-                .consumerNetworkThread(QuestList::handler).add();
+        CHANNEL.messageBuilder(ValidNPCMarker.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(ValidNPCMarker::encodeBuffer).decoder(ValidNPCMarker::new)
+                .consumerNetworkThread(ValidNPCMarker::handler).add();
+
+        CHANNEL.messageBuilder(ActiveQuestList.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(ActiveQuestList::encodeBuffer).decoder(ActiveQuestList::new)
+                .consumerNetworkThread(ActiveQuestList::handler).add();
+
+        CHANNEL.messageBuilder(ServerQuestList.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(ServerQuestList::encodeBuffer).decoder(ServerQuestList::new)
+                .consumerNetworkThread(ServerQuestList::handler).add();
     }
 }

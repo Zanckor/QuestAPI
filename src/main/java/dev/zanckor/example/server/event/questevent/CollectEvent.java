@@ -9,7 +9,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
 
-import static dev.zanckor.example.common.enumregistry.enumquest.EnumQuestType.COLLECT;
+import static dev.zanckor.example.common.enumregistry.enumquest.EnumGoalType.COLLECT;
+import static dev.zanckor.example.common.enumregistry.enumquest.EnumGoalType.COLLECT_WITH_NBT;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CollectEvent {
@@ -18,25 +19,25 @@ public class CollectEvent {
     public static void CollectPickUpQuest(PlayerEvent.ItemPickupEvent e) throws IOException {
         if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
 
-
-        sendQuestPacket((ServerPlayer) e.getEntity());
+        runGoalHandler((ServerPlayer) e.getEntity());
     }
 
     @SubscribeEvent
     public static void CollectCraftQuest(PlayerEvent.ItemCraftedEvent e) throws IOException {
         if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
 
-        sendQuestPacket((ServerPlayer) e.getEntity());
+        runGoalHandler((ServerPlayer) e.getEntity());
     }
 
     @SubscribeEvent
     public static void CollectCraftQuest(PlayerEvent.ItemSmeltedEvent e) throws IOException {
         if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
 
-        sendQuestPacket((ServerPlayer) e.getEntity());
+        runGoalHandler((ServerPlayer) e.getEntity());
     }
 
-    public static void sendQuestPacket(ServerPlayer player) throws IOException {
+    public static void runGoalHandler(ServerPlayer player) throws IOException {
         ServerHandler.questHandler(COLLECT, player, null);
+        ServerHandler.questHandler(COLLECT_WITH_NBT, player, null);
     }
 }

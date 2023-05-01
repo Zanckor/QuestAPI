@@ -23,7 +23,7 @@ public class QuestJSONListener extends SimpleJsonResourceReloadListener {
     }
 
     public static void register(AddReloadListenerEvent e) {
-        e.addListener(new QuestJSONListener(GsonManager.gson(), "questapi/quest"));
+        e.addListener(new QuestJSONListener(GsonManager.gson, "questapi/quest"));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class QuestJSONListener extends SimpleJsonResourceReloadListener {
 
             //Load quest
             if(obj.get("goals") != null) {
-                String questId = "_" + obj.get("id").toString().substring(1, obj.get("id").toString().length() - 1);
+                String questId = "." + obj.get("id").toString().substring(1, obj.get("id").toString().length() - 1);
                 Path path = Path.of(rl.getNamespace() + questId + ".json");
 
                 datapackQuestList.put(path.toString(), obj);

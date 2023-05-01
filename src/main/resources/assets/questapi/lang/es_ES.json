@@ -1,4 +1,26 @@
 {
   "key.categories.QuestApi": "Quest API",
-  "key.questapi.quest_menu": "Abrir menu de misiones"
+  "key.questapi.quest_menu": "Abrir menu de misiones",
+  "entity.questapi.quest_npc": "Quest NPC Test",
+
+  "tracker.questapi.quest_type": "Tipo de mision: ",
+  "tracker.questapi.quest": "Mision: ",
+  "tracker.questapi.time_limit": "Tiempo limite: ",
+
+
+  "quest_type.questapi.interact_entity": "Interactuar con entidad",
+  "quest_type.questapi.kill": "Matar",
+  "quest_type.questapi.move_to": "Moverte a las coordenadas",
+  "quest_type.questapi.collect": "Recollectar items",
+  "quest_type.questapi.collect_with_nbt": "Recolectar item con NBT",
+  "quest_type.questapi.xp": "Obtener XP",
+  "quest_type.questapi.locate_structure": "Encontrar estructura",
+
+  "quest_name.questapi.collect_items": "Recolectar items",
+  "quest_name.questapi.collect_items_tag": "Recolectar items con tag",
+  "quest_name.questapi.interact_with_cow_and_pig": "Interactuar con vacas y cerdos",
+  "quest_name.questapi.kill_entities": "Matar entidades",
+  "quest_name.questapi.locate_structure": "Encontrar estructura",
+  "quest_name.questapi.locate_coords": "Moverte a coordenadas",
+  "quest_name.questapi.multiple_quests": "Multiples misiones"
 }

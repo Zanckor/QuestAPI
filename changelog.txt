@@ -1,4 +1,158 @@
 1.19.x Changelog
+43.2
+====
+ - 43.2.0 43.2 Recommended Build.
+
+43.1
+====
+ - 43.1.65 Allow discovering services from the mods folder that use java's modular definition. (#9143)
+ - 43.1.64 Make Datapack Registries support ICondition(s) (#9113)
+ - 43.1.63 Enable additional build types to handle pull request validation. (#9159)
+ - 43.1.62 Check source permission level before selector permission (#9147)
+           In some situations, such as execution of a function by an advancement as
+           part of its reward, a command source stack may have a backing source of
+           a ServerPlayer which may lack the entity selector permission and have an
+           explicit permission level that should allow the use of entity selectors,
+           through CommandSourceStack#withPermission.
+           We now check if the permission level of the command source stack is
+           sufficient for entity selectors _before_ checking if the source is a
+           player and if they have the requisite permission.
+           This means that an operator permission level of 2 will always override
+           the Forge entity selector permission.
+           Fixes #9137
+ - 43.1.61 Fix fires spreading too/igniting custom portal frames. (#9142)
+ - 43.1.60 Add supplier to FlowerBlock so it works with custom MobEffects (#9139)
+ - 43.1.59 Fix some logical bugs related to the Grindstone Event (#9089)
+ - 43.1.58 Call baked model's `getModelData` before `getRenderTypes` (#9163)
+ - 43.1.57 Make Util.memoize thread-safe (#9155)
+ - 43.1.56 Rendering tweaks and fixes: Part 4 (#9065)
+ - 43.1.55 Fix `Transformation` loading `PoseStack` (#9083)
+ - 43.1.54 Add simple block appearance API (#9066)
+ - 43.1.53 Fix invalidated modded packets when on LAN (#9157)
+ - 43.1.52 Improve extensibility of DetectorRailBlock and PoweredRailBlock (#9130)
+ - 43.1.51 Fix launch handler minecraft classpath locator (#9120)
+ - 43.1.50 Add HitResult to `EntityTeleportEvent$EnderPearl` (#9135)
+ - 43.1.49 Throw aggregate exception for erroneous registry event dispatch (#9111)
+           This means that exceptions occurring during the dispatch of the registry
+           events, such as those from the suppliers of RegistryObjects, properly
+           cause a crash rather than merely being logged and allowing the game to
+           reach the main menu.
+           Fixes #8720
+ - 43.1.48 Add missing semi-colon near the Dist import statement in example mod.
+ - 43.1.47 Fix ClientModEvents example not subscribing to client-sided events (#9097)
+ - 43.1.46 Use GitHub action to lock issues with the `spam` label (#9087)
+ - 43.1.45 Remove structures slave map to Feature registry (#9091)
+ - 43.1.44 Improve logging of missing or unsupported dependencies (#9104)
+ - 43.1.43 [1.19.x] Fix ValueSpec caching the return value incorrectly (#9046)
+ - 43.1.42 [1.19.x] Add event for registering spawn placements, and modifying existing (#9024)
+ - 43.1.41 [1.19.x] Add event for items being stacked or swapped in a GUI. (#9050)
+ - 43.1.40 [1.19.x] Fix PlayerInteractEvent.EntityInteractSpecific not cancelling on a server (#9079)
+ - 43.1.39 Fix canceling phantom spawns preventing any further attempts that tick. (#9041)
+ - 43.1.38 Rename fluid type milk translation keys (#9077)
+ - 43.1.37 Fix minecart speed with water (#9076)
+ - 43.1.36 Add a cancellable event that gets fired when a Totem of Undying is used (#9069)
+ - 43.1.35 Fix performance issue and logging when resource caching is enabled (#9029)
+ - 43.1.34 Fix NPE when feeding wolves and cats (#9074)
+ - 43.1.33 Fix logically breaking change to ForgeConfigSpec.Builder#comment where modders could not add a empty line to the start of comments. (#9061)
+ - 43.1.32 Fix ServiceLoader bug
+ - 43.1.31 Fix ClientChatReceivedEvent for system messages
+ - 43.1.30 Make ForgeConfigSpec$Builder.comment able to be called multiple times for the same entry. (#9056)
+ - 43.1.29 Fix control modifier for mac with `KeyMapping`s  using Alt instead of Super (#9057)
+ - 43.1.28 Fix is_desert tag not being applied correctly. (#9051)
+ - 43.1.27 Fix mob griefing event for SmallFireballs not using owner entity. (#9038)
+ - 43.1.26 Fix minecarts on rails not properly slowing down in water (#9033)
+ - 43.1.25 Change codestyle for BookShelves tag. Closes #9027
+           Add IS_CAVE tag Closes #8885
+           Add IS_DESERT tag Closes #8979
+           Simplify Mangrove Swamp tags Closes #8980
+ - 43.1.24 Allow faces of an "elements" model to have disabled ambient occlusion (#9019)
+ - 43.1.23 [1.19.x] Recipe ID-based grouping between modded and vanilla recipes. (#8876)
+ - 43.1.22 Update fence_gates/wooden (#8936)
+ - 43.1.21 [1.19.x] Added event for growing fungus (#8981)
+ - 43.1.20 Added Bookshelves block tag (#8991)
+ - 43.1.19 Create a Forge EntityType Tag for Bosses (#9017)
+ - 43.1.18 Allow mods to specify shader import namespace (#9021)
+ - 43.1.17 Grindstone Events (#8934)
+           One to modify the output, and one to modify the input.
+ - 43.1.16 Fix the serialized names of the enum (#9014)
+ - 43.1.15 Fix `tryEmptyContainerAndStow` duping fluids with stackable containers (#9004)
+ - 43.1.14 Add mod mismatch event (#8989)
+ - 43.1.13 [1.19.x] add methods with more context to tree growers (#8956)
+ - 43.1.12 [1.19.X] Adding more precise events for Advancements (#8360)
+ - 43.1.11 Default IItemHandler capability for shulker box itemstacks (#8827)
+           Co-authored-by: LexManos <LexManos@gmail.com>
+ - 43.1.10 [1.19] Add hook for items to remain in the hotbar when picking blocks/entities (#8872)
+ - 43.1.9  [1.19.x] Block Model Builder Root Transform Support (#8860)
+           Co-authored-by: sciwhiz12 <sciwhiz12@gmail.com>
+ - 43.1.8  [1.19.x] Make LivingSetAttackTargetEvent compatible with the Brain/Behavior system. (Port of PR #8918) (#8954)
+ - 43.1.7  [1.19.x] Add IForgeBlock#onTreeGrow to replace IForgeBlock#onPlantGrow from 1.16 (#8999)
+ - 43.1.6  [1.19.x] Moved Player.resetAttackStrengthTicker() to the end of Player.attack() (#9000)
+ - 43.1.5  fix misplaced patch in sapling block (#9005)
+ - 43.1.4  Fix failed entity interactions consuming the click. (#9007)
+ - 43.1.3  Fix entity selector permission check to check original source (#8995)
+           Permission checks should be against the command source and not the
+           target entity, as is done in vanilla.
+           Fixes #8994
+ - 43.1.2  Hotfix for 1.19.2 item animation bug (#8987)
+           * [HOT FIX]: Fixes #8985 by no-oping for vanilla models instead of throwing error
+ - 43.1.1  Add ability to Auto register capabilities via annotation (#8972)
+ - 43.1.0  1.19.2 RB
+
+43.0
+====
+ - 43.0.22 Added ItemDecorator API (#8794)
+ - 43.0.21 [1.19.x] Custom usage animations for items (#8932)
+ - 43.0.20 Allow registering custom `ColorResolver`s (#8880)
+ - 43.0.19 [1.19] Allow custom outline rendering on EntityRenderers and BlockEntityRenderers (#8938)
+ - 43.0.18 Redirect checks for entity selector use to a permission (#8947)
+           This allows greater flexibility for configuring servers with
+           operator-like permissions to user groups through the permissions API and
+           their permissions handler of choice without needing to grant the
+           vanilla operator permission to any player.
+           The new permission is "forge:use_entity_selectors", which is granted by
+           default to players with permission level 2 (GAMEMASTERS) and above.
+           The hook falls back to checking the permission level if the source of
+           the command is not a ServerPlayer, such as for command blocks and
+           functions.
+ - 43.0.17 Allow FakePlayer to report its position (#8963)
+ - 43.0.16 Add alternate version of renderEntityInInventory to allow for directly specifying the angles (#8961)
+ - 43.0.15 Add cancellable ToastAddEvent (#8952)
+ - 43.0.14 Modify ScreenEvent.RenderInventoryMobEffects to allow moving the effect stack left or right (#8951)
+ - 43.0.13 Fix Enchantment#doPostHurt and Enchantment#doPostAttack being called twice for players. Fixes MC-248272 (#8948)
+ - 43.0.12 Remove reflective implementation of ICustomPacket. (#8973)
+           Make vanilla custom packets able to be sent multiple times. Closes #8969
+ - 43.0.11 Filter name spaces to directories only. Closes #8413
+ - 43.0.10 Fix a corner case where the UMLB can not extract a version from a library. (#8967)
+ - 43.0.9  Fix worlds with removed dimension types unable to load. (#8959) Closes #8800
+ - 43.0.8  Fix issue where unknown chunk generators would cause DFU to fail. (#8957)
+ - 43.0.7  Fix comments and documentation that were missed during the review of #8712 (#8945)
+ - 43.0.6  Make AnvilUpdateEvent fire even if the second input is empty, which means it fires even if only changing the item name. (#8905)
+ - 43.0.5  Fix `LivingEntity#isBlocking` to use `ToolActions#SHIELD_BLOCK` instead of `UseAnim#BLOCK` (#8933)
+ - 43.0.4  Add Custom HolderSet Types allowing for logical combining of sets. (#8928)
+ - 43.0.3  Add values to VersionSupportMatrix to support loading mods that restrict versions to 1.19.1 on 1.19.2 (#8946)
+ - 43.0.2  Fix certain particles not updating their bounding box when their position changes (#8925)
+ - 43.0.1  Update EventBus to address concurrency issue in ModLauncher Factory. Closes #8924
+ - 43.0.0  1.19.2
+
+42.0
+====
+ - 42.0.9 Remove calls to getStepHeight in Player#maybeBackOffFromEdge (#8927)
+ - 42.0.8 Add forge tags for tools and armors, these DO NOT replace ToolActions, and are designed just for Recipes. (#8914)
+ - 42.0.7 Add Biomes.BEACH to Tags (#8892)
+ - 42.0.6 Let NetworkInstance.isRemotePresent check minecraft:register for channel IDs.  (#8921)
+ - 42.0.5 Add an event for when the chunk ticket level is updated (#8909)
+ - 42.0.4 Re-add PotentialSpawns event (#8712)
+ - 42.0.3 Fix misplaced patch in ItemEntityRenderer breaking ItemEntityRenderer#shouldBob() (#8919)
+ - 42.0.2 [1.19] [HotFix] Fix the dedicated server not having access to the JiJ filesystems. (#8931)
+ - 42.0.1 Match Mojang's action bar fix for MC-72687 (#8917)
+ - 42.0.0 Forge 1.19.1
+          Load natives from classpath
+          Make command argument types a forge registry
+          Add `EntityMobGriefingEvent` to `Allay#wantsToPickUp`
+          Overhaul `ServerChatEvent` to use `ChatDecorator` system
+          Remove `ClientChatEvent#setMessage` for now
+          Gradle 7.5
+
 41.1
 ====
  - 41.1.0 Mark 1.19 RB

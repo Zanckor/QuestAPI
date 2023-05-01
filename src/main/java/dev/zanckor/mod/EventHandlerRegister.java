@@ -4,7 +4,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import dev.zanckor.mod.common.datapack.CompoundTagDialogJSONListener;
 import dev.zanckor.mod.common.datapack.DialogJSONListener;
+import dev.zanckor.mod.common.datapack.EntityTypeDialogJSONListener;
 import dev.zanckor.mod.common.datapack.QuestJSONListener;
 import dev.zanckor.mod.server.command.QuestCommand;
 import net.minecraft.commands.CommandSourceStack;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static dev.zanckor.mod.QuestApiMain.LOGGER;
 import static dev.zanckor.mod.QuestApiMain.serverQuests;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID)
@@ -31,6 +34,8 @@ public class EventHandlerRegister {
 
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent e) {
+        LOGGER.debug("QuestAPI Commands registered");
+
         e.getDispatcher().register(Commands.literal("quests")
                 .requires((player) -> player.hasPermission(3))
                 .then(Commands.literal("add")
@@ -50,6 +55,12 @@ public class EventHandlerRegister {
                                             }
                                         }))))
 
+                /*
+                .then(Commands.literal("create")
+                        .then(Commands.literal("quest")
+                                .executes((context -> QuestCommand.openQuestMaker(context)))))
+                 */
+
                 .then(Commands.literal("remove")
                         .then(Commands.argument("player", EntityArgument.player())
                                 .then(Commands.argument("questID", StringArgumentType.string())
@@ -67,9 +78,9 @@ public class EventHandlerRegister {
                                             }
                                         }))))
 
-                .then(net.minecraft.commands.Commands.literal("tracked")
-                        .then(net.minecraft.commands.Commands.argument("player", EntityArgument.player())
-                                .then(net.minecraft.commands.Commands.argument("questID", StringArgumentType.string())
+                .then(Commands.literal("tracked")
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .then(Commands.argument("questID", StringArgumentType.string())
                                         .suggests(EventHandlerRegister::trackedQuestSuggestions)
                                         .executes((context) -> {
                                             try {
@@ -84,8 +95,8 @@ public class EventHandlerRegister {
                                             }
                                         }))))
 
-                .then(net.minecraft.commands.Commands.literal("reload")
-                        .then(net.minecraft.commands.Commands.argument("identifier", StringArgumentType.string())
+                .then(Commands.literal("reload")
+                        .then(Commands.argument("identifier", StringArgumentType.string())
                                 .executes((context) -> {
                                     return QuestCommand.reloadQuests(
                                             context,
@@ -147,8 +158,10 @@ public class EventHandlerRegister {
     }
 
     @SubscribeEvent
-    public static void jsonListener(AddReloadListenerEvent e){
+    public static void jsonListener(AddReloadListenerEvent e) {
         QuestJSONListener.register(e);
         DialogJSONListener.register(e);
+        CompoundTagDialogJSONListener.register(e);
+        EntityTypeDialogJSONListener.register(e);
     }
 }
