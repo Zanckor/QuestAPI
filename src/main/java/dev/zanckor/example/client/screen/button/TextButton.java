@@ -12,7 +12,7 @@ public class TextButton extends Button {
     int maxLength;
 
     public TextButton(int xPosition, int yPosition, int width, int height, float scale, Component component, int maxLength, OnPress onPress) {
-        super(xPosition, yPosition, width, height, component, onPress);
+        super(xPosition, yPosition, width, height, component, onPress, DEFAULT_NARRATION);
         this.scale = scale;
         this.maxLength = maxLength;
     }
@@ -21,7 +21,7 @@ public class TextButton extends Button {
     @Override
     public void renderButton(PoseStack poseStack, int xPos, int yPos, float v) {
         poseStack.pushPose();
-        poseStack.translate(x, y, 0);
+        poseStack.translate(this.getX(), this.getY(), 0);
         poseStack.scale(scale, scale, 1);
 
         MCUtilClient.renderLines(poseStack, 16, 0, maxLength, getMessage().getString(), Minecraft.getInstance().font);

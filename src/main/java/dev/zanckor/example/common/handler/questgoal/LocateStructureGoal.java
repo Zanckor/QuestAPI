@@ -9,7 +9,7 @@ import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.Mathematic;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,13 +38,13 @@ public class LocateStructureGoal extends AbstractGoal {
 
         String structureRLString = userQuest.getQuestGoals().get(indexGoal).getTarget();
         ResourceLocation rl = new ResourceLocation(structureRLString);
-        TagKey<Structure> structureTagKey = TagKey.create(Registry.STRUCTURE_REGISTRY, rl);
+        TagKey<Structure> structureTagKey = TagKey.create(Registries.STRUCTURE, rl);
 
         HashMap<TagKey<Structure>, Vec3> playerStructurePosition = structurePosition.get(player.getUUID());
 
-
         if (Timer.canUseWithCooldown(player.getUUID(), "SEARCH_FOR_NEW_STRUCTURE", GoalConfig.LOCATE_STRUCTURE_COOLDOWN.get() * 200))
             searchForNewStructure(player, structureTagKey, serverLevel, playerStructurePosition);
+
 
         if (playerStructurePosition != null && playerStructurePosition.containsKey(structureTagKey)) {
             if (Mathematic.vec3NumberBetween(playerStructurePosition.get(structureTagKey), player.getPosition(0), -50, 50)) {
@@ -72,6 +72,7 @@ public class LocateStructureGoal extends AbstractGoal {
             structurePosition.put(player.getUUID(), structures);
         }
     }
+
 
     @Override
     public void enhancedCompleteQuest(ServerPlayer player, File file, UserGoal userGoal) {

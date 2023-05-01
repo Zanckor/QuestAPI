@@ -6,8 +6,12 @@ import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class LocateStructureTargetType extends AbstractTargetType {
 

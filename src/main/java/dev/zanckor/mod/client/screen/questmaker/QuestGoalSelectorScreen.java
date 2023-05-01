@@ -43,7 +43,7 @@ public class QuestGoalSelectorScreen extends AbstractContainerScreen<QuestMakerM
         imageHeight = width / 4;
         scale = ((float) width) / 750;
 
-        //For each available goal to edit in quest, create a new button
+        //For each available goal to edit in quest, create a  MCUtilClient.createButton
         AtomicInteger buttonYOffSet = new AtomicInteger();
         for (int goalIndex = 0; goalIndex < editingQuest.getGoalList().size(); goalIndex++) {
             ServerGoal goal = editingQuest.getGoalList().get(goalIndex);

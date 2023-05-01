@@ -11,14 +11,14 @@ import net.minecraftforge.fml.common.Mod;
 import java.io.IOException;
 
 import static dev.zanckor.example.common.enumregistry.enumquest.EnumGoalType.LOCATE_STRUCTURE;
-import static java.lang.Integer.parseInt;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class LocateStructureEvent {
 
     @SubscribeEvent
     public static void moveToQuest(TickEvent.PlayerTickEvent e) throws IOException {
-        if (e.player == null || e.side.isClient() || e.player.getServer().getTickCount() % GoalConfig.LOCATE_STRUCTURE_COOLDOWN.get() != 0) return;
+        if (e.player == null || e.side.isClient() || e.player.getServer().getTickCount() % GoalConfig.LOCATE_STRUCTURE_COOLDOWN.get() != 0)
+            return;
 
         ServerHandler.questHandler(LOCATE_STRUCTURE, (ServerPlayer) e.player, null);
     }

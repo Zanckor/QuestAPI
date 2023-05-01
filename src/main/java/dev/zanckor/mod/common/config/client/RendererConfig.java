@@ -13,8 +13,9 @@ public class RendererConfig {
     static {
         BUILDER.push("Renderer configuration");
 
-        QUEST_MARK_UPDATE_COOLDOWN = BUILDER.comment("How long ? mark takes to update on change entity data. Lower value = realistic, less optimization")
-                .define("Quest Mark ? Update Cooldown", 5);
+        QUEST_MARK_UPDATE_COOLDOWN = BUILDER.comment("How long ! mark takes to update on change entity data.")
+                .comment("Lower value = Smoothness + Lager")
+                .define("Quest Mark ! Update Cooldown", 5);
 
         BUILDER.pop();
         SPEC = BUILDER.build();

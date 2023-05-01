@@ -121,25 +121,27 @@ public class QuestLog extends AbstractQuestLog {
 
 
                     if (prevButtonLines > 0) {
-                        questSelect.y += 13 * (prevButtonLines) * buttonScale;
+                        questSelect.setY((int) (questSelect.getY() + 13 * (prevButtonLines) * buttonScale));
                     }
                 }
 
                 displayedButton.put(displayedButton.size() + 1, i);
 
-                questSelect.y += buttonIndex * 27 * buttonScale;
+                questSelect.setY((int) (questSelect.getY() + buttonIndex * 27 * buttonScale));
                 addRenderableWidget(questSelect);
             }
         }
 
-        Button prevPage = new Button((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
+        Button prevPage =  MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
             if (selectedPage > 0) {
                 selectedPage--;
 
                 init();
             }
         });
-        Button nextPage = new Button((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
+        
+        
+        Button nextPage =  MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
             if (selectedPage + 1 < Math.ceil(questList.size()) / 4) {
                 selectedPage++;
 

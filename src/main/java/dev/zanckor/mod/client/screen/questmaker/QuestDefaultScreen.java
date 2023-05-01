@@ -45,7 +45,7 @@ public class QuestDefaultScreen extends AbstractContainerScreen<QuestMakerMenu> 
         scale = ((float) width) / 750;
 
         //Add buttons for different selection of data, quests, requirements...
-        Button goalScreen = new Button(xPosition, (int) (yPosition * 0.4), 40, 20, Component.literal("Goals"),
+        Button goalScreen =  MCUtilClient.createButton(xPosition, (int) (yPosition * 0.4), 40, 20, Component.literal("Goals"),
                 onPress -> {
                     if (editingQuest != null) {
 
@@ -71,7 +71,7 @@ public class QuestDefaultScreen extends AbstractContainerScreen<QuestMakerMenu> 
         addRenderableWidget(saveButton);
 
 
-        //For each available quest to edit in serverQuest folder, create a new button
+        //For each available quest to edit in serverQuest folder, create a  MCUtilClient.createButton
         //On click in that button, adds that quest to a list of editing quests on QuestMakerManager to save the data
         AtomicInteger buttonYOffSet = new AtomicInteger();
         for (int questIndex = 0; questIndex < QuestMakerManager.availableQuests.size(); questIndex++) {
