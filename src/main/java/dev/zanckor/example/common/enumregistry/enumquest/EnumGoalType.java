@@ -14,8 +14,7 @@ public enum EnumGoalType implements IEnumQuestGoal {
     MOVE_TO(new MoveToGoal(), new MoveToTargetType()),
     COLLECT(new CollectGoal(), new ItemTargetType()),
     COLLECT_WITH_NBT(new CollectNBTGoal(), new ItemTargetType()),
-    XP(new XpGoal(), new XPTargetType()),
-    LOCATE_STRUCTURE(new LocateStructureGoal(), new LocateStructureTargetType());
+    XP(new XpGoal(), new XPTargetType());
 
 
     AbstractGoal goal;
