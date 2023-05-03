@@ -95,11 +95,7 @@ public class QuestLog extends AbstractQuestLog {
 
             //Only add widget if there's 4 or fewer buttons added
             if (displayedButton.size() < 4 && questList.size() > buttonIndex) {
-                String title = (questList.get(buttonIndex).getTitle());
-                if (title.startsWith("#")) {
-                    title = I18n.get("quest_name.questapi." + questList.get(i + (4 * (selectedPage))).getTitle().substring(1));
-                }
-
+                String title = I18n.get(questList.get(buttonIndex).getTitle());
 
                 int textLines = (title.length() * 5) / maxLength;
                 float buttonWidth = textLines < 1 ? questList.get(buttonIndex).getTitle().length() * 5 * textLengthScale : maxLength * textLengthScale;
@@ -113,10 +109,8 @@ public class QuestLog extends AbstractQuestLog {
                 //If is not first button added, checks if prevButton has 1 or more lines to add an extra indent
                 if (displayedButton.size() > 0) {
                     int prevButton = displayedButton.get(displayedButton.size());
-                    String prevButtonTitle = (questList.get(buttonIndex).getTitle());
-                    if (prevButtonTitle.startsWith("#")) {
-                        prevButtonTitle = I18n.get("quest_name.questapi." + questList.get(prevButton).getTitle().substring(1));
-                    }
+                    String prevButtonTitle = I18n.get(questList.get(buttonIndex).getTitle());
+
                     int prevButtonLines = (prevButtonTitle.length() * 5) / maxLength;
 
 
@@ -235,11 +229,7 @@ public class QuestLog extends AbstractQuestLog {
 
     public void renderTitle(PoseStack poseStack, Minecraft minecraft) {
         //If quest title on quest.json starts with # means that is a translatable string, else is rendered literally
-        String title = questTitle;
-        if (questTitle.startsWith("#")) {
-            title = I18n.get("quest_name.questapi." + questTitle.substring(1));
-        }
-
+        String title = I18n.get(questTitle);
         MCUtilClient.renderLines(poseStack, 25, 10, 30, I18n.get("tracker.questapi.quest") + title, minecraft.font);
     }
 
@@ -259,7 +249,7 @@ public class QuestLog extends AbstractQuestLog {
 
             //Render quest type
             MCUtilClient.renderLine(poseStack, 30, 0, 0, 10, Component.literal(I18n.get("tracker.questapi.quest_type") +
-                    I18n.get("quest_type.questapi." + questGoalList.get(0).getType().toLowerCase())).withStyle(ChatFormatting.BLACK), font);
+                    I18n.get("quest_type." + questGoalList.get(0).getTranslatableType().toLowerCase())).withStyle(ChatFormatting.BLACK), font);
 
             //Render each quest goal of a single type and render target
             for (UserGoal questGoal : questGoalList) {

@@ -39,10 +39,7 @@ public class ClientHandler {
     public static Map<String, String> availableEntityTagForQuest = new HashMap<>();
 
     public static void toastQuestCompleted(String questName) {
-        String title = questTitle;
-        if (questTitle.startsWith("#")) {
-            title = I18n.get("quest_name.questapi." + questTitle.substring(1));
-        }
+        String title = I18n.get(questTitle);
 
         SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, Component.literal("Quest Completed"), Component.literal(title));
 

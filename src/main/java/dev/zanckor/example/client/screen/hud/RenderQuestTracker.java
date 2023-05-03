@@ -79,10 +79,7 @@ public class RenderQuestTracker extends AbstractQuestTracked {
     public static void renderTitle(PoseStack poseStack, Minecraft minecraft) {
         //If quest title on quest.json starts with # means that is a translatable string, else is rendered literally
 
-        String title = questTitle;
-        if (title.startsWith("#")) {
-            title = I18n.get("quest_name.questapi." + questTitle.substring(1));
-        }
+        String title = I18n.get(questTitle);
 
         MCUtilClient.renderLine(poseStack, (int) xPosition, (int) yPosition, 20,
                 Component.literal(I18n.get("tracker.questapi.quest") + title).withStyle(ChatFormatting.WHITE), minecraft.font);
@@ -100,7 +97,7 @@ public class RenderQuestTracker extends AbstractQuestTracked {
             //Render quest type
             MCUtilClient.renderLine(poseStack, Integer.MAX_VALUE, xPosition, yPosition, 10,
                     Component.literal(I18n.get("tracker.questapi.quest_type") +
-                            I18n.get("quest_type.questapi." + questGoalList.get(0).getType().toLowerCase())).withStyle(ChatFormatting.WHITE), font);
+                            I18n.get("quest_type." + questGoalList.get(0).getTranslatableType().toLowerCase())).withStyle(ChatFormatting.WHITE), font);
 
             //Render each quest goal of a single type and render target
             for (UserGoal questGoal : questGoalList) {
