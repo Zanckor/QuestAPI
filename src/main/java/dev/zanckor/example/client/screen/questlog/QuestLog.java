@@ -10,10 +10,8 @@ import dev.zanckor.example.client.screen.button.TextButton;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestLog;
-import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.screen.RequestQuestTracked;
+import dev.zanckor.mod.common.network.handler.ClientHandler;
 import dev.zanckor.mod.common.util.GsonManager;
-import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -48,8 +46,8 @@ public class QuestLog extends AbstractQuestLog {
     int questInfoScroll;
     float sin;
 
-
     List<UserQuest> questList = new ArrayList<>();
+    UserQuest selectedQuest;
 
     public QuestLog(Component component) {
         super(component);
@@ -89,6 +87,7 @@ public class QuestLog extends AbstractQuestLog {
 
         HashMap<Integer, Integer> displayedButton = new HashMap<>();
 
+
         //For each quest, checks if it can be added as a button to display data
         for (int i = 0; i < activeQuestList.size(); i++) {
             int buttonIndex = i + (4 * selectedPage);
@@ -102,17 +101,12 @@ public class QuestLog extends AbstractQuestLog {
 
                 Button questSelect = new TextButton(
                         xButtonPosition, yButtonPosition, (int) buttonWidth, 20 * (textLines + 1), buttonScale,
-
-                        Component.literal(title), 26,
-                        button -> SendQuestPacket.TO_SERVER(new RequestQuestTracked(questList.get(buttonIndex).getId())));
+                        Component.literal(title), 26, button -> selectedQuest = questList.get(buttonIndex));
 
                 //If is not first button added, checks if prevButton has 1 or more lines to add an extra indent
                 if (displayedButton.size() > 0) {
-                    int prevButton = displayedButton.get(displayedButton.size());
                     String prevButtonTitle = I18n.get(questList.get(buttonIndex).getTitle());
-
                     int prevButtonLines = (prevButtonTitle.length() * 5) / maxLength;
-
 
                     if (prevButtonLines > 0) {
                         questSelect.setY((int) (questSelect.getY() + 13 * (prevButtonLines) * buttonScale));
@@ -126,25 +120,28 @@ public class QuestLog extends AbstractQuestLog {
             }
         }
 
-        Button prevPage =  MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
+        Button prevPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
             if (selectedPage > 0) {
                 selectedPage--;
 
                 init();
             }
         });
-        
-        
-        Button nextPage =  MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
+        Button nextPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
             if (selectedPage + 1 < Math.ceil(questList.size()) / 4) {
                 selectedPage++;
 
                 init();
             }
         });
+        Button addTrackedQuest = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 15)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal("Track Quest"), button -> {
+            ClientHandler.modifyTrackedQuests(!trackedQuestList.contains(selectedQuest), selectedQuest);
+        });
         textButton = new EditBox(font, (int) (xScreenPos - (imageWidth / 2.4)), (int) (yScreenPos + imageHeight * 0.75), width / 6, 10, Component.literal(""));
 
+
         addRenderableWidget(textButton);
+        addRenderableWidget(addTrackedQuest);
         addWidget(prevPage);
         addWidget(nextPage);
 
@@ -189,7 +186,7 @@ public class QuestLog extends AbstractQuestLog {
     }
 
     public void renderQuestData(PoseStack poseStack) {
-        if (userQuest == null || userQuest.isCompleted())
+        if (selectedQuest == null || selectedQuest.isCompleted())
             return;
 
         HashMap<String, List<UserGoal>> userQuestHashMap = new HashMap<>();
@@ -201,7 +198,7 @@ public class QuestLog extends AbstractQuestLog {
         poseStack.scale(scale, scale, 0);
 
         //Gets all quest types on json and creates a HashMap with a list of goals
-        for (UserGoal questGoal : userQuest.getQuestGoals()) {
+        for (UserGoal questGoal : selectedQuest.getQuestGoals()) {
             String type = questGoal.getType();
             List<UserGoal> questGoalList = userQuestHashMap.get(type);
 
@@ -219,8 +216,8 @@ public class QuestLog extends AbstractQuestLog {
         renderTitle(poseStack, minecraft);
         renderQuestType(poseStack, minecraft, userQuestHashMap);
 
-        if (questHasTimeLimit) {
-            MCUtilClient.renderLine(poseStack, 0, 0, 30, I18n.get("tracker.questapi.time_limit") + questTimeLimit, font);
+        if (selectedQuest.hasTimeLimit()) {
+            MCUtilClient.renderLine(poseStack, 0, 0, 30, I18n.get("tracker.questapi.time_limit") + selectedQuest.getTimeLimitInSeconds(), font);
         }
 
 
@@ -228,8 +225,7 @@ public class QuestLog extends AbstractQuestLog {
     }
 
     public void renderTitle(PoseStack poseStack, Minecraft minecraft) {
-        //If quest title on quest.json starts with # means that is a translatable string, else is rendered literally
-        String title = I18n.get(questTitle);
+        String title = I18n.get(selectedQuest.getTitle());
         MCUtilClient.renderLines(poseStack, 25, 10, 30, I18n.get("tracker.questapi.quest") + title, minecraft.font);
     }
 

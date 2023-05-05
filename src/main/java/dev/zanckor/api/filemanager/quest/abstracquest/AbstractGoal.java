@@ -60,7 +60,6 @@ public abstract class AbstractGoal {
             userQuest.setCompleted(true);
             GsonManager.writeJson(file, userQuest);
 
-            MCUtil.nextQuestTracked(player, file);
             callEnhancedReward(userQuest, player, file);
 
             giveReward(player, file, userQuest);
