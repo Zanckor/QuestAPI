@@ -4,10 +4,10 @@ import dev.zanckor.api.filemanager.quest.abstracquest.AbstractGoal;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 
-public interface IEnumQuestGoal {
-    AbstractGoal getQuest();
+public interface IEnumTargetType {
+    AbstractTargetType getTargetType();
 
-    default void registerEnumGoal(Class enumClass) {
-        EnumRegistry.registerQuestGoal(enumClass);
+    default void registerTargetType(Class enumClass) {
+        EnumRegistry.registerTargetType(enumClass);
     }
 }
