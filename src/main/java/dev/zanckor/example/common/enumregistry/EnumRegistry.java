@@ -12,6 +12,7 @@ public class EnumRegistry {
     static List<Class> enumQuestRequirement = new ArrayList<>();
     static List<Class> enumQuestReward = new ArrayList<>();
     static List<Class> enumQuestGoal = new ArrayList<>();
+    static List<Class> enumTargetType = new ArrayList<>();
 
 
     public static void registerDialogOption(Class enumClass) {
@@ -34,6 +35,10 @@ public class EnumRegistry {
         enumQuestGoal.add(enumClass);
     }
 
+    public static void registerTargetType(Class enumClass) {
+        enumTargetType.add(enumClass);
+    }
+
 
     public static List<Class> getDialogOption() {
         return enumDialogOption;
@@ -52,6 +57,10 @@ public class EnumRegistry {
 
     public static List<Class> getQuestGoal() {
         return enumQuestGoal;
+    }
+
+    public static List<Class> getTargetType() {
+        return enumTargetType;
     }
 
 
