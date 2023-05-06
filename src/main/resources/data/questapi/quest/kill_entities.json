@@ -1,6 +1,7 @@
 {
   "id": "kill_entities",
-  "title": "#kill_entities",
+  "title": "quest_name.questapi.kill_entities",
+
   "hasTimeLimit": true,
   "timeLimitInSeconds": 10,
   "goals": [

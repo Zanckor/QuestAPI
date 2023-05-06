@@ -23,9 +23,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class ClientHandler {
+    public static List<UserQuest> trackedQuestList = new ArrayList<>();
 
     public static UserQuest userQuest;
     public static String questID;
@@ -39,10 +41,7 @@ public class ClientHandler {
     public static Map<String, String> availableEntityTagForQuest = new HashMap<>();
 
     public static void toastQuestCompleted(String questName) {
-        String title = questTitle;
-        if (questTitle.startsWith("#")) {
-            title = I18n.get("quest_name.questapi." + questTitle.substring(1));
-        }
+        String title = I18n.get(questTitle);
 
         SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, Component.literal("Quest Completed"), Component.literal(title));
 
@@ -59,17 +58,20 @@ public class ClientHandler {
         Minecraft.getInstance().setScreen(null);
     }
 
-    public static void setQuestTracked(UserQuest userQuest) {
-        ClientHandler.userQuest = userQuest;
+    public static void modifyTrackedQuests(Boolean addQuest, UserQuest userQuest) {
+        //If addQuest is true and trackedQuest's goals are less than 5, can add another quest to tracked list
+        System.out.println("U");
 
-        questTitle = userQuest.getTitle();
-        questID = userQuest.getId();
-        questHasTimeLimit = userQuest.hasTimeLimit();
-        questTimeLimit = userQuest.getTimeLimitInSeconds();
-        questGoals = userQuest.getQuestGoals();
+        if (addQuest) {
+            System.out.println("A");
 
-        if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + questID) && questHasTimeLimit) {
-            Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + questID, questTimeLimit);
+            var totalGoals = new AtomicInteger();
+            trackedQuestList.forEach(quest -> totalGoals.addAndGet(quest.getQuestGoals().size()));
+
+            if (totalGoals.get() < 5) { trackedQuestList.add(userQuest); }
+        } else {
+            System.out.println("B");
+            trackedQuestList.removeIf(quest -> quest.getId().equals(userQuest.getId()));
         }
     }
 

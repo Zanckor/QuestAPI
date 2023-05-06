@@ -7,7 +7,6 @@ import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -176,18 +175,6 @@ public class MCUtil {
         }
 
         return false;
-    }
-
-    public static void nextQuestTracked(ServerPlayer player, File file) throws IOException {
-        Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
-
-        for (File activeQuestFile : getActiveQuest(userFolder).toFile().listFiles()) {
-            if (!(activeQuestFile.exists())) continue;
-            UserQuest playerQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
-
-            if (playerQuest == null) continue;
-            SendQuestPacket.TO_CLIENT(player, new SetQuestTracked(playerQuest));
-        }
     }
 
     public static void moveFileToCompletedFolder(UserQuest userQuest, ServerPlayer player, File file) throws IOException {

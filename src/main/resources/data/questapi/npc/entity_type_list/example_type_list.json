@@ -1,9 +1,0 @@
-{
-  "id": "example_type_list",
-  "entity_type": [
-    "minecraft:cat"
-  ],
-  "dialog_list": [
-    "questapi.collect_items_dialog"
-  ]
-}

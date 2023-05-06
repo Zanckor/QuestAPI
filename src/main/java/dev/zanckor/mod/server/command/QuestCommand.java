@@ -2,7 +2,6 @@ package dev.zanckor.mod.server.command;
 
 import com.mojang.brigadier.context.CommandContext;
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.codec.ReadDialog;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
 import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
@@ -14,7 +13,6 @@ import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.quest.ActiveQuestList;
 import dev.zanckor.mod.common.network.message.quest.ServerQuestList;
 import dev.zanckor.mod.common.network.message.screen.RemovedQuest;
-import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.Timer;
 import dev.zanckor.mod.server.menu.questmaker.QuestMakerMenu;
@@ -23,12 +21,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,23 +38,6 @@ public class QuestCommand {
 
         return 1;
     }
-
-    public static int trackedQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
-        ServerLevel level = context.getSource().getLevel();
-        Player player = level.getPlayerByUUID(playerUUID);
-        String quest = questID + ".json";
-        Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
-
-        for (File file : getActiveQuest(userFolder).toFile().listFiles()) {
-            if (!(file.getName().equals(quest))) continue;
-            UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
-
-            SendQuestPacket.TO_CLIENT(player, new SetQuestTracked(userQuest));
-        }
-
-        return 1;
-    }
-
 
     public static int addQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
         ServerLevel level = context.getSource().getLevel();
@@ -92,8 +70,6 @@ public class QuestCommand {
             createQuest(serverQuest, player, path);
             LocateHash.registerQuestByID(questID, path);
             SendQuestPacket.TO_CLIENT(player, new ActiveQuestList(player.getUUID()));
-
-            trackedQuest(context, playerUUID, questID);
             return 1;
         }
 

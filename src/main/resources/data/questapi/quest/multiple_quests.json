@@ -1,6 +1,6 @@
 {
   "id": "multiple_quests",
-  "title": "#multiple_quests",
+  "title": "quest_name.questapi.multiple_quests",
   "goals": [
     {
       "type": "MOVE_TO",

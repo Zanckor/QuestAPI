@@ -1,6 +1,6 @@
 {
   "id": "collect_items",
-  "title": "#collect_items",
+  "title": "quest_name.questapi.collect_items",
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,
   "goals": [
