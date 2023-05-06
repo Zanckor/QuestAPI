@@ -103,19 +103,9 @@ public class QuestLog extends AbstractQuestLog {
                         xButtonPosition, yButtonPosition, (int) buttonWidth, 20 * (textLines + 1), buttonScale,
                         Component.literal(title), 26, button -> selectedQuest = questList.get(buttonIndex));
 
-                //If is not first button added, checks if prevButton has 1 or more lines to add an extra indent
-                if (displayedButton.size() > 0) {
-                    String prevButtonTitle = I18n.get(questList.get(buttonIndex).getTitle());
-                    int prevButtonLines = (prevButtonTitle.length() * 5) / maxLength;
-
-                    if (prevButtonLines > 0) {
-                        questSelect.setY((int) (questSelect.getY() + 13 * (prevButtonLines) * buttonScale));
-                    }
-                }
-
                 displayedButton.put(displayedButton.size() + 1, i);
 
-                questSelect.setY((int) (questSelect.getY() + buttonIndex * 27 * buttonScale));
+                questSelect.setY((int) (questSelect.getY() + buttonIndex * 27));
                 addRenderableWidget(questSelect);
             }
         }
