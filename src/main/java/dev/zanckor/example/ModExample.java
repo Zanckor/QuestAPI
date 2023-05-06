@@ -58,16 +58,12 @@ public class ModExample {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         NpcTypes.register(modEventBus);
 
-        Arrays.stream(EnumGoalType.values()).forEach(enumGoalType -> {
-            QuestTemplateRegistry.registerQuest(enumGoalType);
-            QuestTemplateRegistry.registerTargetType(enumGoalType);
-        });
+        Arrays.stream(EnumGoalType.values()).forEach(QuestTemplateRegistry::registerQuest);
         Arrays.stream(EnumQuestReward.values()).forEach(QuestTemplateRegistry::registerReward);
         Arrays.stream(EnumQuestRequirement.values()).forEach(QuestTemplateRegistry::registerQuestRequirement);
         Arrays.stream(EnumDialogReq.values()).forEach(QuestTemplateRegistry::registerDialogRequirement);
         Arrays.stream(EnumDialogOption.values()).forEach(QuestTemplateRegistry::registerDialogOption);
     }
-
 
     @SubscribeEvent
     public static void registerTemplates(ServerAboutToStartEvent e) throws IOException {
@@ -88,6 +84,11 @@ public class ModExample {
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModExample {
+
+        @SubscribeEvent
+        public static void registerTargetTypeEnum(FMLClientSetupEvent e) {
+            Arrays.stream(EnumGoalType.EnumTargetType.values()).forEach(QuestTemplateRegistry::registerTargetType);
+        }
 
         /**
          * registerScreen adds specified classes to cache to load X or Y screen depending on your identifier and config file

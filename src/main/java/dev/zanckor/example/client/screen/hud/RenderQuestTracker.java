@@ -104,7 +104,7 @@ public class RenderQuestTracker extends AbstractQuestTracked {
 
             //Render each quest goal of a single type and render target
             for (UserGoal questGoal : questGoalList) {
-                Enum goalEnum = EnumRegistry.getEnum(questGoal.getType(), EnumRegistry.getQuestGoal());
+                Enum goalEnum = EnumRegistry.getEnum("TARGET_TYPE_" + questGoal.getType(), EnumRegistry.getTargetType());
 
                 AbstractTargetType translatableTargetType = QuestTemplateRegistry.getTranslatableTargetType(goalEnum);
                 MutableComponent goalComponentTarget = translatableTargetType.handler(questGoal.getTarget(), questGoal, player, ChatFormatting.GRAY, ChatFormatting.BLACK);

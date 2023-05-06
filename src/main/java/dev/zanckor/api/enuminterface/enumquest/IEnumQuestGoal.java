@@ -7,8 +7,6 @@ import dev.zanckor.example.common.enumregistry.EnumRegistry;
 public interface IEnumQuestGoal {
     AbstractGoal getQuest();
 
-    AbstractTargetType getTargetType();
-
     default void registerEnumGoal(Class enumClass) {
         EnumRegistry.registerQuestGoal(enumClass);
     }

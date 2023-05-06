@@ -5,6 +5,7 @@ import dev.zanckor.api.enuminterface.enumdialog.IEnumDialogReq;
 import dev.zanckor.api.enuminterface.enumquest.IEnumQuestGoal;
 import dev.zanckor.api.enuminterface.enumquest.IEnumQuestRequirement;
 import dev.zanckor.api.enuminterface.enumquest.IEnumQuestReward;
+import dev.zanckor.api.enuminterface.enumquest.IEnumTargetType;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogOption;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractGoal;
@@ -28,7 +29,6 @@ public class QuestTemplateRegistry {
     private static HashMap<Enum, AbstractQuestRequirement> quest_requirement = new HashMap<>();
     private static HashMap<Enum, AbstractDialogRequirement> dialog_requirement = new HashMap<>();
     private static HashMap<Enum, AbstractDialogOption> dialog_template = new HashMap<>();
-
     private static HashMap<Enum, AbstractTargetType> target_type = new HashMap<>();
 
     public static void registerQuest(IEnumQuestGoal key) {
@@ -46,7 +46,7 @@ public class QuestTemplateRegistry {
     public static void registerDialogRequirement(IEnumDialogReq key) {
         dialog_requirement.put((Enum) key, key.getDialogRequirement());
     }
-    public static void registerTargetType(IEnumQuestGoal key) {
+    public static void registerTargetType(IEnumTargetType key) {
         target_type.put((Enum) key, key.getTargetType());
     }
 
