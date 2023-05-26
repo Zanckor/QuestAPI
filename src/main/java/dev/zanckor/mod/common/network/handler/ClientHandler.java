@@ -28,20 +28,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class ClientHandler {
     public static List<UserQuest> trackedQuestList = new ArrayList<>();
-
-    public static UserQuest userQuest;
-    public static String questID;
-    public static String questTitle;
-    public static List<UserGoal> questGoals;
-    public static boolean questHasTimeLimit;
-    public static int questTimeLimit;
-    public static List<String> activeQuestList;
+    public static List<UserQuest> activeQuestList;
 
     public static List<EntityType> availableEntityTypeForQuest = new ArrayList<>();
     public static Map<String, String> availableEntityTagForQuest = new HashMap<>();
 
     public static void toastQuestCompleted(String questName) {
-        String title = I18n.get(questTitle);
+        String title = I18n.get(questName);
 
         SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, Component.literal("Quest Completed"), Component.literal(title));
 
@@ -60,35 +53,26 @@ public class ClientHandler {
 
     public static void modifyTrackedQuests(Boolean addQuest, UserQuest userQuest) {
         //If addQuest is true and trackedQuest's goals are less than 5, can add another quest to tracked list
-        System.out.println("U");
 
+        System.out.println("A");
         if (addQuest) {
-            System.out.println("A");
-
             var totalGoals = new AtomicInteger();
             trackedQuestList.forEach(quest -> totalGoals.addAndGet(quest.getQuestGoals().size()));
 
+            System.out.println("B");
             if (totalGoals.get() < 5) { trackedQuestList.add(userQuest); }
         } else {
-            System.out.println("B");
+            System.out.println("C");
             trackedQuestList.removeIf(quest -> quest.getId().equals(userQuest.getId()));
         }
     }
 
     public static void updateQuestTracked(UserQuest userQuest) {
-        if (!(userQuest.getId().equals(ClientHandler.userQuest.getId()))) return;
+        ClientHandler.trackedQuestList.forEach(quest -> {
+            if(!userQuest.getId().equals(quest.getId())) return;
 
-        ClientHandler.userQuest = userQuest;
-
-        questTitle = userQuest.getTitle();
-        questID = userQuest.getId();
-        questHasTimeLimit = userQuest.hasTimeLimit();
-        questTimeLimit = userQuest.getTimeLimitInSeconds();
-        questGoals = userQuest.getQuestGoals();
-
-        if (!Timer.existsTimer(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + questID) && questHasTimeLimit) {
-            Timer.updateCooldown(Minecraft.getInstance().player.getUUID(), "TIMER_QUEST" + questID, questTimeLimit);
-        }
+            quest.setQuestGoals(userQuest.getQuestGoals());
+        });
     }
 
     public static void removeQuest(String id) {
@@ -96,7 +80,7 @@ public class ClientHandler {
     }
 
 
-    public static void setActiveQuestList(List<String> activeQuestList) {
+    public static void setActiveQuestList(List<UserQuest> activeQuestList) {
         ClientHandler.activeQuestList = activeQuestList;
     }
 
@@ -117,8 +101,8 @@ public class ClientHandler {
 
     public static void setAvailableEntityTypeForQuest(List<String> entityTypeForQuest, Map<String, String> entityTagMap) {
         for (String entityTypeString : entityTypeForQuest) {
+            if(entityTypeString.isBlank()) return;
             ResourceLocation entityResourceLocation = new ResourceLocation(entityTypeString.strip());
-
             EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(entityResourceLocation);
 
             availableEntityTypeForQuest.add(entityType);

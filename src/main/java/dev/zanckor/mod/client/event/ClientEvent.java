@@ -26,6 +26,8 @@ import net.minecraftforge.fml.common.Mod;
 import org.joml.Quaternionf;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
@@ -42,7 +44,7 @@ public class ClientEvent {
 
     @SubscribeEvent
     public static void loadHashMaps(ClientPlayerNetworkEvent.LoggingIn e) {
-        ClientHandler.userQuest = null;
+        ClientHandler.activeQuestList = new ArrayList<>();
     }
 
     @SubscribeEvent
@@ -83,8 +85,8 @@ public class ClientEvent {
         }
 
         if (ClientHandler.availableEntityTypeForQuest != null) {
-
             entity.getPersistentData().putBoolean("availableForDialog", ClientHandler.availableEntityTypeForQuest.contains(entityType));
+
             return ClientHandler.availableEntityTypeForQuest.contains(entityType);
         }
 
@@ -93,7 +95,6 @@ public class ClientEvent {
 
     public static boolean checkEntityTagIsValid(LivingEntity entity) {
         for (Map.Entry<String, String> entry : ClientHandler.availableEntityTagForQuest.entrySet()) {
-
             if (Timer.canUseWithCooldown(entity.getUUID(), "UPDATE_MARKER", RendererConfig.QUEST_MARK_UPDATE_COOLDOWN.get())) {
                 Timer.updateCooldown(entity.getUUID(), "UPDATE_MARKER", RendererConfig.QUEST_MARK_UPDATE_COOLDOWN.get());
 

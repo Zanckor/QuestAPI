@@ -10,8 +10,9 @@ import dev.zanckor.example.client.screen.button.TextButton;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestLog;
+import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.handler.ClientHandler;
-import dev.zanckor.mod.common.util.GsonManager;
+import dev.zanckor.mod.common.network.message.screen.RequestActiveQuests;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -32,7 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static dev.zanckor.mod.common.network.handler.ClientHandler.*;
+import static dev.zanckor.mod.common.network.handler.ClientHandler.activeQuestList;
+import static dev.zanckor.mod.common.network.handler.ClientHandler.trackedQuestList;
 
 public class QuestLog extends AbstractQuestLog {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
@@ -46,7 +48,6 @@ public class QuestLog extends AbstractQuestLog {
     int questInfoScroll;
     float sin;
 
-    List<UserQuest> questList = new ArrayList<>();
     UserQuest selectedQuest;
 
     public QuestLog(Component component) {
@@ -54,17 +55,8 @@ public class QuestLog extends AbstractQuestLog {
     }
 
     @Override
-    public Screen modifyScreen() throws IOException {
-        //Each time screen opens hashMap is deleted and questList
-        questList.clear();
-
-        for (int i = 0; i < activeQuestList.size(); i++) {
-            UserQuest quest = (UserQuest) GsonManager.getJsonClass(activeQuestList.get(i), UserQuest.class);
-
-            questList.add(quest);
-        }
-
-
+    public Screen modifyScreen() {
+        init();
         return this;
     }
 
@@ -72,6 +64,7 @@ public class QuestLog extends AbstractQuestLog {
     protected void init() {
         super.init();
         clearWidgets();
+        selectedQuest = null;
 
         questInfoScroll = 0;
         imageWidth = width / 2;
@@ -93,19 +86,22 @@ public class QuestLog extends AbstractQuestLog {
             int buttonIndex = i + (4 * selectedPage);
 
             //Only add widget if there's 4 or fewer buttons added
-            if (displayedButton.size() < 4 && questList.size() > buttonIndex) {
-                String title = I18n.get(questList.get(buttonIndex).getTitle());
+            if (displayedButton.size() < 4 && activeQuestList.size() > buttonIndex) {
+                String title = I18n.get(activeQuestList.get(buttonIndex).getTitle());
 
                 int textLines = (title.length() * 5) / maxLength;
-                float buttonWidth = textLines < 1 ? questList.get(buttonIndex).getTitle().length() * 5 * textLengthScale : maxLength * textLengthScale;
+                float buttonWidth = textLines < 1 ? activeQuestList.get(buttonIndex).getTitle().length() * 5 * textLengthScale : maxLength * textLengthScale;
 
                 Button questSelect = new TextButton(
                         xButtonPosition, yButtonPosition, (int) buttonWidth, 20 * (textLines + 1), buttonScale,
-                        Component.literal(title), 26, button -> selectedQuest = questList.get(buttonIndex));
+                        Component.literal(title), 26, button -> {
+                    selectedQuest = activeQuestList.get(buttonIndex);
+                    SendQuestPacket.TO_SERVER(new RequestActiveQuests());
+                });
 
                 displayedButton.put(displayedButton.size() + 1, i);
 
-                questSelect.setY((int) (questSelect.getY() + buttonIndex * 27));
+                questSelect.setY(questSelect.getY() + buttonIndex * 27);
                 addRenderableWidget(questSelect);
             }
         }
@@ -118,7 +114,7 @@ public class QuestLog extends AbstractQuestLog {
             }
         });
         Button nextPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal(""), button -> {
-            if (selectedPage + 1 < Math.ceil(questList.size()) / 4) {
+            if (selectedPage + 1 < Math.ceil(activeQuestList.size()) / 4) {
                 selectedPage++;
 
                 init();
@@ -136,6 +132,7 @@ public class QuestLog extends AbstractQuestLog {
         addWidget(nextPage);
 
         textButton.setValue("Quest name");
+        SendQuestPacket.TO_SERVER(new RequestActiveQuests());
     }
 
     @Override

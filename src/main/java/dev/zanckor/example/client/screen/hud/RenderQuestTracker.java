@@ -7,6 +7,9 @@ import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestTracked;
+import dev.zanckor.mod.common.network.handler.ClientHandler;
+import dev.zanckor.mod.common.util.GsonManager;
+import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -34,10 +37,11 @@ public class RenderQuestTracker extends AbstractQuestTracked {
         Minecraft minecraft = Minecraft.getInstance();
         HashMap<String, List<UserGoal>> userQuestHashMap = new HashMap<>();
 
-        if (trackedQuestList.isEmpty() || minecraft.player.isReducedDebugInfo() || minecraft.options.keyPlayerList.isDown() || minecraft.options.renderDebug) {
+        if (trackedQuestList.isEmpty() || trackedQuestList == null || minecraft.player.isReducedDebugInfo() || minecraft.options.keyPlayerList.isDown() || minecraft.options.renderDebug) {
             userQuestHashMap.clear();
             return;
         }
+
         xPosition = width / 100;
         yPosition = width / 100;
         scale = ((float) width) / 700;
@@ -58,27 +62,28 @@ public class RenderQuestTracker extends AbstractQuestTracked {
         trackedQuestList.forEach(userQuest -> {
             userQuestHashMap.clear();
 
-            for (UserGoal questGoal : userQuest.getQuestGoals()) {
-                String type = questGoal.getType();
-                List<UserGoal> questGoalList = userQuestHashMap.get(type);
+            if(!MCUtil.isQuestCompleted(userQuest)) {
+                for (UserGoal questGoal : userQuest.getQuestGoals()) {
+                    String type = questGoal.getType();
+                    List<UserGoal> questGoalList = userQuestHashMap.get(type);
 
-                if (questGoalList == null) {
-                    questGoalList = new ArrayList<>();
+                    if (questGoalList == null) {
+                        questGoalList = new ArrayList<>();
+                    }
+
+                    questGoalList.add(questGoal);
+
+                    userQuestHashMap.put(type, questGoalList);
                 }
 
-                questGoalList.add(questGoal);
+                //Displays quest goals
+                renderTitle(poseStack, minecraft, userQuest);
+                renderQuestType(poseStack, minecraft, userQuestHashMap);
 
-                userQuestHashMap.put(type, questGoalList);
+                if (userQuest.hasTimeLimit()) {
+                    MCUtilClient.renderLine(poseStack, (int) xPosition, (int) yPosition, 10, I18n.get("tracker.questapi.time_limit") + userQuest.getTimeLimitInSeconds(), minecraft.font);
+                }
             }
-
-            //Displays quest goals
-            renderTitle(poseStack, minecraft, userQuest);
-            renderQuestType(poseStack, minecraft, userQuestHashMap);
-
-            if (userQuest.hasTimeLimit()) {
-                MCUtilClient.renderLine(poseStack, (int) xPosition, (int) yPosition, 10, I18n.get("tracker.questapi.time_limit") + userQuest.getTimeLimitInSeconds(), minecraft.font);
-            }
-
         });
     }
 
