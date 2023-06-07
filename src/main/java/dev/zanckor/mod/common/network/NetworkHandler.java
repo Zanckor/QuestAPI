@@ -15,7 +15,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkHandler {
 
-    private static final String PROTOCOL_VERSION = "2.0";
+    private static final String PROTOCOL_VERSION = "2.1";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             new ResourceLocation(QuestApiMain.MOD_ID, "questapinetwork"),
@@ -35,9 +35,9 @@ public class NetworkHandler {
                 .encoder(TimerPacket::encodeBuffer).decoder(TimerPacket::new)
                 .consumerNetworkThread(TimerPacket::handler).add();
 
-        CHANNEL.messageBuilder(RequestQuestTracked.class, index++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(RequestQuestTracked::encodeBuffer).decoder(RequestQuestTracked::new)
-                .consumerNetworkThread(RequestQuestTracked::handler).add();
+        CHANNEL.messageBuilder(RequestActiveQuests.class, index++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(RequestActiveQuests::encodeBuffer).decoder(RequestActiveQuests::new)
+                .consumerNetworkThread(RequestActiveQuests::handler).add();
 
         CHANNEL.messageBuilder(DialogRequestPacket.class, index++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(DialogRequestPacket::encodeBuffer).decoder(DialogRequestPacket::new)
@@ -59,13 +59,13 @@ public class NetworkHandler {
                 .encoder(DisplayDialog::encodeBuffer).decoder(DisplayDialog::new)
                 .consumerNetworkThread(DisplayDialog::handler).add();
 
+        CHANNEL.messageBuilder(ModifyTrackedQuests.class, index++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(ModifyTrackedQuests::encodeBuffer).decoder(ModifyTrackedQuests::new)
+                .consumerNetworkThread(ModifyTrackedQuests::handler).add();
+
         CHANNEL.messageBuilder(CloseDialog.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(CloseDialog::encodeBuffer).decoder(CloseDialog::new)
                 .consumerNetworkThread(CloseDialog::handler).add();
-
-        CHANNEL.messageBuilder(SetQuestTracked.class, index++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(SetQuestTracked::encodeBuffer).decoder(SetQuestTracked::new)
-                .consumerNetworkThread(SetQuestTracked::handler).add();
 
         CHANNEL.messageBuilder(UpdateQuestTracked.class, index++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(UpdateQuestTracked::encodeBuffer).decoder(UpdateQuestTracked::new)

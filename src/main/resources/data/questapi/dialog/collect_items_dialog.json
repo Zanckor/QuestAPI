@@ -2,8 +2,7 @@
   "dialog": [
     {
       "id": 0,
-      "dialogTitle": "D. 1 - Inicio",
-      "dialogText": "Hello adventurer, I need help with a task, would you help me?",
+      "dialogText": "dialog_text.questapi.collect_items_dialog.salute",
       "requirements": {
         "type": "QUEST",
         "quest_id": "questapi.collect_items",
@@ -11,120 +10,94 @@
       },
       "options": [
         {
-          "text": "Sure, tell me what you need.",
+          "text": "dialog_text.questapi.collect_items_dialog.salute.accept",
           "type": "OPEN_DIALOG",
           "global_id": "questapi.collect_items_dialog",
-          "dialog": 1,
-          "quest_id": ""
+          "dialog": 1
         },
         {
-          "text": "No, sorry, I don\u0027t have time.",
+          "text": "dialog_text.questapi.collect_items_dialog.salute.deny",
           "type": "OPEN_DIALOG",
           "global_id": "questapi.collect_items_dialog",
-          "dialog": 2,
-          "quest_id": ""
+          "dialog": 2
         }
       ]
     },
     {
       "id": 1,
-      "dialogTitle": "D. 1 - Acceptar",
-      "dialogText": "Thanks, I need 2 gold and 1 iron ingots.",
+      "dialogText": "dialog_text.questapi.collect_items_dialog.quest_accepted",
       "requirements": {
       },
       "options": [
         {
-          "text": "I\u0027ll start right now.",
+          "text": "dialog_text.questapi.collect_items_dialog.quest_accepted.add_quest",
           "type": "ADD_QUEST",
-          "global_id": "",
-          "dialog": null,
           "quest_id": "questapi.collect_items"
         }
       ]
     },
     {
       "id": 2,
-      "dialogTitle": "D. 2 - Rechazar",
-      "dialogText": "I see, it doesn\u0027t matter, if you change your mind I\u0027ll stay here.",
+      "dialogText": "dialog_text.questapi.collect_items_dialog.quest_declined",
       "requirements": {
       },
       "options": [
         {
-          "text": "Okay...",
-          "type": "CLOSE_DIALOG",
-          "global_id": "",
-          "dialog": null,
-          "quest_id": ""
+          "text": "dialog_text.questapi.collect_items_dialog.quest_declined.close_dialog",
+          "type": "CLOSE_DIALOG"
         }
       ]
     },
     {
       "id": 3,
-      "dialogTitle": "D. 2.1 - Tras Rechazar",
-      "dialogText": "Hello, I see you\u0027re back, have you changed your mind?",
+      "dialogText": "dialog_text.questapi.collect_items_dialog.repeat_salute",
       "requirements": {
         "type": "DIALOG",
-        "global_id": "",
         "dialog_id": 2,
-          "quest_id": "",
         "requirement_status": "READ"
       },
       "options": [
         {
-          "text": "Sure, tell me what you need.",
+          "text": "dialog_text.questapi.collect_items_dialog.repeat_salute.accept",
           "type": "OPEN_DIALOG",
           "global_id": "questapi.collect_items_dialog",
-          "dialog": 1,
-          "quest_id": ""
+          "dialog": 1
         },
         {
-          "text": "No, sorry, I don\u0027t have time.",
+          "text": "dialog_text.questapi.collect_items_dialog.repeat_salute.deny",
           "type": "OPEN_DIALOG",
           "global_id": "questapi.collect_items_dialog",
-          "dialog": 2,
-          "quest_id": ""
+          "dialog": 2
         }
       ]
     },
     {
       "id": 4,
-      "dialogTitle": "D. 3 - Intermedio",
-      "dialogText": "Hello traveler, how are you doing on the quest?",
+      "dialogText": "dialog_text.questapi.collect_items_dialog.work_in_progress",
       "requirements": {
         "type": "QUEST",
-        "global_id": "",
-        "dialog_id": null,
         "quest_id": "questapi.collect_items",
         "requirement_status": "IN_PROGRESS"
       },
       "options": [
         {
-          "text": "Okay, almost there.",
-          "type": "CLOSE_DIALOG",
-          "global_id": "",
-          "dialog": null,
-          "quest_id": ""
+          "text": "dialog_text.questapi.collect_items_dialog.work_in_progress.close_dialog",
+          "type": "CLOSE_DIALOG"
         }
       ]
     },
     {
       "id": 5,
-      "dialogTitle": "D. 4 - Finalizar",
-      "dialogText": "Thank you very much for helping me traveler.",
+      "dialogText": "dialog_text.questapi.collect_items_dialog.greetings",
       "requirements": {
         "type": "QUEST",
-        "global_id": "",
-        "dialog_id": null,
         "quest_id": "questapi.collect_items",
         "requirement_status": "COMPLETED"
       },
       "options": [
         {
-          "text": "No problem.",
-          "type": "CLOSE_DIALOG",
-          "global_id": "",
-          "dialog": null,
-          "quest_id": ""
+          "text": "dialog_text.questapi.collect_items_dialog.greetings.response",
+          "type": "CLOSE_DIALOG"
         }
       ]
     }

@@ -34,9 +34,11 @@ public class EnumRegistry {
     public static void registerQuestGoal(Class enumClass) {
         enumQuestGoal.add(enumClass);
     }
+
     public static void registerTargetType(Class enumClass) {
         enumTargetType.add(enumClass);
     }
+
 
     public static List<Class> getDialogOption() {
         return enumDialogOption;
@@ -56,26 +58,25 @@ public class EnumRegistry {
     public static List<Class> getQuestGoal() {
         return enumQuestGoal;
     }
+
     public static List<Class> getTargetType() {
         return enumTargetType;
     }
 
+
     public static Enum getEnum(String enumString, List<Class> enumRegistry) {
         Enum anEnum;
 
-        for (Class enumClass : enumRegistry) {
+        for (Class enumClass : enumRegistry){
             Object[] enumValues = enumClass.getEnumConstants();
-            boolean hasCorrectEnum;
 
-            for (Object value : enumValues) {
-                hasCorrectEnum = value.toString().equalsIgnoreCase(enumString);
+            for(Object enumValue : enumValues){
+                if(enumValue.toString().equalsIgnoreCase(enumString)){
+                    anEnum = Enum.valueOf(enumClass, enumString);
 
-                if(hasCorrectEnum) break;
+                    return anEnum;
+                }
             }
-
-            anEnum = Enum.valueOf(enumClass, enumString);
-
-            if(anEnum != null) return anEnum;
         }
 
         return null;

@@ -78,23 +78,6 @@ public class EventHandlerRegister {
                                             }
                                         }))))
 
-                .then(Commands.literal("tracked")
-                        .then(Commands.argument("player", EntityArgument.player())
-                                .then(Commands.argument("questID", StringArgumentType.string())
-                                        .suggests(EventHandlerRegister::trackedQuestSuggestions)
-                                        .executes((context) -> {
-                                            try {
-                                                return QuestCommand.trackedQuest(
-                                                        context,
-                                                        EntityArgument.getPlayer(context, "player").getUUID(),
-                                                        StringArgumentType.getString(context, "questID"));
-                                            } catch (IOException ex) {
-                                                QuestApiMain.LOGGER.error(ex.getMessage());
-
-                                                return 0;
-                                            }
-                                        }))))
-
                 .then(Commands.literal("reload")
                         .then(Commands.argument("identifier", StringArgumentType.string())
                                 .executes((context) -> {

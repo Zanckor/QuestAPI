@@ -42,7 +42,7 @@ public class ModExample {
     /**
      * You can create your own EnumClass to add your templates:
      * <p><p>
-     *
+     * <p>
      * DialogOption Needs to extend {@link AbstractDialogOption} <p>
      * Goal Needs to extend {@link AbstractGoal} <p>
      * Reward Needs to extend {@link AbstractReward} <p>
@@ -85,7 +85,6 @@ public class ModExample {
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModExample {
-
 
         @SubscribeEvent
         public static void registerTargetTypeEnum(FMLClientSetupEvent e) {
