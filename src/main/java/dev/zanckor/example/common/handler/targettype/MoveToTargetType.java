@@ -7,6 +7,10 @@ import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.common.Mod;
+
+import static dev.zanckor.mod.QuestApiMain.MOD_ID;
 
 public class MoveToTargetType extends AbstractTargetType {
 

@@ -8,6 +8,7 @@ import dev.zanckor.mod.common.network.handler.ServerHandler;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.Mathematic;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
@@ -47,13 +48,13 @@ public class MoveToEvent {
         //Then, add a new position to targetPos via additionalListData field from json
         for (int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
             UserGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
-            List<?> additionalListData = questGoal.getAdditionalListData();
+            List<Double> additionalListData = (List<Double>) questGoal.getAdditionalListData();
 
             if (!(questGoal.getType().equals(MOVE_TO.toString())) || additionalListData == null) continue;
 
-            Vec3 vec3Coord = new Vec3((double) additionalListData.get(0), (double) additionalListData.get(1), (double) additionalListData.get(2));
+            Vec3i vec3Coord = new Vec3i(additionalListData.get(0).intValue(), additionalListData.get(1).intValue(), additionalListData.get(2).intValue());
 
-            targetPos = new BlockPos(new BlockPos(vec3Coord));
+            targetPos = new BlockPos(vec3Coord);
         }
 
         //If player coords are in a range of 10 blocks to target coord, executes questHandler

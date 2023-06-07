@@ -39,6 +39,8 @@ public class DisplayDialog {
         this.npcUUID = npc == null ? player.getUUID() : npc.getUUID();
         this.identifier = identifier != null ? identifier : "questapi";
 
+
+
         LocateHash.currentDialog.put(player, dialogID);
         MCUtil.writeDialogRead(player, dialogID);
     }
@@ -77,10 +79,14 @@ public class DisplayDialog {
         buffer.writeInt(dialog.getOptions().size());
 
         for (NPCDialog.DialogOption option : dialog.getOptions()) {
-            buffer.writeUtf(option.getText());
+            String optionText = option.getText() == null ? "" : option.getText();
+            String optionQuestID = option.getQuest_id() == null ? "" : option.getQuest_id();
+            String optionGlobalID = option.getGlobal_id() == null ? "" : option.getGlobal_id();
+
+            buffer.writeUtf(optionText);
             buffer.writeUtf(option.getType());
-            buffer.writeUtf(option.getQuest_id());
-            buffer.writeUtf(option.getGlobal_id());
+            buffer.writeUtf(optionQuestID);
+            buffer.writeUtf(optionGlobalID);
             buffer.writeInt(option.getDialog());
         }
     }

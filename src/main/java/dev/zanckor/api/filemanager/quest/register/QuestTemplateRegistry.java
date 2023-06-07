@@ -29,6 +29,7 @@ public class QuestTemplateRegistry {
     private static HashMap<Enum, AbstractQuestRequirement> quest_requirement = new HashMap<>();
     private static HashMap<Enum, AbstractDialogRequirement> dialog_requirement = new HashMap<>();
     private static HashMap<Enum, AbstractDialogOption> dialog_template = new HashMap<>();
+
     private static HashMap<Enum, AbstractTargetType> target_type = new HashMap<>();
 
     public static void registerQuest(IEnumQuestGoal key) {

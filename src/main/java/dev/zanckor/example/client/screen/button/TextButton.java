@@ -19,7 +19,7 @@ public class TextButton extends Button {
 
 
     @Override
-    public void renderButton(PoseStack poseStack, int xPos, int yPos, float v) {
+    public void render(PoseStack poseStack, int xPos, int yPos, float v) {
         poseStack.pushPose();
         poseStack.translate(this.getX(), this.getY(), 0);
         poseStack.scale(scale, scale, 1);

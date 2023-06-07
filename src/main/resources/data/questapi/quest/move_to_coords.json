@@ -1,6 +1,6 @@
 {
   "id": "move_to_coords",
-  "title": "#locate_coords",
+  "title": "quest_name.questapi.locate_coords",
   "goals": [
     {
       "type": "MOVE_TO",

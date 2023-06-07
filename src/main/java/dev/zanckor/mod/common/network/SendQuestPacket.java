@@ -20,7 +20,7 @@ public class SendQuestPacket {
 
 
     public static void TO_CLIENT(Player player, Object packet) {
-        NetworkHandler.CHANNEL.sendTo(packet, ((ServerPlayer) player).connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+        NetworkHandler.CHANNEL.sendTo(packet, ((ServerPlayer) player).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static void TO_SERVER(Object packet) {

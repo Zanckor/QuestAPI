@@ -6,6 +6,7 @@ import java.util.List;
 
 public class UserGoal {
     private String type;
+    private String translatableType;
     private String target;
     private Integer current_amount;
     private Integer amount;
@@ -17,10 +18,11 @@ public class UserGoal {
     private Object additionalClassData;
 
 
-    public static UserGoal createQuestGoal(ServerGoal serverGoal) {
+    public static UserGoal createQuestGoal(ServerGoal serverGoal, String modid) {
         UserGoal userGoal = new UserGoal();
 
         userGoal.setType(serverGoal.getType());
+        userGoal.setTranslatableType(modid + "." + serverGoal.getType());
         userGoal.setTarget(serverGoal.getTarget());
         userGoal.setCurrentAmount(0);
         userGoal.setAmount(serverGoal.getAmount());
@@ -40,6 +42,14 @@ public class UserGoal {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getTranslatableType() {
+        return translatableType;
+    }
+
+    public void setTranslatableType(String translatableType) {
+        this.translatableType = translatableType;
     }
 
     public String getTarget() {

@@ -77,8 +77,7 @@ public class QuestDefaultScreen extends AbstractContainerScreen<QuestMakerMenu> 
         for (int questIndex = 0; questIndex < QuestMakerManager.availableQuests.size(); questIndex++) {
             ServerQuest quest = QuestMakerManager.availableQuests.get(questIndex);
 
-            String questTitle = quest.getTitle();
-            questTitle = questTitle.startsWith("#") ? I18n.get("quest_name.questapi." + quest.getTitle().substring(1)) : questTitle;
+            String questTitle = I18n.get(quest.getTitle());
 
             int lines = (int) Math.max(1, Math.ceil(questTitle.length() / 14));
             int linesOffSet = lines * 20;

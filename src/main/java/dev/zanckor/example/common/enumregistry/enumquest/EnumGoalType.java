@@ -5,9 +5,11 @@ import dev.zanckor.api.enuminterface.enumquest.IEnumQuestGoal;
 import dev.zanckor.api.enuminterface.enumquest.IEnumTargetType;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractGoal;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
-import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.example.common.handler.questgoal.*;
-import dev.zanckor.example.common.handler.targettype.*;
+import dev.zanckor.example.common.handler.targettype.EntityTargetType;
+import dev.zanckor.example.common.handler.targettype.ItemTargetType;
+import dev.zanckor.example.common.handler.targettype.MoveToTargetType;
+import dev.zanckor.example.common.handler.targettype.XPTargetType;
 
 public enum EnumGoalType implements IEnumQuestGoal {
     INTERACT_ENTITY(new InteractEntityGoal()),
@@ -19,6 +21,7 @@ public enum EnumGoalType implements IEnumQuestGoal {
 
 
     AbstractGoal goal;
+
     EnumGoalType(AbstractGoal abstractGoal) {
         this.goal = abstractGoal;
         registerEnumGoal(this.getClass());
@@ -39,6 +42,7 @@ public enum EnumGoalType implements IEnumQuestGoal {
         TARGET_TYPE_XP(new XPTargetType());
 
         AbstractTargetType targetType;
+
         EnumTargetType(AbstractTargetType targetType) {
             this.targetType = targetType;
             registerTargetType(this.getClass());

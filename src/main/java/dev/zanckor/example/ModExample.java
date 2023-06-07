@@ -42,7 +42,7 @@ public class ModExample {
     /**
      * You can create your own EnumClass to add your templates:
      * <p><p>
-     *
+     * <p>
      * DialogOption Needs to extend {@link AbstractDialogOption} <p>
      * Goal Needs to extend {@link AbstractGoal} <p>
      * Reward Needs to extend {@link AbstractReward} <p>
@@ -64,6 +64,7 @@ public class ModExample {
         Arrays.stream(EnumDialogReq.values()).forEach(QuestTemplateRegistry::registerDialogRequirement);
         Arrays.stream(EnumDialogOption.values()).forEach(QuestTemplateRegistry::registerDialogOption);
     }
+
 
     @SubscribeEvent
     public static void registerTemplates(ServerAboutToStartEvent e) throws IOException {
@@ -89,6 +90,7 @@ public class ModExample {
         public static void registerTargetTypeEnum(FMLClientSetupEvent e) {
             Arrays.stream(EnumGoalType.EnumTargetType.values()).forEach(QuestTemplateRegistry::registerTargetType);
         }
+
 
         /**
          * registerScreen adds specified classes to cache to load X or Y screen depending on your identifier and config file

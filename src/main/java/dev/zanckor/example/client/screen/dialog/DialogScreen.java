@@ -12,6 +12,7 @@ import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
 import dev.zanckor.mod.common.network.message.screen.OpenVanillaEntityScreen;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -49,7 +50,7 @@ public class DialogScreen extends AbstractDialog {
     @Override
     public Screen modifyScreen(int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings, UUID npcUUID) {
         this.dialogID = dialogID;
-        this.text = text;
+        this.text = I18n.get(text);
         this.optionSize = optionSize;
         this.optionIntegers = optionIntegers;
         this.optionStrings = optionStrings;
@@ -84,7 +85,7 @@ public class DialogScreen extends AbstractDialog {
             }
 
             addRenderableWidget(new TextButton(xButtonPosition, yButtonPosition, stringLength, 20,  ((float) width) / 675,
-                    Component.literal(optionStrings.get(i).get(0)), 26, button -> button(index, dialogID)));
+                    Component.literal(I18n.get(optionStrings.get(i).get(0))), 26, button -> button(index, dialogID)));
 
             xButtonPosition += optionStrings.get(i).get(0).length() * 5.7 + 20;
         }

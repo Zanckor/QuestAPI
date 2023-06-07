@@ -49,17 +49,12 @@ public class NPCDialog extends FileAbstract {
 
     public static class QuestDialog {
         int id;
-        String dialogTitle;
         String dialogText;
         DialogRequirement requirements;
         List<DialogOption> options;
 
         public int getId() {
             return id;
-        }
-
-        public String getDialogTitle() {
-            return dialogTitle;
         }
 
         public String getDialogText() {
@@ -74,10 +69,9 @@ public class NPCDialog extends FileAbstract {
             return options;
         }
 
-        private static QuestDialog createDialog(int id, String dialogTitle, String dialogText, DialogRequirement requirements, List<DialogOption> dialogOptions) {
+        private static QuestDialog createDialog(int id, String dialogText, DialogRequirement requirements, List<DialogOption> dialogOptions) {
             QuestDialog questDialog = new QuestDialog();
             questDialog.id = id;
-            questDialog.dialogTitle = dialogTitle;
             questDialog.dialogText = dialogText;
             questDialog.requirements = requirements;
             questDialog.options = dialogOptions;
