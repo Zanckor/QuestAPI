@@ -82,6 +82,8 @@ public class ServerEvent {
 
                 MCUtil.moveFileToUncompletedFolder(uncompletedQuest, file, userQuest, goalEnum);
             }
+
+            SendQuestPacket.TO_CLIENT(player, new ActiveQuestList(player.getUUID()));
         }
     }
 

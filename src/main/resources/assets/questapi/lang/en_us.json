@@ -21,5 +21,21 @@
   "quest_name.questapi.kill_entities": "Kill entities",
   "quest_name.questapi.locate_structure": "Locate structure",
   "quest_name.questapi.locate_coords": "Move to coordinates",
-  "quest_name.questapi.multiple_quests": "Multiple quests"
+  "quest_name.questapi.multiple_quests": "Multiple quests",
+
+  "dialog_text.questapi.collect_items_dialog.salute": "Hello adventurer, I need help with a task, would you help me?",
+  "dialog_text.questapi.collect_items_dialog.quest_accepted": "Thanks, I need 2 gold and 1 iron ingots.",
+  "dialog_text.questapi.collect_items_dialog.quest_declined": "I see, it doesn\u0027t matter, if you change your mind I\u0027ll stay here.",
+  "dialog_text.questapi.collect_items_dialog.repeat_salute": "Ey, I see you\u0027re back, have you changed your mind?",
+  "dialog_text.questapi.collect_items_dialog.work_in_progress": "Hello traveler, how are you doing on the quest?",
+  "dialog_text.questapi.collect_items_dialog.greetings": "Thank you very much for helping me traveler.",
+
+  "dialog_text.questapi.collect_items_dialog.salute.accept": "Sure, tell me what you need.",
+  "dialog_text.questapi.collect_items_dialog.salute.deny": "No, sorry, I don\u0027t have time.",
+  "dialog_text.questapi.collect_items_dialog.quest_accepted.add_quest": "I\u0027ll start right now.",
+  "dialog_text.questapi.collect_items_dialog.quest_declined.close_dialog": "Okay...",
+  "dialog_text.questapi.collect_items_dialog.repeat_salute.accept": "Sure, tell me what you need.",
+  "dialog_text.questapi.collect_items_dialog.repeat_salute.deny": "No, sorry, I don\u0027t have time.",
+  "dialog_text.questapi.collect_items_dialog.work_in_progress.close_dialog": "Okay, almost there.",
+  "dialog_text.questapi.collect_items_dialog.greetings.response": "No problem."
 }

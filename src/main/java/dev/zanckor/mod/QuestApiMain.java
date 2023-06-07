@@ -6,7 +6,6 @@ import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.example.ModExample;
 import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestTracked;
 import dev.zanckor.mod.client.screen.questmaker.QuestDefaultScreen;
-import dev.zanckor.mod.client.screen.questmaker.QuestGoalSelectorScreen;
 import dev.zanckor.mod.common.config.client.RendererConfig;
 import dev.zanckor.mod.common.config.client.ScreenConfig;
 import dev.zanckor.mod.common.config.server.GoalConfig;

@@ -43,7 +43,7 @@ public class QuestGoalSelectorScreen extends AbstractContainerScreen<QuestMakerM
         imageHeight = width / 4;
         scale = ((float) width) / 750;
 
-        //For each available goal to edit in quest, create a new button
+        //For each available goal to edit in quest, create a  MCUtilClient.createButton
         AtomicInteger buttonYOffSet = new AtomicInteger();
         for (int goalIndex = 0; goalIndex < editingQuest.getGoalList().size(); goalIndex++) {
             ServerGoal goal = editingQuest.getGoalList().get(goalIndex);
@@ -80,8 +80,7 @@ public class QuestGoalSelectorScreen extends AbstractContainerScreen<QuestMakerM
     }
 
     public void renderTitles(PoseStack poseStack, float scale, int xPosition, int yPosition) {
-        String questTitle = editingQuest.getTitle();
-        questTitle = questTitle.startsWith("#") ? I18n.get("quest_name.questapi." + editingQuest.getTitle().substring(1)) : questTitle;
+        String questTitle = I18n.get(editingQuest.getTitle());
 
         MCUtilClient.renderText(poseStack, xPosition, yPosition / 1.5, 0, scale, 40, questTitle, font);
         MCUtilClient.renderText(poseStack, xPosition / 1.725, yPosition / 1.5, 0, scale, 40, "Goals", font);

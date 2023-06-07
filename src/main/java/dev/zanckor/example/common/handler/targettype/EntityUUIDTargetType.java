@@ -44,7 +44,7 @@ public class EntityUUIDTargetType extends AbstractTargetType {
 
         MCUtilClient.renderEntity(
                 xPosition + 10, yPosition + 4, 5,
-                rotation, (LivingEntity) entityType.create(Minecraft.getInstance().level).getResponsibleEntity(), poseStack);
+                rotation, (LivingEntity) entityType.create(Minecraft.getInstance().level), poseStack);
 
     }
 }

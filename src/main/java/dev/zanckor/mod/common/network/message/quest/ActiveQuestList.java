@@ -1,7 +1,9 @@
 package dev.zanckor.mod.common.network.message.quest;
 
+import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.handler.ClientHandler;
+import dev.zanckor.mod.common.util.GsonManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -54,7 +56,16 @@ public class ActiveQuestList {
 
     public static void handler(ActiveQuestList msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.setActiveQuestList(msg.questFileList));
+            List<UserQuest> userQuestList = new ArrayList<>();
+            msg.questFileList.forEach(questFile -> {
+                try {
+                    userQuestList.add((UserQuest) GsonManager.getJsonClass(questFile, UserQuest.class));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.setActiveQuestList(userQuestList));
         });
 
         ctx.get().setPacketHandled(true);

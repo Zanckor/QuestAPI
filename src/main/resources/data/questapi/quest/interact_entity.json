@@ -1,6 +1,6 @@
 {
   "id": "interact_entity",
-  "title": "#interact_with_cow_and_pig",
+  "title": "quest_name.questapi.interact_with_cow_and_pig",
   "hasTimeLimit": false,
   "timeLimitInSeconds": 0,
   "goals": [

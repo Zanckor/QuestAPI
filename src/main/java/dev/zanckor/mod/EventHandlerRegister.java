@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static dev.zanckor.mod.QuestApiMain.LOGGER;
 import static dev.zanckor.mod.QuestApiMain.serverQuests;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID)
@@ -33,6 +34,8 @@ public class EventHandlerRegister {
 
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent e) {
+        LOGGER.debug("QuestAPI Commands registered");
+
         e.getDispatcher().register(Commands.literal("quests")
                 .requires((player) -> player.hasPermission(3))
                 .then(Commands.literal("add")
@@ -75,25 +78,8 @@ public class EventHandlerRegister {
                                             }
                                         }))))
 
-                .then(net.minecraft.commands.Commands.literal("tracked")
-                        .then(net.minecraft.commands.Commands.argument("player", EntityArgument.player())
-                                .then(net.minecraft.commands.Commands.argument("questID", StringArgumentType.string())
-                                        .suggests(EventHandlerRegister::trackedQuestSuggestions)
-                                        .executes((context) -> {
-                                            try {
-                                                return QuestCommand.trackedQuest(
-                                                        context,
-                                                        EntityArgument.getPlayer(context, "player").getUUID(),
-                                                        StringArgumentType.getString(context, "questID"));
-                                            } catch (IOException ex) {
-                                                QuestApiMain.LOGGER.error(ex.getMessage());
-
-                                                return 0;
-                                            }
-                                        }))))
-
-                .then(net.minecraft.commands.Commands.literal("reload")
-                        .then(net.minecraft.commands.Commands.argument("identifier", StringArgumentType.string())
+                .then(Commands.literal("reload")
+                        .then(Commands.argument("identifier", StringArgumentType.string())
                                 .executes((context) -> {
                                     return QuestCommand.reloadQuests(
                                             context,

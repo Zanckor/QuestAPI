@@ -35,8 +35,6 @@ public class ValidNPCMarker {
 
     public void encodeBuffer(FriendlyByteBuf buffer) {
         try {
-
-
             buffer.writeUtf(dialogPerEntityType.keySet().toString());
 
             //Convert String - File to String - String

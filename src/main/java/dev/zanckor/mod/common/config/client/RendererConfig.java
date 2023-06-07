@@ -1,5 +1,6 @@
 package dev.zanckor.mod.common.config.client;
 
+import dev.zanckor.mod.QuestApiMain;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class RendererConfig {
