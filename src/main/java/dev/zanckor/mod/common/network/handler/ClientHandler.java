@@ -53,16 +53,11 @@ public class ClientHandler {
 
     public static void modifyTrackedQuests(Boolean addQuest, UserQuest userQuest) {
         //If addQuest is true and trackedQuest's goals are less than 5, can add another quest to tracked list
-
-        System.out.println("A");
         if (addQuest) {
             var totalGoals = new AtomicInteger();
             trackedQuestList.forEach(quest -> totalGoals.addAndGet(quest.getQuestGoals().size()));
-
-            System.out.println("B");
             if (totalGoals.get() < 5) { trackedQuestList.add(userQuest); }
         } else {
-            System.out.println("C");
             trackedQuestList.removeIf(quest -> quest.getId().equals(userQuest.getId()));
         }
     }

@@ -27,11 +27,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static dev.zanckor.mod.common.network.handler.ClientHandler.activeQuestList;
 import static dev.zanckor.mod.common.network.handler.ClientHandler.trackedQuestList;
@@ -93,7 +93,7 @@ public class QuestLog extends AbstractQuestLog {
                 float buttonWidth = textLines < 1 ? activeQuestList.get(buttonIndex).getTitle().length() * 5 * textLengthScale : maxLength * textLengthScale;
 
                 Button questSelect = new TextButton(
-                        xButtonPosition, yButtonPosition, (int) buttonWidth, 20 * (textLines + 1), buttonScale,
+                        xButtonPosition, yButtonPosition, (int) buttonWidth, 20, buttonScale,
                         Component.literal(title), 26, button -> {
                     selectedQuest = activeQuestList.get(buttonIndex);
                     SendQuestPacket.TO_SERVER(new RequestActiveQuests());
@@ -101,7 +101,7 @@ public class QuestLog extends AbstractQuestLog {
 
                 displayedButton.put(displayedButton.size() + 1, i);
 
-                questSelect.setY(questSelect.getY() + buttonIndex * 27);
+                questSelect.setY((int) (questSelect.getY() + buttonIndex * (30 * buttonScale)));
                 addRenderableWidget(questSelect);
             }
         }
@@ -120,14 +120,22 @@ public class QuestLog extends AbstractQuestLog {
                 init();
             }
         });
-        Button addTrackedQuest = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 15)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal("Track Quest"), button -> {
-            ClientHandler.modifyTrackedQuests(!trackedQuestList.contains(selectedQuest), selectedQuest);
+        Button addTrackedQuest = MCUtilClient.createButton((int) (xScreenPos + (imageWidth / 25)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.literal("Track Quest"), button -> {
+            AtomicBoolean containsSelectedQuest = new AtomicBoolean(false);
+
+            trackedQuestList.forEach(trackedQuest -> {
+                if(trackedQuest.getId().equals(selectedQuest.getId())){
+                    containsSelectedQuest.set(true);
+                }
+            });
+
+            ClientHandler.modifyTrackedQuests(!containsSelectedQuest.get(), selectedQuest);
         });
         textButton = new EditBox(font, (int) (xScreenPos - (imageWidth / 2.4)), (int) (yScreenPos + imageHeight * 0.75), width / 6, 10, Component.literal(""));
 
 
         addRenderableWidget(textButton);
-        addRenderableWidget(addTrackedQuest);
+        addWidget(addTrackedQuest);
         addWidget(prevPage);
         addWidget(nextPage);
 

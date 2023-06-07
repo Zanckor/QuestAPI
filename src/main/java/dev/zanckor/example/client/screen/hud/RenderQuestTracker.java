@@ -97,7 +97,7 @@ public class RenderQuestTracker extends AbstractQuestTracked {
     public static void renderQuestType(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
         Font font = minecraft.font;
         Player player = minecraft.player;
-        sin += 0.5;
+        sin += 0.25;
 
 
         for (Map.Entry<String, List<UserGoal>> entry : userQuestHashMap.entrySet()) {
