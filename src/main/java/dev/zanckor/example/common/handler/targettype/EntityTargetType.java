@@ -12,10 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import static dev.zanckor.mod.QuestApiMain.MOD_ID;
 import static dev.zanckor.mod.common.util.MCUtilClient.properNoun;
-
 
 public class EntityTargetType extends AbstractTargetType {
 

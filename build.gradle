@@ -6,7 +6,7 @@ plugins {
 
 apply plugin: 'java'
 
-version = '1.3.0-1.19.4'
+version = '1.3.4-1.19.4'
 group = 'net.zanckor.questapi' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'questapi'
 
@@ -38,7 +38,7 @@ minecraft {
             args '--username', 'Zanckor'
         }
 
-
+t
         server {
             workingDirectory project.file('run')
 
@@ -101,7 +101,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.4-45.0.50'
+    minecraft 'net.minecraftforge:forge:1.19.4-45.0.66'
 }
 
 jar {

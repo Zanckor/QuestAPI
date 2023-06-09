@@ -7,6 +7,7 @@ import dev.zanckor.example.common.enumregistry.EnumRegistry;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserQuest extends FileAbstract {
@@ -21,6 +22,7 @@ public class UserQuest extends FileAbstract {
     public static UserQuest createQuest(ServerQuest serverQuest, Path path) {
         UserQuest userQuest = new UserQuest();
         List<UserGoal> questGoalList = new ArrayList<>();
+        String questModid = path.getFileName().toString().split("\\.")[0];
 
         userQuest.setId(serverQuest.getId());
         userQuest.setTitle(serverQuest.getTitle());
@@ -29,7 +31,7 @@ public class UserQuest extends FileAbstract {
         userQuest.setCompleted(false);
 
         for (int goalsIndex = 0; goalsIndex < serverQuest.getGoalList().size(); goalsIndex++) {
-            UserGoal questGoal = UserGoal.createQuestGoal(serverQuest.getGoalList().get(goalsIndex));
+            UserGoal questGoal = UserGoal.createQuestGoal(serverQuest.getGoalList().get(goalsIndex), questModid);
             Enum goalEnum = EnumRegistry.getEnum(questGoal.getType(), EnumRegistry.getQuestGoal());
 
             questGoalList.add(questGoal);

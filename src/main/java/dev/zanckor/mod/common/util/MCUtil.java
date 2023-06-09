@@ -6,8 +6,6 @@ import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
-import dev.zanckor.mod.common.network.SendQuestPacket;
-import dev.zanckor.mod.common.network.message.screen.SetQuestTracked;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -99,7 +97,7 @@ public class MCUtil {
         float ySinRotation = yRotSin * xCosDegrees;
 
         //Distance in blocks, multiplier is applied to player reach distance
-        double viewDistance = player.getReachDistance() * multiplier;
+        double viewDistance = player.getBlockReach() * multiplier;
 
         Vec3 lookingVector = eyePos.add((double) ySinRotation * viewDistance, (double) xSinDegrees * viewDistance, (double) yCosRotation * viewDistance);
         return level.clip(new ClipContext(eyePos, lookingVector, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
@@ -178,18 +176,6 @@ public class MCUtil {
         return false;
     }
 
-    public static void nextQuestTracked(ServerPlayer player, File file) throws IOException {
-        Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
-
-        for (File activeQuestFile : getActiveQuest(userFolder).toFile().listFiles()) {
-            if (!(activeQuestFile.exists())) continue;
-            UserQuest playerQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
-
-            if (playerQuest == null) continue;
-            SendQuestPacket.TO_CLIENT(player, new SetQuestTracked(playerQuest));
-        }
-    }
-
     public static void moveFileToCompletedFolder(UserQuest userQuest, ServerPlayer player, File file) throws IOException {
         Path userFolder = Paths.get(playerData.toFile().toString(), player.getUUID().toString());
         String questName = userQuest.getId() + ".json";
@@ -206,7 +192,10 @@ public class MCUtil {
 
     public static void moveFileToUncompletedFolder(Path uncompletedQuestFolder, File file, UserQuest userQuest, Enum goalEnum) throws IOException {
         Path uncompletedPath = Paths.get(uncompletedQuestFolder.toString(), file.getName());
-        Files.move(file.toPath(), uncompletedPath);
+
+        if (file.exists()) {
+            Files.move(file.toPath(), uncompletedPath);
+        }
         LocateHash.movePathQuest(userQuest.getId(), uncompletedPath, goalEnum);
     }
 

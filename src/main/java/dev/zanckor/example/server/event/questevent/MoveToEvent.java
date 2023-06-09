@@ -48,11 +48,11 @@ public class MoveToEvent {
         //Then, add a new position to targetPos via additionalListData field from json
         for (int indexGoals = 0; indexGoals < userQuest.getQuestGoals().size(); indexGoals++) {
             UserGoal questGoal = userQuest.getQuestGoals().get(indexGoals);
-            List<?> additionalListData = questGoal.getAdditionalListData();
+            List<Double> additionalListData = (List<Double>) questGoal.getAdditionalListData();
 
             if (!(questGoal.getType().equals(MOVE_TO.toString())) || additionalListData == null) continue;
 
-            Vec3i vec3Coord = new Vec3i((int) additionalListData.get(0), (int) additionalListData.get(1), (int) additionalListData.get(2));
+            Vec3i vec3Coord = new Vec3i(additionalListData.get(0).intValue(), additionalListData.get(1).intValue(), additionalListData.get(2).intValue());
 
             targetPos = new BlockPos(vec3Coord);
         }
