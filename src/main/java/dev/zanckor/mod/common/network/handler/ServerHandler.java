@@ -77,7 +77,7 @@ public class ServerHandler {
 
         try {
             NPCConversation dialog = (NPCConversation) GsonManager.getJsonClass(dialogFile, NPCConversation.class);
-            dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID(player.getLevel(), npcUuid));
+            dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID((ServerLevel) player.level(), npcUuid));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

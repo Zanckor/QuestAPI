@@ -67,8 +67,7 @@ public class ClientEvent {
                 poseStack.scale(0.15f, 0.125f, 0.15f);
                 poseStack.mulPose(new Quaternionf().rotateXYZ((float) Math.toRadians(180), (float) Math.toRadians(player.getYHeadRot() + 180), 0));
 
-
-                font.draw(poseStack, "!", 0, 0, color);
+                font.drawInBatch("!", 0, 0, 0, false, poseStack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, color);
 
                 poseStack.popPose();
             }

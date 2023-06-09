@@ -50,7 +50,7 @@ public class MCUtil {
 
         AABB startEndBox = new AABB(startPos, endVec);
         Entity entity = null;
-        for (Entity entity1 : rayTraceEntity.level.getEntities(rayTraceEntity, startEndBox, (val) -> true)) {
+        for (Entity entity1 : rayTraceEntity.level().getEntities(rayTraceEntity, startEndBox, (val) -> true)) {
             AABB aabb = entity1.getBoundingBox().inflate(entity1.getPickRadius());
             Optional<Vec3> optional = aabb.clip(startPos, endVec);
             if (aabb.contains(startPos)) {
@@ -211,7 +211,7 @@ public class MCUtil {
         List<Integer> slots = new ArrayList<>();
 
         for (int itemSlot = 0; itemSlot < inventory.items.size(); ++itemSlot) {
-            if (!inventory.items.get(itemSlot).isEmpty() && ItemStack.isSame(itemStack, inventory.items.get(itemSlot))) {
+            if (!inventory.items.get(itemSlot).isEmpty() && ItemStack.isSameItem(itemStack, inventory.items.get(itemSlot))) {
                 slots.add(itemSlot);
             }
         }

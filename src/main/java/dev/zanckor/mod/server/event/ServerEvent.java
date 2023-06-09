@@ -47,7 +47,7 @@ public class ServerEvent {
 
     @SubscribeEvent
     public static void questWithTimer(TickEvent.PlayerTickEvent e) throws IOException {
-        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide) {
+        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level().isClientSide) {
             return;
         }
 
@@ -159,7 +159,7 @@ public class ServerEvent {
         String targetEntityType = EntityType.getKey(target.getType()).toString();
 
         List<String> dialogPerEntityType = LocateHash.getDialogPerEntityType(targetEntityType);
-        if (!player.level.isClientSide && dialogPerEntityType != null && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
+        if (!player.level().isClientSide && dialogPerEntityType != null && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
             String selectedDialog = target.getPersistentData().getString("dialog");
 
             if (target.getPersistentData().get("dialog") == null) {
@@ -179,7 +179,7 @@ public class ServerEvent {
         Entity target = e.getTarget();
         List<String> dialogs = new ArrayList<>();
 
-        if (!player.level.isClientSide && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
+        if (!player.level().isClientSide && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
 
             for (Map.Entry<String, File> entry : LocateHash.dialogPerCompoundTag.entrySet()) {
                 CompoundTag entityNBT = NbtPredicate.getEntityTagToCompare(target);

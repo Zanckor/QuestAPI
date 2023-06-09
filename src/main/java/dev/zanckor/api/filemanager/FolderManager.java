@@ -59,7 +59,7 @@ public class FolderManager {
 
     @SubscribeEvent
     public static void playerFolderManager(PlayerEvent.PlayerLoggedInEvent e) {
-        if (e.getEntity().level.isClientSide || !(e.getEntity() instanceof Player)) return;
+        if (e.getEntity().level().isClientSide || !(e.getEntity() instanceof Player)) return;
 
         Path userFolder = Paths.get(playerData.toString(), e.getEntity().getUUID().toString());
 

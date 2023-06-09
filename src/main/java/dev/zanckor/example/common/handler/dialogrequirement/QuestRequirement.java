@@ -32,7 +32,7 @@ public class QuestRequirement extends AbstractDialogRequirement {
 
     @Override
     public boolean handler(Player player, NPCConversation dialog, int option_id, Entity npc) throws IOException {
-        if (player.level.isClientSide) return false;
+        if (player.level().isClientSide) return false;
         NPCDialog.DialogRequirement requirement = dialog.getDialog().get(option_id).getServerRequirements();
         String requirementType = requirement.getType();
         if (!(requirementType.equals(EnumDialogReq.QUEST.toString()))) return false;

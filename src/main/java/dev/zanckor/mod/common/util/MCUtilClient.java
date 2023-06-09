@@ -8,6 +8,7 @@ import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -61,19 +62,19 @@ public class MCUtilClient {
         soundManager.play(SimpleSoundInstance.forUI(sound, Mth.randomBetween(RandomSource.create(), minPitch, maxPitch)));
     }
 
-    public static void renderLine(PoseStack poseStack, float xPos, float yPos, float textIndent, String text, Font font) {
-        font.draw(poseStack, text, xPos, yPos, 0);
+    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, float xPos, float yPos, float textIndent, String text, Font font) {
+        graphics.drawString(font, text, (int) xPos, (int) yPos, 0, false);
 
         poseStack.translate(0, textIndent, 0);
     }
 
-    public static void renderLine(PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, String text, Font font) {
+    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, String text, Font font) {
         float splitIndent = 0;
         List<List<FormattedCharSequence>> splintedText = splitText(text, font, maxTextLength * 5);
 
         for (List<FormattedCharSequence> line : splintedText) {
             for (FormattedCharSequence lineString : line) {
-                font.draw(poseStack, lineString, xPos, yPos + (textIndent * (splitIndent / 2)), 0);
+                graphics.drawString(font, lineString, (int) xPos, (int) (yPos + (textIndent * (splitIndent / 2))), 0, false);
 
                 splitIndent++;
             }
@@ -82,7 +83,7 @@ public class MCUtilClient {
         poseStack.translate(0, textIndent, 0);
     }
 
-    public static void renderLine(PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, MutableComponent text, Font font) {
+    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, MutableComponent text, Font font) {
         float splitIndent = 0;
         Style style = text.getStyle();
         List<List<FormattedCharSequence>> splintedText = splitText(text.getString(), font, maxTextLength * 5);
@@ -96,7 +97,7 @@ public class MCUtilClient {
                     return true;
                 });
 
-                font.draw(poseStack, Component.literal(sb.toString()).withStyle(style), xPos, yPos + (textIndent * (splitIndent)), 0);
+                graphics.drawString(font, Component.literal(sb.toString()).withStyle(style), (int) xPos, (int) (yPos + (textIndent * (splitIndent))), 0, false);
 
                 splitIndent++;
             }
@@ -105,25 +106,25 @@ public class MCUtilClient {
         poseStack.translate(0, textIndent * splitIndent, 0);
     }
 
-    public static void renderLine(PoseStack poseStack, float xPos, float yPos, float textIndent, MutableComponent text, Font font) {
-        font.draw(poseStack, text, xPos, yPos, 0);
+    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, float xPos, float yPos, float textIndent, MutableComponent text, Font font) {
+        graphics.drawString(font, text, (int) xPos, (int) yPos, 0, false);
 
         poseStack.translate(0, textIndent, 0);
     }
 
-    public static void renderLine(PoseStack poseStack, float xPos, float yPos, float textIndent, MutableComponent text1, MutableComponent text2, Font font) {
-        font.draw(poseStack, text1 + " " + text2, xPos, yPos, 0);
+    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, float xPos, float yPos, float textIndent, MutableComponent text1, MutableComponent text2, Font font) {
+        graphics.drawString(font, text1 + " " + text2, (int) xPos, (int) yPos, 0, false);
 
         poseStack.translate(0, textIndent, 0);
     }
 
-    public static void renderLines(PoseStack poseStack, float textIndent, int paragraphIndent, int textMaxLength, String text, Font font) {
+    public static void renderLines(GuiGraphics graphics, PoseStack poseStack, float textIndent, int paragraphIndent, int textMaxLength, String text, Font font) {
         float splitIndent = 0;
         List<List<FormattedCharSequence>> splintedText = splitText(text, font, textMaxLength * 5);
 
         for (List<FormattedCharSequence> line : splintedText) {
             for (FormattedCharSequence lineString : line) {
-                font.draw(poseStack, lineString, 0, textIndent * (splitIndent / 2), 0);
+                graphics.drawString(font, lineString, 0, (int) (textIndent * (splitIndent / 2)), 0, false);
 
                 splitIndent++;
             }
@@ -133,7 +134,7 @@ public class MCUtilClient {
         poseStack.translate(0, paragraphIndent, 0);
     }
 
-    public static void renderText(PoseStack poseStack, double xPosition, double yPosition, float textIndent, float scale, int textMaxLength, String text, Font font) {
+    public static void renderText(GuiGraphics graphics, PoseStack poseStack, double xPosition, double yPosition, float textIndent, float scale, int textMaxLength, String text, Font font) {
         float splitIndent = 0;
         List<List<FormattedCharSequence>> splintedText = splitText(text, font, textMaxLength * 5);
 
@@ -144,7 +145,7 @@ public class MCUtilClient {
 
         for (List<FormattedCharSequence> line : splintedText) {
             for (FormattedCharSequence lineString : line) {
-                font.draw(poseStack, lineString, 0, textIndent * (splitIndent / 2), 0);
+                graphics.drawString(font, lineString, 0, (int) (textIndent * (splitIndent / 2)), 0, false);
 
                 splitIndent++;
             }
@@ -153,7 +154,7 @@ public class MCUtilClient {
         poseStack.popPose();
     }
 
-    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, List<String> text, Font font) {
+    public static void renderText(GuiGraphics graphics, PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, List<String> text, Font font) {
         if (text == null) return;
         float splitIndent = 0;
 
@@ -173,7 +174,7 @@ public class MCUtilClient {
             for (List<FormattedCharSequence> textBlock : MCUtilClient.splitText(text.get(i), font, 5 * textMaxLength)) {
                 for (FormattedCharSequence line : textBlock) {
                     if (splitIndent < 2) {
-                        font.draw(poseStack, line, 0, textIndent * (i + (splitIndent / 2)), 0);
+                        graphics.drawString(font, line, 0, (int) (textIndent * (splitIndent / 2)), 0, false);
                         splitIndent++;
                     }
 

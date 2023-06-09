@@ -11,6 +11,8 @@ import dev.zanckor.mod.common.network.message.dialogoption.AddQuest;
 import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
 import dev.zanckor.mod.common.network.message.screen.OpenVanillaEntityScreen;
 import dev.zanckor.mod.common.util.MCUtilClient;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -116,26 +118,20 @@ public class DialogScreen extends AbstractDialog {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         int xPosition = (int) (width / 2.41);
         int yPosition = (int) (yScreenPos + yScreenPos / 1.45);
+        PoseStack poseStack = graphics.pose();
 
-        poseStack.pushPose();
-        RenderSystem.setShaderTexture(0, DIALOG);
-
-        blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-
-        MCUtilClient.renderText(poseStack, xPosition, yPosition, 26, (float) width / 675, 42, text.substring(0, textDisplaySize), font);
-
-        poseStack.popPose();
-
+        graphics.blit(DIALOG, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+        MCUtilClient.renderText(graphics, poseStack, xPosition, yPosition, 26, (float) width / 675, 42, text.substring(0, textDisplaySize), font);
 
         MCUtilClient.renderEntity(
                 xScreenPos / 1.4575, yScreenPos * 3.41, width / 12,
                 (xScreenPos / 1.4575 - mouseX) / 4, (yScreenPos * 2.5 - mouseY) / 4,
                 (LivingEntity) npc);
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTicks);
     }
 
     private void button(int optionID, int dialogID) {

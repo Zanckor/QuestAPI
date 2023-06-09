@@ -3,6 +3,7 @@ package dev.zanckor.mod.common.network.message.quest;
 import dev.zanckor.mod.common.network.handler.ServerHandler;
 import dev.zanckor.mod.common.util.MCUtil;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,7 +44,7 @@ public class QuestDataPacket {
         ctx.get().enqueueWork(() -> {
             try {
                 ServerPlayer player = ctx.get().getSender();
-                LivingEntity entity = (LivingEntity) MCUtil.getEntityByUUID(player.getLevel(), msg.entity);
+                LivingEntity entity = (LivingEntity) MCUtil.getEntityByUUID((ServerLevel) player.level(), msg.entity);
 
                 ServerHandler.questHandler(msg.quest, player, entity);
             } catch (IOException e) {

@@ -27,7 +27,7 @@ public class NPCEntity extends Villager {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
-        if (!player.level.isClientSide && interactionHand.equals(InteractionHand.MAIN_HAND)) {
+        if (!player.level().isClientSide && interactionHand.equals(InteractionHand.MAIN_HAND)) {
             try {
                 StartDialog.loadDialog(player, dialogID, this);
             } catch (IOException e) {

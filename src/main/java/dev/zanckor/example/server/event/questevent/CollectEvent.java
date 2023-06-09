@@ -17,21 +17,21 @@ public class CollectEvent {
 
     @SubscribeEvent
     public static void CollectPickUpQuest(PlayerEvent.ItemPickupEvent e) throws IOException {
-        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
+        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level().isClientSide) return;
 
         runGoalHandler((ServerPlayer) e.getEntity());
     }
 
     @SubscribeEvent
     public static void CollectCraftQuest(PlayerEvent.ItemCraftedEvent e) throws IOException {
-        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
+        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level().isClientSide) return;
 
         runGoalHandler((ServerPlayer) e.getEntity());
     }
 
     @SubscribeEvent
     public static void CollectCraftQuest(PlayerEvent.ItemSmeltedEvent e) throws IOException {
-        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level.isClientSide) return;
+        if(!(e.getEntity() instanceof ServerPlayer) || e.getEntity().level().isClientSide) return;
 
         runGoalHandler((ServerPlayer) e.getEntity());
     }
