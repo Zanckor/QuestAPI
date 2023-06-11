@@ -39,7 +39,6 @@ import java.util.Map;
 
 import static dev.zanckor.mod.QuestApiMain.LOGGER;
 
-@Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEvent {
     /*
      * TODO: Add auto-save quest's timer so on logout it wont lose the quest, just will freeze the timer.

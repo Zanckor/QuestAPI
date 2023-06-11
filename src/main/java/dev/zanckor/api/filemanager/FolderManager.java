@@ -2,6 +2,7 @@ package dev.zanckor.api.filemanager;
 
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
