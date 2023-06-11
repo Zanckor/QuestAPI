@@ -110,7 +110,7 @@ public class MCUtil {
 
         Path userFolder = Paths.get(QuestApiMain.playerData.toString(), player.getUUID().toString());
 
-        Path path = Paths.get(QuestApiMain.getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
+        Path path = Paths.get(QuestApiMain.getReadDialogs(userFolder).toString(), File.separator, "dialog_read.json");
         File file = path.toFile();
 
         ReadDialog.GlobalID dialog = file.exists() ? (ReadDialog.GlobalID) GsonManager.getJsonClass(file, ReadDialog.GlobalID.class) : null;
@@ -137,7 +137,7 @@ public class MCUtil {
     public static boolean isReadDialog(Player player, int dialogID) throws IOException {
         Path userFolder = Paths.get(QuestApiMain.playerData.toString(), player.getUUID().toString());
 
-        Path path = Paths.get(QuestApiMain.getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
+        Path path = Paths.get(QuestApiMain.getReadDialogs(userFolder).toString(), File.separator, "dialog_read.json");
         File file = path.toFile();
         ReadDialog.GlobalID dialog = file.exists() ? (ReadDialog.GlobalID) GsonManager.getJsonClass(file, ReadDialog.GlobalID.class) : null;
         List<ReadDialog.DialogID> dialogIDList;
