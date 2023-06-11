@@ -3,7 +3,7 @@ loaderVersion="[45,)"
 license="MIT License"
 [[mods]]
 modId="questapi"
-version="1.3.4"
+version="1.3.5"
 displayName="Quest API"
 logoFile="questapi.png"
 authors="Zanckor"
