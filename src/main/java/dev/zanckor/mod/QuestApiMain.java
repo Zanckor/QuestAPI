@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -95,12 +94,12 @@ public class QuestApiMain {
         public static void registerOverlays(RegisterGuiOverlaysEvent e) {
             LOGGER.debug("Registering overlay screens");
 
-            e.registerAboveAll("quest_tracker", (gui, poseStack, partialTick, width, height) -> {
+            e.registerAboveAll("quest_tracker", (gui, guiGraphics, partialTick, screenWidth, screenHeight) ->  {
                 Player player = Minecraft.getInstance().player;
 
                 if (player != null && !player.isDeadOrDying()) {
                     AbstractQuestTracked abstractQuestTracked = ScreenRegistry.getQuestTrackedScreen(ScreenConfig.QUEST_TRACKED_SCREEN.get());
-                    abstractQuestTracked.renderQuestTracked(poseStack, width, height);
+                    abstractQuestTracked.renderQuestTracked(guiGraphics, screenWidth, screenHeight);
                 }
             });
         }

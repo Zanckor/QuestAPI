@@ -7,8 +7,6 @@ import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestTracked;
-import dev.zanckor.mod.common.network.handler.ClientHandler;
-import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
@@ -24,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static dev.zanckor.mod.common.network.handler.ClientHandler.*;
+import static dev.zanckor.mod.common.network.handler.ClientHandler.trackedQuestList;
 
 public class RenderQuestTracker extends AbstractQuestTracked {
     static float xPosition;
@@ -57,12 +55,12 @@ public class RenderQuestTracker extends AbstractQuestTracked {
         minecraft.getProfiler().pop();
     }
 
-    public static void renderQuests(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap){
+    public static void renderQuests(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
         //Gets all quest types on json and creates a HashMap with a list of goals
         trackedQuestList.forEach(userQuest -> {
             userQuestHashMap.clear();
 
-            if(!MCUtil.isQuestCompleted(userQuest)) {
+            if (!MCUtil.isQuestCompleted(userQuest)) {
                 for (UserGoal questGoal : userQuest.getQuestGoals()) {
                     String type = questGoal.getType();
                     List<UserGoal> questGoalList = userQuestHashMap.get(type);

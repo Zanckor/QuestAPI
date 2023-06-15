@@ -124,7 +124,7 @@ public class QuestLog extends AbstractQuestLog {
             AtomicBoolean containsSelectedQuest = new AtomicBoolean(false);
 
             trackedQuestList.forEach(trackedQuest -> {
-                if(trackedQuest.getId().equals(selectedQuest.getId())){
+                if (trackedQuest.getId().equals(selectedQuest.getId())) {
                     containsSelectedQuest.set(true);
                 }
             });
@@ -179,6 +179,7 @@ public class QuestLog extends AbstractQuestLog {
 
         super.render(poseStack, x, y, partialTicks);
     }
+
 
     public void renderQuestData(PoseStack poseStack) {
         if (selectedQuest == null || selectedQuest.isCompleted())

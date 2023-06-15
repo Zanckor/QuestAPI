@@ -5,13 +5,12 @@ import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 
 public class TextButton extends Button {
     float scale;
     int maxLength;
 
-    public TextButton(int xPosition, int yPosition, int width, int height, float scale, Component component, int maxLength, OnPress onPress) {
+    public TextButton(int xPosition, int yPosition, int width, int height, float scale, Component component, int maxLength, Button.OnPress onPress) {
         super(xPosition, yPosition, width, height, component, onPress, DEFAULT_NARRATION);
         this.scale = scale;
         this.maxLength = maxLength;

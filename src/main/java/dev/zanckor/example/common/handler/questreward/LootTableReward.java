@@ -5,6 +5,7 @@ import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;

@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -36,7 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static net.minecraft.client.gui.components.Button.*;
+import static net.minecraft.client.gui.components.Button.OnPress;
+import static net.minecraft.client.gui.components.Button.builder;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class MCUtilClient {
@@ -330,7 +330,7 @@ public class MCUtilClient {
         RenderSystem.applyModelViewMatrix();
     }
 
-    public static Button createButton(int xPos, int yPos, int width, int height, Component component, OnPress onPress){
+    public static Button createButton(int xPos, int yPos, int width, int height, Component component, OnPress onPress) {
         Button button = builder(component, onPress).build();
 
         button.setPosition(xPos, yPos);

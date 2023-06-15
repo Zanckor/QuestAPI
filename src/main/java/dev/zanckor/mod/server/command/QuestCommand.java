@@ -40,7 +40,7 @@ public class QuestCommand {
     }
 
     public static int addQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
-        ServerLevel level = context.getSource().getLevel();
+        ServerLevel level = context.getSource().getPlayer().getLevel();
         Player player = level.getPlayerByUUID(playerUUID);
         String quest = questID + ".json";
 
@@ -89,7 +89,7 @@ public class QuestCommand {
     }
 
     public static int removeQuest(CommandContext<CommandSourceStack> context, UUID playerUUID, String questID) throws IOException {
-        ServerLevel level = context.getSource().getLevel();
+        ServerLevel level = context.getSource().getPlayer().getLevel();
         Player player = level.getPlayerByUUID(playerUUID);
         Path path = LocateHash.getQuestByID(questID);
         UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(path.toFile(), UserQuest.class);
