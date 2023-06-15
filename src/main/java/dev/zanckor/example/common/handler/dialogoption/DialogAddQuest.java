@@ -18,8 +18,10 @@ import dev.zanckor.mod.common.network.message.quest.ActiveQuestList;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.Timer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 
@@ -44,7 +46,7 @@ public class DialogAddQuest extends AbstractDialogOption {
      */
 
     @Override
-    public void handler(Player player, NPCConversation dialog, int option_id, Entity npc) throws IOException {
+    public void handler(Player player, NPCConversation dialog, int option_id, Entity entity) throws IOException {
         int currentDialog = LocateHash.currentDialog.get(player);
         NPCDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
         String quest = option.getQuest_id() + ".json";
@@ -89,5 +91,15 @@ public class DialogAddQuest extends AbstractDialogOption {
         //Close screen and update active quest list on client side
         SendQuestPacket.TO_CLIENT(player, new CloseDialog());
         SendQuestPacket.TO_CLIENT(player, new ActiveQuestList(player.getUUID()));
+    }
+
+    @Override
+    public void handler(Player player, NPCConversation dialog, int option_id, String resourceLocation) throws IOException {
+        handler(player, dialog, option_id, (Entity) null);
+    }
+
+    @Override
+    public void handler(Player player, NPCConversation dialog, int option_id, Item item) throws IOException {
+        handler(player, dialog, option_id, (Entity) null);
     }
 }

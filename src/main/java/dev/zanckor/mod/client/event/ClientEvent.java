@@ -13,7 +13,10 @@ import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +26,7 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.io.IOException;
@@ -63,11 +67,14 @@ public class ClientEvent {
             if (checkEntityTagIsValid(e.getEntity()) || checkEntityTypeIsValid(e.getEntity())) {
                 poseStack.pushPose();
 
-                poseStack.translate(-0.1, e.getEntity().getBbHeight() + 1.25, 0);
+                poseStack.translate(0, e.getEntity().getBbHeight() + 1.25, 0);
                 poseStack.scale(0.15f, 0.125f, 0.15f);
                 poseStack.mulPose(new Quaternionf().rotateXYZ((float) Math.toRadians(180), (float) Math.toRadians(player.getYHeadRot() + 180), 0));
 
-                font.drawInBatch("!", 0, 0, 0, false, poseStack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(), Font.DisplayMode.NORMAL, 0, color);
+                font.drawInBatch(Component.literal("!"),
+                        0, 0, color,
+                        false, poseStack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(),
+                        Font.DisplayMode.SEE_THROUGH, 0, 0);
 
                 poseStack.popPose();
             }
