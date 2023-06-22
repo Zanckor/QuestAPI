@@ -10,7 +10,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class NPCEntity extends Villager {
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
         if (!player.level().isClientSide && interactionHand.equals(InteractionHand.MAIN_HAND)) {
             try {
-                StartDialog.loadDialog(player, dialogID, Items.DRAGON_EGG);
+                StartDialog.loadDialog(player, dialogID, "minecraft:cow");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

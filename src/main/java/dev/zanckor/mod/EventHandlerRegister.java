@@ -26,8 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static dev.zanckor.mod.QuestApiMain.LOGGER;
-import static dev.zanckor.mod.QuestApiMain.serverQuests;
+import static dev.zanckor.mod.QuestApiMain.*;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID)
 public class EventHandlerRegister {
@@ -53,8 +52,23 @@ public class EventHandlerRegister {
 
                                                 return 0;
                                             }
-                                        }))))
+                                        })))
 
+                        .then(Commands.literal("itemDialog")
+                                .then(Commands.argument("dialogID", StringArgumentType.string())
+                                        .suggests(EventHandlerRegister::addDialogSuggestions)
+                                        .executes(context ->
+                                                QuestCommand.putDialogToItem(
+                                                        context.getSource().getPlayer().getMainHandItem(),
+                                                        StringArgumentType.getString(context, "dialogID")))))
+
+                        .then(Commands.literal("itemQuest")
+                                .then(Commands.argument("questID", StringArgumentType.string())
+                                        .suggests(EventHandlerRegister::addQuestSuggestions)
+                                        .executes(context ->
+                                                QuestCommand.putQuestToItem(
+                                                        context.getSource().getPlayer().getMainHandItem(),
+                                                        StringArgumentType.getString(context, "questID"))))))
                 /*
                 .then(Commands.literal("create")
                         .then(Commands.literal("quest")
@@ -80,10 +94,22 @@ public class EventHandlerRegister {
 
                 .then(Commands.literal("reload")
                         .then(Commands.argument("identifier", StringArgumentType.string())
-                                .executes((context) -> {
-                                    return QuestCommand.reloadQuests(
-                                            context,
-                                            StringArgumentType.getString(context, "identifier"));
+                                .executes((context) -> QuestCommand.reloadQuests(
+                                        context,
+                                        StringArgumentType.getString(context, "identifier")))))
+
+                .then(Commands.literal("displayDialog")
+                        .then(Commands.argument("dialogID", StringArgumentType.string())
+                                .suggests(EventHandlerRegister::addDialogSuggestions)
+                                .executes(context -> {
+                                    try {
+                                        return QuestCommand.displayDialog(
+                                                context.getSource().getPlayer(),
+                                                StringArgumentType.getString(context, "dialogID")
+                                        );
+                                    } catch (IOException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
                                 }))));
 
 
@@ -99,7 +125,7 @@ public class EventHandlerRegister {
 
         Path activeQuestFolder = QuestApiMain.getActiveQuest(userFolder);
         Path completedQuestFolder = QuestApiMain.getCompletedQuest(userFolder);
-        Path uncompletedQuestFolder = QuestApiMain.getUncompletedQuest(userFolder);
+        Path uncompletedQuestFolder = QuestApiMain.getFailedQuest(userFolder);
 
 
         questsFile.add(activeQuestFolder.toFile().listFiles());
@@ -129,9 +155,17 @@ public class EventHandlerRegister {
     }
 
     private static CompletableFuture<Suggestions> addQuestSuggestions(final CommandContext<CommandSourceStack> ctx, final SuggestionsBuilder builder) {
-        Player player = ctx.getSource().getPlayer();
-
         File[] questsFile = serverQuests.toFile().listFiles();
+
+        for (File quest : questsFile) {
+            builder.suggest(quest.getName().substring(0, quest.getName().length() - 5));
+        }
+        return builder.buildFuture();
+    }
+
+
+    private static CompletableFuture<Suggestions> addDialogSuggestions(final CommandContext<CommandSourceStack> ctx, final SuggestionsBuilder builder) {
+        File[] questsFile = serverDialogs.toFile().listFiles();
 
         for (File quest : questsFile) {
             builder.suggest(quest.getName().substring(0, quest.getName().length() - 5));

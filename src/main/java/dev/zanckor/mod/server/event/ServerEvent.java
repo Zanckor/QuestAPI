@@ -21,6 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -38,6 +39,7 @@ import static dev.zanckor.mod.QuestApiMain.LOGGER;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEvent {
+
     /*
      * TODO: Add auto-save quest's timer so on logout it wont lose the quest, just will freeze the timer.
      */
@@ -49,7 +51,7 @@ public class ServerEvent {
         }
 
         Path activeQuest = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
 
         for (File file : activeQuest.toFile().listFiles()) {
             UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
@@ -58,7 +60,6 @@ public class ServerEvent {
                 timer(userQuest, e.player, file, uncompletedQuest);
             }
         }
-
     }
 
 
@@ -87,7 +88,7 @@ public class ServerEvent {
     @SubscribeEvent
     public static void uncompletedQuestOnLogOut(PlayerEvent.PlayerLoggedOutEvent e) throws IOException {
         Path activeQuest = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
 
         for (File file : activeQuest.toFile().listFiles()) {
             UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
@@ -114,7 +115,7 @@ public class ServerEvent {
         Path userFolder = QuestApiMain.getUserFolder(e.getEntity().getUUID());
         Path activeQuest = QuestApiMain.getActiveQuest(userFolder);
         Path completedQuest = QuestApiMain.getCompletedQuest(userFolder);
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(userFolder);
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(userFolder);
 
         Path[] questPaths = {activeQuest, completedQuest, uncompletedQuest};
 
@@ -147,6 +148,27 @@ public class ServerEvent {
 
         SendQuestPacket.TO_CLIENT(e.getEntity(), new ValidNPCMarker());
         SendQuestPacket.TO_CLIENT(e.getEntity(), new ActiveQuestList(e.getEntity().getUUID()));
+    }
+
+    @SubscribeEvent
+    public static void loadDialogOrAddQuestViaItem(PlayerInteractEvent e) throws IOException {
+        final ItemStack ITEM_STACK = e.getItemStack();
+        final Player PLAYER = e.getEntity();
+        final CompoundTag TAG = ITEM_STACK.getTag();
+
+        if (e.getSide().isClient() || ITEM_STACK == null || TAG == null) return;
+
+        if (TAG.contains("display_dialog")) {
+            String dialogID = TAG.getString("display_dialog");
+
+            StartDialog.loadDialog(PLAYER, dialogID, e.getItemStack().getItem());
+        }
+
+        if (TAG.contains("give_quest")) {
+            String questID = TAG.getString("give_quest");
+
+            MCUtil.addQuest(PLAYER, questID);
+        }
     }
 
     @SubscribeEvent

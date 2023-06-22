@@ -51,6 +51,7 @@ public class ClientEvent {
         ClientHandler.activeQuestList = new ArrayList<>();
     }
 
+
     @SubscribeEvent
     public static void renderNPCQuestMarker(RenderLivingEvent.Pre e) {
         Player player = Minecraft.getInstance().player;
