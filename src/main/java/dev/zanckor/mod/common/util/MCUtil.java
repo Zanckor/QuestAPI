@@ -228,26 +228,8 @@ public class MCUtil {
     public static void addQuest(Player player, String questID) throws IOException {
         String quest = questID + ".json";
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
-        boolean isQuestCompleted = false;
 
-        //Checks if quest is already completed or failed
-        for (Path completeQuestPath : getCompletedQuest(userFolder)) {
-            if (completeQuestPath.getFileName().equals(quest)) {
-                isQuestCompleted = true;
-                return;
-            }
-        }
-
-        for (Path failedQuestPath : getFailedQuest(userFolder)) {
-            if (failedQuestPath.getFileName().equals(quest)) {
-                isQuestCompleted = true;
-                return;
-            }
-        }
-
-
-        //If quest has never been completed or failed, give the quest
-        if (!isQuestCompleted) {
+        if (MCUtil.hasQuest(quest, userFolder)) {
             for (File file : serverQuests.toFile().listFiles()) {
                 if (!(file.getName().equals(quest))) continue;
                 Path path = Paths.get(getActiveQuest(userFolder).toString(), File.separator, file.getName());
