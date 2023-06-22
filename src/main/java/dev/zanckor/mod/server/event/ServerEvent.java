@@ -6,6 +6,7 @@ import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition.EntityTypeTagDialogNBT;
 import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
+import dev.zanckor.mod.server.startdialog.StartDialog;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
