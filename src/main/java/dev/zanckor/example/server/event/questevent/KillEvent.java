@@ -15,7 +15,7 @@ import static dev.zanckor.example.common.enumregistry.enumquest.EnumGoalType.KIL
 public class KillEvent {
     @SubscribeEvent
     public static void killQuest(LivingDeathEvent e) throws IOException {
-        if (!(e.getSource().getEntity() instanceof ServerPlayer player) || player.level.isClientSide) return;
+        if (!(e.getSource().getEntity() instanceof ServerPlayer player) || player.level().isClientSide) return;
 
         ServerHandler.questHandler(KILL, player, e.getEntity());
     }

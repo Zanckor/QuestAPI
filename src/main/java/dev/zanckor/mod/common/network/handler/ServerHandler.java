@@ -8,13 +8,16 @@ import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.mod.QuestApiMain;
+import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +40,7 @@ public class ServerHandler {
         try {
             NPCConversation dialog = (NPCConversation) GsonManager.getJsonClass(dialogFile, NPCConversation.class);
 
-            dialogTemplate.handler(player, dialog, optionID, null);
+            dialogTemplate.handler(player, dialog, optionID, (Entity) null);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -68,7 +71,7 @@ public class ServerHandler {
         }
     }
 
-    public static void requestDialog(ServerPlayer player, int optionID, Enum optionType, UUID npcUuid) {
+    public static void requestDialog(ServerPlayer player, int optionID, Enum optionType, UUID entityUUID, Item item, DisplayDialog.NpcType npcType) {
         String globalDialogID = LocateHash.currentGlobalDialog.get(player);
 
         Path path = LocateHash.getDialogLocation(globalDialogID);
@@ -77,7 +80,11 @@ public class ServerHandler {
 
         try {
             NPCConversation dialog = (NPCConversation) GsonManager.getJsonClass(dialogFile, NPCConversation.class);
-            dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID(player.getLevel(), npcUuid));
+
+            switch (npcType){
+                case ITEM -> dialogTemplate.handler(player, dialog, optionID, item);
+                case UUID, RESOURCE_LOCATION -> dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID((ServerLevel) player.level(), entityUUID));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

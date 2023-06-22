@@ -11,6 +11,7 @@ import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
 import dev.zanckor.mod.common.network.message.screen.OpenVanillaEntityScreen;
 import dev.zanckor.mod.common.util.MCUtilClient;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class DialogScreen extends AbstractDialog {
+public class MinimalistDialogScreen extends AbstractDialog {
     int dialogID;
     String text;
     int textDisplayDelay;
@@ -47,11 +48,10 @@ public class DialogScreen extends AbstractDialog {
     DisplayDialog.NpcType npcType;
 
 
-    private final static ResourceLocation DIALOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_background.png");
-    private final static ResourceLocation BUTTON = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_button.png");
+    private final static ResourceLocation DIALOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/minimalist_dialog_background.png");
 
 
-    public DialogScreen(Component component) {
+    public MinimalistDialogScreen(Component component) {
         super(component);
     }
 
@@ -85,29 +85,28 @@ public class DialogScreen extends AbstractDialog {
         super.init();
 
         textDisplaySize = 0;
-        imageWidth = width / 2;
-        imageHeight = (int) (width / 2.7);
-        xScreenPos = width - (imageWidth);
-        yScreenPos = (double) width / 11;
+        imageWidth = (int) (width / 1.35);
+        imageHeight = width / 8;
+        xScreenPos = imageWidth / 1.5;
+        yScreenPos = (double) width / 3;
         scale = ((float) width) / 700;
 
-        xButtonPosition = (int) (width / 3.55);
-        yButtonPosition = (int) (yScreenPos * 3.6);
+        xButtonPosition = (int) (xScreenPos - (imageWidth / 2.75));
+        yButtonPosition = (int) (yScreenPos * 1.225);
 
         for (int i = 0; i < optionSize; i++) {
-            int stringLength = (int) ((optionStrings.get(i).get(0).length() + 1) * 5.5);
+            int stringLength = (int) ((optionStrings.get(i).get(0).length()) * (2.6 * scale));
             int index = i;
 
-
-            if (xButtonPosition + stringLength > (width / 1.4)) {
-                xButtonPosition = (int) (width / 3.55);
-                yButtonPosition += 22 * scale;
+            if (xButtonPosition + stringLength > (width / 1.3)) {
+                yButtonPosition += 18 * scale;
+                xButtonPosition = (int) (xScreenPos - (imageWidth / 2.75));
             }
 
             addRenderableWidget(new TextButton(xButtonPosition, yButtonPosition, stringLength, 20, ((float) width) / 675,
-                    Component.literal(I18n.get(optionStrings.get(i).get(0))), 26, button -> button(index)));
+                    Component.literal(I18n.get(optionStrings.get(i).get(0))).withStyle(ChatFormatting.WHITE), 26, button -> button(index)));
 
-            xButtonPosition += optionStrings.get(i).get(0).length() * 5.7 + 20;
+            xButtonPosition += (stringLength);
         }
 
         addRenderableWidget(new TextButton((int) (imageWidth * 1.4), (int) (imageHeight * 1.1), 20, 20, ((float) width) / 300,
@@ -139,23 +138,26 @@ public class DialogScreen extends AbstractDialog {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        int xPosition = (int) (width / 2.41);
-        int yPosition = (int) (yScreenPos + yScreenPos / 1.45);
+        int xPosition = (width / 4);
+        int yPosition = (int) (yScreenPos + yScreenPos / 16);
         PoseStack poseStack = graphics.pose();
 
+        graphics.setColor(1, 1, 1, 0.5f);
         graphics.blit(DIALOG, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-        MCUtilClient.renderText(graphics, poseStack, xPosition, yPosition, 26, (float) width / 675, 42, text.substring(0, textDisplaySize), font);
+        graphics.setColor(1, 1, 1, 1);
+
+        MCUtilClient.renderLine(graphics, poseStack, 80, xPosition, yPosition, (float) width / 675, 16, Component.literal(text.substring(0, textDisplaySize)).withStyle(ChatFormatting.WHITE), font);
 
         switch (npcType) {
             case UUID, RESOURCE_LOCATION -> {
                 if (entity != null) MCUtilClient.renderEntity(
-                        xScreenPos / 1.4575, yScreenPos * 3.41, width / 12,
-                        (xScreenPos / 1.4575 - mouseX) / 4, (yScreenPos * 2.5 - mouseY) / 4,
+                        xScreenPos / 2.7, yScreenPos * 1.325, (double) width / 24,
+                        (xScreenPos / 2.7 - mouseX) / 4, (yScreenPos * 1.3 - mouseY) / 4,
                         (LivingEntity) entity);
             }
 
             case ITEM -> MCUtilClient.renderItem(item.getDefaultInstance(),
-                    (int) (xScreenPos / 1.4575), (int) (yScreenPos * 2.5), width / 150,
+                    (int) (xScreenPos / 2.65), (int) (yScreenPos * 1.185), (double) width / 150,
                     0, poseStack);
         }
 

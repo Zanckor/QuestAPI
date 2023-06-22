@@ -1,6 +1,5 @@
 package dev.zanckor.mod.client.screen.questmaker;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.example.client.screen.button.TextButton;
@@ -8,6 +7,7 @@ import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import dev.zanckor.mod.server.menu.questmaker.QuestMakerMenu;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -93,6 +93,11 @@ public class QuestDefaultScreen extends AbstractContainerScreen<QuestMakerMenu> 
         }
     }
 
+    @Override
+    protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
+
+    }
+
 
     public void onQuestButtonPress(ServerQuest quest) {
         QuestMakerManager.addQuest(quest);
@@ -112,34 +117,25 @@ public class QuestDefaultScreen extends AbstractContainerScreen<QuestMakerMenu> 
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        poseStack.pushPose();
-        RenderSystem.setShaderTexture(0, BG);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        PoseStack poseStack = graphics.pose();
+        graphics.blit(BG, xPosition - (imageWidth / 2), yPosition - (imageHeight / 2), 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
-        blit(poseStack, xPosition - (imageWidth / 2), yPosition - (imageHeight / 2), 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-        renderTitles(poseStack, scale, xPosition, yPosition);
+        poseStack.pushPose();
+        renderTitles(graphics, poseStack, scale, xPosition, yPosition);
 
         poseStack.popPose();
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
-    }
-
-    @Override
-    protected void renderLabels(PoseStack p_97808_, int p_97809_, int p_97810_) {
-    }
-
-    public void renderTitles(PoseStack poseStack, float scale, int xPosition, int yPosition) {
-        MCUtilClient.renderText(poseStack, xPosition / 1.75, yPosition / 1.5, 0, scale, 40, "Quests", font);
-
-        MCUtilClient.renderText(poseStack, xPosition / 1.3, yPosition / 1.5, 0, scale, 40, "ID:", font);
-        MCUtilClient.renderText(poseStack, xPosition / 1.3, yPosition / 1.3, 0, scale, 40, "TITLE:", font);
-
-        MCUtilClient.renderText(poseStack, xPosition / 1.3, yPosition / 1.1, 0, scale, 40, "TIME LIMIT:", font);
+        super.render(graphics, mouseX, mouseY, partialTicks);
     }
 
 
-    @Override
-    protected void renderBg(PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
+    public void renderTitles(GuiGraphics graphics, PoseStack poseStack, float scale, int xPosition, int yPosition) {
+        MCUtilClient.renderText(graphics, poseStack, xPosition / 1.75, yPosition / 1.5, 0, scale, 40, "Quests", font);
 
+        MCUtilClient.renderText(graphics, poseStack, xPosition / 1.3, yPosition / 1.5, 0, scale, 40, "ID:", font);
+        MCUtilClient.renderText(graphics, poseStack, xPosition / 1.3, yPosition / 1.3, 0, scale, 40, "TITLE:", font);
+
+        MCUtilClient.renderText(graphics, poseStack, xPosition / 1.3, yPosition / 1.1, 0, scale, 40, "TIME LIMIT:", font);
     }
 }

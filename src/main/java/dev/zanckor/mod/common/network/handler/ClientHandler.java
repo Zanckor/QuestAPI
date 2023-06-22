@@ -1,12 +1,12 @@
 package dev.zanckor.mod.common.network.handler;
 
 import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
-import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.client.screen.abstractscreen.AbstractDialog;
 import dev.zanckor.mod.client.screen.questmaker.QuestMakerManager;
+import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import dev.zanckor.mod.common.util.Timer;
@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -41,10 +42,10 @@ public class ClientHandler {
         MCUtilClient.playSound(SoundEvents.NOTE_BLOCK_PLING.get(), 1, 2);
     }
 
-    public static void displayDialog(String dialogIdentifier, int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings, UUID npc) {
+    public static void displayDialog(String dialogIdentifier, int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings, UUID entity, String resourceLocation, Item item, DisplayDialog.NpcType npcType) {
         AbstractDialog dialogScreen = ScreenRegistry.getDialogScreen(dialogIdentifier);
 
-        Minecraft.getInstance().setScreen(dialogScreen.modifyScreen(dialogID, text, optionSize, optionIntegers, optionStrings, npc));
+        Minecraft.getInstance().setScreen(dialogScreen.modifyScreen(dialogID, text, optionSize, optionIntegers, optionStrings, entity, resourceLocation, item, npcType));
     }
 
     public static void closeDialog() {

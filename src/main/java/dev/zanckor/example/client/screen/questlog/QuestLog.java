@@ -17,6 +17,7 @@ import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -161,26 +162,24 @@ public class QuestLog extends AbstractQuestLog {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int x, int y, float partialTicks) {
+    public void render(@NotNull GuiGraphics graphics, int x, int y, float partialTicks) {
         float scale = ((float) width) / 500;
+        PoseStack poseStack = graphics.pose();
 
         Minecraft.getInstance().getProfiler().push("background");
-        RenderSystem.setShaderTexture(0, QUEST_LOG);
-        blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+        graphics.blit(QUEST_LOG, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
-        poseStack.pushPose();
-        renderQuestData(poseStack);
+        renderQuestData(graphics, poseStack);
 
-        MCUtilClient.renderText(poseStack, (float) (xScreenPos - imageWidth / 2.9), (float) (yScreenPos + (20 * scale)), 0, scale, 40, "Quest Title", font);
-        MCUtilClient.renderText(poseStack, (float) (xScreenPos + imageWidth * 0.135), (float) (yScreenPos + (20 * scale)), 0, scale, 40, "Quest Info", font);
+        MCUtilClient.renderText(graphics, poseStack, (float) (xScreenPos - imageWidth / 2.9), (float) (yScreenPos + (20 * scale)), 0, scale, 40, "Quest Title", font);
+        MCUtilClient.renderText(graphics, poseStack, (float) (xScreenPos + imageWidth * 0.135), (float) (yScreenPos + (20 * scale)), 0, scale, 40, "Quest Info", font);
 
-        poseStack.popPose();
         Minecraft.getInstance().getProfiler().pop();
 
-        super.render(poseStack, x, y, partialTicks);
+        super.render(graphics, x, y, partialTicks);
     }
 
-    public void renderQuestData(PoseStack poseStack) {
+    public void renderQuestData(GuiGraphics graphics, PoseStack poseStack) {
         if (selectedQuest == null || selectedQuest.isCompleted())
             return;
 
@@ -208,23 +207,23 @@ public class QuestLog extends AbstractQuestLog {
         }
 
         //Displays quest goals
-        renderTitle(poseStack, minecraft);
-        renderQuestType(poseStack, minecraft, userQuestHashMap);
+        renderTitle(graphics, poseStack, minecraft);
+        renderQuestType(graphics, poseStack, minecraft, userQuestHashMap);
 
         if (selectedQuest.hasTimeLimit()) {
-            MCUtilClient.renderLine(poseStack, 0, 0, 30, I18n.get("tracker.questapi.time_limit") + selectedQuest.getTimeLimitInSeconds(), font);
+            MCUtilClient.renderLine(graphics, poseStack, 0, 0, 30, I18n.get("tracker.questapi.time_limit") + selectedQuest.getTimeLimitInSeconds(), font);
         }
 
 
         poseStack.popPose();
     }
 
-    public void renderTitle(PoseStack poseStack, Minecraft minecraft) {
+    public void renderTitle(GuiGraphics graphics, PoseStack poseStack, Minecraft minecraft) {
         String title = I18n.get(selectedQuest.getTitle());
-        MCUtilClient.renderLines(poseStack, 25, 10, 30, I18n.get("tracker.questapi.quest") + title, minecraft.font);
+        MCUtilClient.renderLines(graphics, poseStack, 25, 10, 30, I18n.get("tracker.questapi.quest") + title, minecraft.font);
     }
 
-    public void renderQuestType(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
+    public void renderQuestType(GuiGraphics graphics, PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
         int scissorBottom = (int) (height - (yScreenPos + imageHeight) + 15) * 2;
         int scissorTop = (int) (imageHeight * 1.25) - 15;
 
@@ -239,7 +238,7 @@ public class QuestLog extends AbstractQuestLog {
             List<UserGoal> questGoalList = entry.getValue();
 
             //Render quest type
-            MCUtilClient.renderLine(poseStack, 30, 0, 0, 10, Component.literal(I18n.get("tracker.questapi.quest_type") +
+            MCUtilClient.renderLine(graphics, poseStack, 30, 0, 0, 10, Component.literal(I18n.get("tracker.questapi.quest_type") +
                     I18n.get("quest_type." + questGoalList.get(0).getTranslatableType().toLowerCase())).withStyle(ChatFormatting.BLACK), font);
 
             //Render each quest goal of a single type and render target
@@ -250,7 +249,7 @@ public class QuestLog extends AbstractQuestLog {
                 MutableComponent goalComponentTarget = translatableTargetType.handler(questGoal.getTarget(), questGoal, player, ChatFormatting.GRAY, ChatFormatting.BLACK);
 
                 translatableTargetType.renderTarget(poseStack, (goalComponentTarget.getString().length() * 6 - 4), 3, 0.7, Math.sin(sin), questGoal, questGoal.getTarget());
-                MCUtilClient.renderLine(poseStack, 30, 0, 0, 10, goalComponentTarget.withStyle(ChatFormatting.ITALIC), font);
+                MCUtilClient.renderLine(graphics, poseStack, 30, 0, 0, 10, goalComponentTarget.withStyle(ChatFormatting.ITALIC), font);
             }
 
             poseStack.translate(0, 10, 0);

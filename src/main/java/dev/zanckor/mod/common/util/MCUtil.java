@@ -2,10 +2,15 @@ package dev.zanckor.mod.common.util;
 
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.codec.ReadDialog;
+import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
+import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
+import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
+import dev.zanckor.mod.common.network.SendQuestPacket;
+import dev.zanckor.mod.common.network.message.quest.ActiveQuestList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -31,6 +36,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static dev.zanckor.mod.QuestApiMain.*;
+import static dev.zanckor.mod.server.command.QuestCommand.createQuest;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID)
 public class MCUtil {
@@ -50,7 +56,7 @@ public class MCUtil {
 
         AABB startEndBox = new AABB(startPos, endVec);
         Entity entity = null;
-        for (Entity entity1 : rayTraceEntity.level.getEntities(rayTraceEntity, startEndBox, (val) -> true)) {
+        for (Entity entity1 : rayTraceEntity.level().getEntities(rayTraceEntity, startEndBox, (val) -> true)) {
             AABB aabb = entity1.getBoundingBox().inflate(entity1.getPickRadius());
             Optional<Vec3> optional = aabb.clip(startPos, endVec);
             if (aabb.contains(startPos)) {
@@ -110,7 +116,7 @@ public class MCUtil {
 
         Path userFolder = Paths.get(QuestApiMain.playerData.toString(), player.getUUID().toString());
 
-        Path path = Paths.get(QuestApiMain.getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
+        Path path = Paths.get(QuestApiMain.getReadDialogs(userFolder).toString(), File.separator, "dialog_read.json");
         File file = path.toFile();
 
         ReadDialog.GlobalID dialog = file.exists() ? (ReadDialog.GlobalID) GsonManager.getJsonClass(file, ReadDialog.GlobalID.class) : null;
@@ -137,7 +143,7 @@ public class MCUtil {
     public static boolean isReadDialog(Player player, int dialogID) throws IOException {
         Path userFolder = Paths.get(QuestApiMain.playerData.toString(), player.getUUID().toString());
 
-        Path path = Paths.get(QuestApiMain.getReadDialogs(userFolder).toString(), "\\", "dialog_read.json");
+        Path path = Paths.get(QuestApiMain.getReadDialogs(userFolder).toString(), File.separator, "dialog_read.json");
         File file = path.toFile();
         ReadDialog.GlobalID dialog = file.exists() ? (ReadDialog.GlobalID) GsonManager.getJsonClass(file, ReadDialog.GlobalID.class) : null;
         List<ReadDialog.DialogID> dialogIDList;
@@ -157,7 +163,7 @@ public class MCUtil {
 
 
     public static boolean hasQuest(String quest, Path userFolder) {
-        return Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getUncompletedQuest(userFolder).toString(), quest));
+        return Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getFailedQuest(userFolder).toString(), quest));
     }
 
     public static boolean isQuestCompleted(UserQuest userQuest) {
@@ -211,12 +217,42 @@ public class MCUtil {
         List<Integer> slots = new ArrayList<>();
 
         for (int itemSlot = 0; itemSlot < inventory.items.size(); ++itemSlot) {
-            if (!inventory.items.get(itemSlot).isEmpty() && ItemStack.isSame(itemStack, inventory.items.get(itemSlot))) {
+            if (!inventory.items.get(itemSlot).isEmpty() && ItemStack.isSameItem(itemStack, inventory.items.get(itemSlot))) {
                 slots.add(itemSlot);
             }
         }
 
         return slots;
+    }
+
+
+    public static void addQuest(Player player, String questID) throws IOException {
+        String quest = questID + ".json";
+        Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
+
+        //If quest has never been completed or failed, give the quest
+        if (MCUtil.hasQuest(quest, userFolder)) {
+            for (File file : serverQuests.toFile().listFiles()) {
+                if (!(file.getName().equals(quest))) continue;
+                Path path = Paths.get(getActiveQuest(userFolder).toString(), File.separator, file.getName());
+                ServerQuest serverQuest = (ServerQuest) GsonManager.getJsonClass(file, ServerQuest.class);
+
+                //Checks if player has all requirements
+                for (int requirementIndex = 0; requirementIndex < serverQuest.getRequirements().size(); requirementIndex++) {
+                    Enum questRequirementEnum = EnumRegistry.getEnum(serverQuest.getRequirements().get(requirementIndex).getType(), EnumRegistry.getQuestRequirement());
+                    AbstractQuestRequirement requirement = QuestTemplateRegistry.getQuestRequirement(questRequirementEnum);
+
+                    if (!requirement.handler(player, serverQuest, requirementIndex)) {
+                        return;
+                    }
+                }
+
+                createQuest(serverQuest, player, path);
+                LocateHash.registerQuestByID(questID, path);
+                SendQuestPacket.TO_CLIENT(player, new ActiveQuestList(player.getUUID()));
+                return;
+            }
+        }
     }
 
     public static int randomBetween(double min, double max) {

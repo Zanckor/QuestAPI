@@ -15,7 +15,7 @@ import static dev.zanckor.example.common.enumregistry.enumquest.EnumGoalType.XP;
 public class XPEvent {
     @SubscribeEvent
     public static void xpQuest(PlayerXpEvent e) throws IOException {
-        if (!(e.getEntity() instanceof ServerPlayer player) || player.level.isClientSide) return;
+        if (!(e.getEntity() instanceof ServerPlayer player) || player.level().isClientSide) return;
 
         ServerHandler.questHandler(XP, player, e.getEntity());
     }

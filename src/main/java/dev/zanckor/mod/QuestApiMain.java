@@ -75,7 +75,7 @@ public class QuestApiMain {
         return completedQuest;
     }
 
-    public static Path getUncompletedQuest(Path userFolder) {
+    public static Path getFailedQuest(Path userFolder) {
         Path uncompletedQuest = Paths.get(userFolder.toString(), "uncompleted-quests");
 
         return uncompletedQuest;
@@ -94,12 +94,12 @@ public class QuestApiMain {
         public static void registerOverlays(RegisterGuiOverlaysEvent e) {
             LOGGER.debug("Registering overlay screens");
 
-            e.registerAboveAll("quest_tracker", (gui, poseStack, partialTick, width, height) -> {
+            e.registerAboveAll("quest_tracker", (gui, guiGraphics, partialTick, screenWidth, screenHeight) ->  {
                 Player player = Minecraft.getInstance().player;
 
                 if (player != null && !player.isDeadOrDying()) {
                     AbstractQuestTracked abstractQuestTracked = ScreenRegistry.getQuestTrackedScreen(ScreenConfig.QUEST_TRACKED_SCREEN.get());
-                    abstractQuestTracked.renderQuestTracked(poseStack, width, height);
+                    abstractQuestTracked.renderQuestTracked(guiGraphics, screenWidth, screenHeight);
                 }
             });
         }

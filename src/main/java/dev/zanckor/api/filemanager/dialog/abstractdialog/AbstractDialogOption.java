@@ -1,8 +1,10 @@
 package dev.zanckor.api.filemanager.dialog.abstractdialog;
 
 import dev.zanckor.api.filemanager.dialog.codec.NPCConversation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 
 import java.io.IOException;
 
@@ -16,5 +18,7 @@ public abstract class AbstractDialogOption {
      * @throws IOException      Exception fired when server cannot read json file
      */
 
-    public abstract void handler(Player player, NPCConversation dialog, int option_id, Entity npc) throws IOException;
+    public abstract void handler(Player player, NPCConversation dialog, int option_id, Entity entity) throws IOException;
+    public abstract void handler(Player player, NPCConversation dialog, int option_id, String resourceLocation) throws IOException;
+    public abstract void handler(Player player, NPCConversation dialog, int option_id, Item item) throws IOException;
 }

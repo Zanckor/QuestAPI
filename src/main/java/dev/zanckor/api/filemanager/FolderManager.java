@@ -59,14 +59,14 @@ public class FolderManager {
 
     @SubscribeEvent
     public static void playerFolderManager(PlayerEvent.PlayerLoggedInEvent e) {
-        if (e.getEntity().level.isClientSide || !(e.getEntity() instanceof Player)) return;
+        if (e.getEntity().level().isClientSide || !(e.getEntity() instanceof Player)) return;
 
         Path userFolder = Paths.get(playerData.toString(), e.getEntity().getUUID().toString());
 
         if (!userFolder.toFile().exists()) {
             getActiveQuest(userFolder).toFile().mkdirs();
             getCompletedQuest(userFolder).toFile().mkdirs();
-            getUncompletedQuest(userFolder).toFile().mkdirs();
+            getFailedQuest(userFolder).toFile().mkdirs();
             getReadDialogs(userFolder).toFile().mkdirs();
         }
     }

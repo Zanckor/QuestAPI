@@ -5,6 +5,7 @@ import dev.zanckor.api.filemanager.FileAbstract;
 import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class UserQuest extends FileAbstract {
     public static UserQuest createQuest(ServerQuest serverQuest, Path path) {
         UserQuest userQuest = new UserQuest();
         List<UserGoal> questGoalList = new ArrayList<>();
-        String questModid = path.getFileName().toString().split("\\.")[0];
+        String questModid = path.getFileName().toString().split(File.separator + ".")[0];
 
         userQuest.setId(serverQuest.getId());
         userQuest.setTitle(serverQuest.getTitle());

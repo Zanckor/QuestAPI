@@ -6,8 +6,11 @@ import dev.zanckor.api.filemanager.dialog.codec.NPCConversation;
 import dev.zanckor.api.filemanager.dialog.codec.NPCDialog;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogOption;
 import dev.zanckor.mod.common.network.SendQuestPacket;
+import dev.zanckor.mod.common.network.message.dialogoption.CloseDialog;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 
 import java.io.IOException;
 
@@ -23,12 +26,22 @@ public class DialogCloseDialog extends AbstractDialogOption {
      */
 
     @Override
-    public void handler(Player player, NPCConversation dialog, int option_id, Entity npc) throws IOException {
+    public void handler(Player player, NPCConversation dialog, int option_id, Entity entity) throws IOException {
         int currentDialog = LocateHash.currentDialog.get(player);
         NPCDialog.DialogOption option = dialog.getDialog().get(currentDialog).getOptions().get(option_id);
 
         if (option.getType().equals(EnumDialogOption.CLOSE_DIALOG.toString())) {
-            SendQuestPacket.TO_CLIENT(player, new dev.zanckor.mod.common.network.message.dialogoption.CloseDialog());
+            SendQuestPacket.TO_CLIENT(player, new CloseDialog());
         }
+    }
+
+    @Override
+    public void handler(Player player, NPCConversation dialog, int option_id, String resourceLocation) throws IOException {
+        handler(player, dialog, option_id, (Entity) null);
+    }
+
+    @Override
+    public void handler(Player player, NPCConversation dialog, int option_id, Item item) throws IOException {
+        handler(player, dialog, option_id, (Entity) null);
     }
 }

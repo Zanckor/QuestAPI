@@ -1,13 +1,12 @@
 package dev.zanckor.mod.server.event;
 
-import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog;
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition;
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition.EntityTypeTagDialogNBT;
 import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
-import dev.zanckor.example.client.event.StartDialog;
+import dev.zanckor.mod.server.startdialog.StartDialog;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
@@ -22,6 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -30,9 +30,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,18 +39,19 @@ import static dev.zanckor.mod.QuestApiMain.LOGGER;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEvent {
+
     /*
      * TODO: Add auto-save quest's timer so on logout it wont lose the quest, just will freeze the timer.
      */
 
     @SubscribeEvent
     public static void questWithTimer(TickEvent.PlayerTickEvent e) throws IOException {
-        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level.isClientSide) {
+        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level().isClientSide) {
             return;
         }
 
         Path activeQuest = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
 
         for (File file : activeQuest.toFile().listFiles()) {
             UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
@@ -61,7 +60,6 @@ public class ServerEvent {
                 timer(userQuest, e.player, file, uncompletedQuest);
             }
         }
-
     }
 
 
@@ -90,7 +88,7 @@ public class ServerEvent {
     @SubscribeEvent
     public static void uncompletedQuestOnLogOut(PlayerEvent.PlayerLoggedOutEvent e) throws IOException {
         Path activeQuest = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
 
         for (File file : activeQuest.toFile().listFiles()) {
             UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
@@ -117,7 +115,7 @@ public class ServerEvent {
         Path userFolder = QuestApiMain.getUserFolder(e.getEntity().getUUID());
         Path activeQuest = QuestApiMain.getActiveQuest(userFolder);
         Path completedQuest = QuestApiMain.getCompletedQuest(userFolder);
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(userFolder);
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(userFolder);
 
         Path[] questPaths = {activeQuest, completedQuest, uncompletedQuest};
 
@@ -153,13 +151,34 @@ public class ServerEvent {
     }
 
     @SubscribeEvent
+    public static void loadDialogOrAddQuestViaItem(PlayerInteractEvent e) throws IOException {
+        final ItemStack ITEM_STACK = e.getItemStack();
+        final Player PLAYER = e.getEntity();
+        final CompoundTag TAG = ITEM_STACK.getTag();
+
+        if (e.getSide().isClient() || ITEM_STACK == null || TAG == null) return;
+
+        if (TAG.contains("display_dialog")) {
+            String dialogID = TAG.getString("display_dialog");
+
+            StartDialog.loadDialog(PLAYER, dialogID, e.getItemStack().getItem());
+        }
+
+        if (TAG.contains("give_quest")) {
+            String questID = TAG.getString("give_quest");
+
+            MCUtil.addQuest(PLAYER, questID);
+        }
+    }
+
+    @SubscribeEvent
     public static void loadDialogPerEntityType(PlayerInteractEvent.EntityInteract e) throws IOException {
         Player player = e.getEntity();
         Entity target = e.getTarget();
         String targetEntityType = EntityType.getKey(target.getType()).toString();
 
         List<String> dialogPerEntityType = LocateHash.getDialogPerEntityType(targetEntityType);
-        if (!player.level.isClientSide && dialogPerEntityType != null && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
+        if (!player.level().isClientSide && dialogPerEntityType != null && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
             String selectedDialog = target.getPersistentData().getString("dialog");
 
             if (target.getPersistentData().get("dialog") == null) {
@@ -179,7 +198,7 @@ public class ServerEvent {
         Entity target = e.getTarget();
         List<String> dialogs = new ArrayList<>();
 
-        if (!player.level.isClientSide && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
+        if (!player.level().isClientSide && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
 
             for (Map.Entry<String, File> entry : LocateHash.dialogPerCompoundTag.entrySet()) {
                 CompoundTag entityNBT = NbtPredicate.getEntityTagToCompare(target);

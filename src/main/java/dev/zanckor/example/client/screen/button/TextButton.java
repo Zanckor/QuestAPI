@@ -3,9 +3,11 @@ package dev.zanckor.example.client.screen.button;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 public class TextButton extends Button {
     float scale;
@@ -19,12 +21,15 @@ public class TextButton extends Button {
 
 
     @Override
-    public void render(PoseStack poseStack, int xPos, int yPos, float v) {
+    public void render(GuiGraphics graphics, int xPos, int yPos, float v) {
+        PoseStack poseStack = graphics.pose();
+        Style style = !isMouseOver(xPos, yPos) ? getMessage().getStyle() : getMessage().getStyle().withUnderlined(true);
+
         poseStack.pushPose();
         poseStack.translate(this.getX(), this.getY(), 0);
         poseStack.scale(scale, scale, 1);
 
-        MCUtilClient.renderLines(poseStack, 16, 0, maxLength, getMessage().getString(), Minecraft.getInstance().font);
+        MCUtilClient.renderLine(graphics, poseStack, 16, 0, maxLength, Component.literal(getMessage().getString()).withStyle(style), Minecraft.getInstance().font);
         poseStack.popPose();
     }
 }
