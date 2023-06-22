@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -66,14 +67,14 @@ public class DialogScreen extends AbstractDialog {
 
         switch (npcType) {
             case RESOURCE_LOCATION -> {
-                entity = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocation)).create(Minecraft.getInstance().level);
-                this.resourceLocation = resourceLocation;
+                EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocation));
+                entity = entityType.create(Minecraft.getInstance().level);
             }
+
             case UUID -> entity = MCUtilClient.getEntityByUUID(npcUUID);
             case ITEM -> this.item = item;
         }
 
-        this.entity = MCUtilClient.getEntityByUUID(npcUUID);
         this.npcUUID = npcUUID;
 
         return this;

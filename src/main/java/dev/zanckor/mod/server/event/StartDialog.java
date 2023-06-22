@@ -1,4 +1,4 @@
-package dev.zanckor.example.client.event;
+package dev.zanckor.mod.server.event;
 
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;

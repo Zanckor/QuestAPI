@@ -75,7 +75,7 @@ public class QuestApiMain {
         return completedQuest;
     }
 
-    public static Path getUncompletedQuest(Path userFolder) {
+    public static Path getFailedQuest(Path userFolder) {
         Path uncompletedQuest = Paths.get(userFolder.toString(), "uncompleted-quests");
 
         return uncompletedQuest;
