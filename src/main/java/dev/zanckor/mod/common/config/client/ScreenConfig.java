@@ -14,7 +14,7 @@ public class ScreenConfig {
         BUILDER.push("Screen configuration");
 
         QUEST_TRACKED_SCREEN = BUILDER.comment("Which quest tracked design you want to see")
-                .define("Quest Tracked Screen", QuestApiMain.MOD_ID);
+                .define("Quest Tracked Screen", "minimalist_" + QuestApiMain.MOD_ID);
 
         QUEST_LOG_SCREEN = BUILDER.comment("Which design you want to see on quest log")
                 .define("Quest Log Screen", QuestApiMain.MOD_ID);

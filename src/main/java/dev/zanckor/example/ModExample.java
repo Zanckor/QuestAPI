@@ -13,6 +13,7 @@ import dev.zanckor.api.filemanager.quest.register.LoadQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.example.client.screen.dialog.DialogScreen;
+import dev.zanckor.example.client.screen.dialog.MinimalistDialogScreen;
 import dev.zanckor.example.client.screen.hud.RenderQuestTracker;
 import dev.zanckor.example.client.screen.questlog.QuestLog;
 import dev.zanckor.example.common.entity.NpcTypes;
@@ -99,6 +100,7 @@ public class ModExample {
         @SubscribeEvent
         public static void registerScreen(FMLClientSetupEvent e) {
             ScreenRegistry.registerDialogScreen(MOD_ID, new DialogScreen(Component.literal("dialog_screen")));
+            ScreenRegistry.registerDialogScreen("minimalist_" + MOD_ID, new MinimalistDialogScreen(Component.literal("minimalist_dialog_screen")));
             ScreenRegistry.registerQuestTrackedScreen(MOD_ID, new RenderQuestTracker());
             ScreenRegistry.registerQuestLogScreen(MOD_ID, new QuestLog(Component.literal("quest_log_screen")));
         }
