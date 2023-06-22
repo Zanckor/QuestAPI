@@ -8,6 +8,7 @@ import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
 import dev.zanckor.api.filemanager.quest.register.LoadQuest;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
+import dev.zanckor.mod.client.event.StartDialog;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.quest.ActiveQuestList;
@@ -17,10 +18,13 @@ import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.Timer;
 import dev.zanckor.mod.server.menu.questmaker.QuestMakerMenu;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkHooks;
 
 import java.io.File;
@@ -46,7 +50,7 @@ public class QuestCommand {
 
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
-        if (Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getUncompletedQuest(userFolder).toString(), quest))) {
+        if (Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getFailedQuest(userFolder).toString(), quest))) {
             context.getSource().sendFailure(Component.literal("Player " + player.getScoreboardName() + " with UUID " + playerUUID + " already completed/has this quest"));
             return 0;
         }
@@ -76,7 +80,7 @@ public class QuestCommand {
         return 0;
     }
 
-    private static int createQuest(ServerQuest serverQuest, Player player, Path path) throws IOException {
+    public static int createQuest(ServerQuest serverQuest, Player player, Path path) throws IOException {
         UserQuest userQuest = UserQuest.createQuest(serverQuest, path);
 
         if (userQuest.hasTimeLimit()) {
@@ -106,6 +110,30 @@ public class QuestCommand {
         path.toFile().delete();
 
         SendQuestPacket.TO_CLIENT(player, new ActiveQuestList(player.getUUID()));
+        return 1;
+    }
+
+    public static int putDialogToItem(ItemStack item, String dialogId){
+        CompoundTag compoundTag = new CompoundTag();
+        compoundTag.putString("display_dialog", dialogId);
+
+        item.setTag(compoundTag);
+
+        return 1;
+    }
+
+    public static int putQuestToItem(ItemStack item, String questId){
+        CompoundTag compoundTag = new CompoundTag();
+        compoundTag.putString("give_quest", questId);
+
+        item.setTag(compoundTag);
+
+        return 1;
+    }
+
+    public static int displayDialog(ServerPlayer player, String dialogID) throws IOException {
+        StartDialog.loadDialog(player, dialogID, player);
+
         return 1;
     }
 

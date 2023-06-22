@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -47,7 +48,6 @@ public class DialogScreen extends AbstractDialog {
 
 
     private final static ResourceLocation DIALOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_background.png");
-    private final static ResourceLocation BUTTON = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/dialog_button.png");
 
 
     public DialogScreen(Component component) {
@@ -66,14 +66,16 @@ public class DialogScreen extends AbstractDialog {
 
         switch (npcType) {
             case RESOURCE_LOCATION -> {
-                entity = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocation)).create(Minecraft.getInstance().level);
+                EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocation));
+
+                entity = entityType.create(Minecraft.getInstance().level);
                 this.resourceLocation = resourceLocation;
             }
+
             case UUID -> entity = MCUtilClient.getEntityByUUID(npcUUID);
             case ITEM -> this.item = item;
         }
 
-        this.entity = MCUtilClient.getEntityByUUID(npcUUID);
         this.npcUUID = npcUUID;
 
         return this;
@@ -151,12 +153,11 @@ public class DialogScreen extends AbstractDialog {
         poseStack.popPose();
 
         switch (npcType) {
-            case UUID, RESOURCE_LOCATION -> {
-                if (entity != null) MCUtilClient.renderEntity(
-                        xScreenPos / 1.4575, yScreenPos * 3.41, width / 12,
-                        (xScreenPos / 1.4575 - mouseX) / 4, (yScreenPos * 2.5 - mouseY) / 4,
-                        (LivingEntity) entity);
-            }
+            case UUID, RESOURCE_LOCATION -> MCUtilClient.renderEntity(
+                    xScreenPos / 1.4575, yScreenPos * 3.41, width / 12,
+                    (xScreenPos / 1.4575 - mouseX) / 4, (yScreenPos * 2.5 - mouseY) / 4,
+                    (LivingEntity) entity);
+
 
             case ITEM -> MCUtilClient.renderItem(item.getDefaultInstance(),
                     (int) (xScreenPos / 1.4575), (int) (yScreenPos * 2.5), width / 150,

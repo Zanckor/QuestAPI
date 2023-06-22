@@ -66,7 +66,7 @@ public class FolderManager {
         if (!userFolder.toFile().exists()) {
             getActiveQuest(userFolder).toFile().mkdirs();
             getCompletedQuest(userFolder).toFile().mkdirs();
-            getUncompletedQuest(userFolder).toFile().mkdirs();
+            getFailedQuest(userFolder).toFile().mkdirs();
             getReadDialogs(userFolder).toFile().mkdirs();
         }
     }

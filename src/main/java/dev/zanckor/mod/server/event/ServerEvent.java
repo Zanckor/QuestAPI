@@ -1,13 +1,12 @@
 package dev.zanckor.mod.server.event;
 
-import com.google.gson.Gson;
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog;
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition;
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition.EntityTypeTagDialogNBT;
 import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
-import dev.zanckor.example.client.event.StartDialog;
+import dev.zanckor.mod.client.event.StartDialog;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
@@ -16,12 +15,16 @@ import dev.zanckor.mod.common.network.message.quest.ActiveQuestList;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.Timer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -30,9 +33,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class ServerEvent {
         }
 
         Path activeQuest = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(QuestApiMain.getUserFolder(e.player.getUUID()));
 
         for (File file : activeQuest.toFile().listFiles()) {
             UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
@@ -90,7 +91,7 @@ public class ServerEvent {
     @SubscribeEvent
     public static void uncompletedQuestOnLogOut(PlayerEvent.PlayerLoggedOutEvent e) throws IOException {
         Path activeQuest = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(QuestApiMain.getUserFolder(e.getEntity().getUUID()));
 
         for (File file : activeQuest.toFile().listFiles()) {
             UserQuest userQuest = (UserQuest) GsonManager.getJsonClass(file, UserQuest.class);
@@ -117,7 +118,7 @@ public class ServerEvent {
         Path userFolder = QuestApiMain.getUserFolder(e.getEntity().getUUID());
         Path activeQuest = QuestApiMain.getActiveQuest(userFolder);
         Path completedQuest = QuestApiMain.getCompletedQuest(userFolder);
-        Path uncompletedQuest = QuestApiMain.getUncompletedQuest(userFolder);
+        Path uncompletedQuest = QuestApiMain.getFailedQuest(userFolder);
 
         Path[] questPaths = {activeQuest, completedQuest, uncompletedQuest};
 
@@ -150,6 +151,29 @@ public class ServerEvent {
 
         SendQuestPacket.TO_CLIENT(e.getEntity(), new ValidNPCMarker());
         SendQuestPacket.TO_CLIENT(e.getEntity(), new ActiveQuestList(e.getEntity().getUUID()));
+    }
+
+    @SubscribeEvent
+    public static void loadDialogOrAddQuestViaItem(PlayerInteractEvent e) throws IOException {
+        final ItemStack ITEM_STACK = e.getItemStack();
+        final Player PLAYER = e.getEntity();
+        final CompoundTag TAG = ITEM_STACK.getTag();
+
+        if(e.getSide().isClient() || ITEM_STACK == null || TAG == null) return;
+
+        if(TAG.contains("display_dialog")){
+            String dialogID = TAG.getString("display_dialog");
+
+            StartDialog.loadDialog(PLAYER, dialogID, e.getItemStack().getItem());
+            ITEM_STACK.getTooltipLines(PLAYER, TooltipFlag.NORMAL).add(Component.literal("Displays Dialog").withStyle(ChatFormatting.RED).withStyle(ChatFormatting.BOLD));
+        }
+
+        if(TAG.contains("give_quest")){
+            String questID = TAG.getString("give_quest");
+
+            MCUtil.addQuest(PLAYER, questID);
+            ITEM_STACK.getTooltipLines(PLAYER, TooltipFlag.NORMAL).add(Component.literal("Gives Quest").withStyle(ChatFormatting.RED).withStyle(ChatFormatting.BOLD));
+        }
     }
 
     @SubscribeEvent
