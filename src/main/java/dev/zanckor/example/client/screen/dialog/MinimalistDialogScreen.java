@@ -24,6 +24,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +70,7 @@ public class MinimalistDialogScreen extends AbstractDialog {
             case RESOURCE_LOCATION -> {
                 EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocation));
                 entity = entityType.create(Minecraft.getInstance().level);
+                this.resourceLocation = resourceLocation;
             }
 
             case UUID -> entity = MCUtilClient.getEntityByUUID(npcUUID);
@@ -109,8 +111,8 @@ public class MinimalistDialogScreen extends AbstractDialog {
             xButtonPosition += (stringLength);
         }
 
-        addRenderableWidget(new TextButton((int) (imageWidth * 1.4), (int) (imageHeight * 1.1), 20, 20, ((float) width) / 300,
-                Component.literal("↩"), 26, button -> {
+        addRenderableWidget(new TextButton((int) (xScreenPos / 2 + (imageWidth / 1.35)), (int) (yScreenPos * 1.235), (int) (20 * scale), (int) (20 * scale), ((float) width) / 675,
+                Component.literal("↩").withStyle(ChatFormatting.WHITE).withStyle(ChatFormatting.BOLD), 26, button -> {
             if (npcUUID != null) SendQuestPacket.TO_SERVER(new OpenVanillaEntityScreen(npcUUID));
         }));
     }
@@ -169,7 +171,7 @@ public class MinimalistDialogScreen extends AbstractDialog {
 
         switch (optionType) {
             case OPEN_DIALOG, CLOSE_DIALOG:
-                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID, entity, item, npcType));
+                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID, entity, resourceLocation, item, npcType));
                 break;
             case ADD_QUEST:
                 SendQuestPacket.TO_SERVER(new AddQuest(optionType, optionID));
