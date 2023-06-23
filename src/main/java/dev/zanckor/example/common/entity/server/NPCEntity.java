@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import java.io.IOException;
 
 public class NPCEntity extends Villager {
-    private String dialogID = "questapi.collect_items_dialog";
+    private String dialogID = "questapi.secondary_collect_items_dialog";
 
     public NPCEntity(EntityType<? extends Villager> entityType, Level level) {
         super(entityType, level);

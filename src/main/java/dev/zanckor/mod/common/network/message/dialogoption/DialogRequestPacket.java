@@ -15,13 +15,15 @@ public class DialogRequestPacket {
     EnumDialogOption optionType;
     int optionID;
     UUID entityUUID;
+    String resourceLocation;
     Item item;
     DisplayDialog.NpcType npcType;
 
-    public DialogRequestPacket(EnumDialogOption optionType, int optionID, Entity npc, Item item, DisplayDialog.NpcType npcType) {
+    public DialogRequestPacket(EnumDialogOption optionType, int optionID, Entity npc, String resourceLocation, Item item, DisplayDialog.NpcType npcType) {
         this.optionType = optionType;
         this.optionID = optionID;
         this.entityUUID = npc.getUUID();
+        this.resourceLocation = resourceLocation;
         this.item = item;
         this.npcType = npcType;
     }
@@ -38,7 +40,8 @@ public class DialogRequestPacket {
 
         switch (npcType) {
             case ITEM -> buf.writeItem(item.getDefaultInstance());
-            case UUID, RESOURCE_LOCATION -> buf.writeUUID(entityUUID);
+            case UUID -> buf.writeUUID(entityUUID);
+            case RESOURCE_LOCATION -> buf.writeUtf(resourceLocation);
         }
     }
 
@@ -54,7 +57,8 @@ public class DialogRequestPacket {
 
         switch (npcType) {
             case ITEM -> item = buf.readItem().getItem();
-            case UUID, RESOURCE_LOCATION -> entityUUID = buf.readUUID();
+            case UUID -> entityUUID = buf.readUUID();
+            case RESOURCE_LOCATION -> resourceLocation = buf.readUtf();
         }
     }
 
@@ -62,7 +66,7 @@ public class DialogRequestPacket {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
 
-            ServerHandler.requestDialog(player, msg.optionID, msg.optionType, msg.entityUUID, msg.item, msg.npcType);
+            ServerHandler.requestDialog(player, msg.optionID, msg.optionType, msg.entityUUID, msg.resourceLocation, msg.item, msg.npcType);
         });
 
         ctx.get().setPacketHandled(true);
