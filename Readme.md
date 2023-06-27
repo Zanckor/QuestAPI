@@ -18,3 +18,7 @@ Take a look at our [wiki](https://github.com/zanckor/QuestApi/wiki) to learn how
 
 If you have any suggestions for improvements, find any bugs, or would like to point out anything that is not very intuitive, feel free to contact me via Discord (Zanckor#6989).
 
+## Downloads
+
+[CurseForge](https://www.curseforge.com/minecraft/mc-mods/questapi)
+[Modrinth](https://modrinth.com/mod/questapi)
