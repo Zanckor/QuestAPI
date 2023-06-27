@@ -12,7 +12,7 @@ QuestApi is a Forge library that allows modders and modpack makers to easily add
 
 ## Wiki
 
-Take a look at our [wiki](https://github.com/your-username/QuestApi/wiki) to learn how to add your own quests, dialogs, and screens.
+Take a look at our [wiki](https://github.com/zanckor/QuestApi/wiki) to learn how to add your own quests, dialogs, and screens.
 
 ## Contact
 
