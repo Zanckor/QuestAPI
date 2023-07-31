@@ -6,7 +6,6 @@ import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition.EntityTypeTagDialogNBT;
 import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
-import dev.zanckor.mod.server.startdialog.StartDialog;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
@@ -15,6 +14,7 @@ import dev.zanckor.mod.common.network.message.quest.ActiveQuestList;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.Timer;
+import dev.zanckor.mod.server.displaydialog.StartDialog;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
@@ -39,14 +39,13 @@ import static dev.zanckor.mod.QuestApiMain.LOGGER;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEvent {
-
     /*
      * TODO: Add auto-save quest's timer so on logout it wont lose the quest, just will freeze the timer.
      */
 
     @SubscribeEvent
     public static void questWithTimer(TickEvent.PlayerTickEvent e) throws IOException {
-        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.level().isClientSide) {
+        if (e.player.getServer() == null || e.player.getServer().getTickCount() % 20 != 0 || e.player.getLevel().isClientSide) {
             return;
         }
 
@@ -61,7 +60,6 @@ public class ServerEvent {
             }
         }
     }
-
 
     public static void timer(UserQuest userQuest, Player player, File file, Path uncompletedQuest) throws IOException {
         if (userQuest == null) {
@@ -146,14 +144,14 @@ public class ServerEvent {
         }
 
 
-        SendQuestPacket.TO_CLIENT(e.getEntity(), new ValidNPCMarker());
-        SendQuestPacket.TO_CLIENT(e.getEntity(), new ActiveQuestList(e.getEntity().getUUID()));
+        SendQuestPacket.TO_CLIENT(e.getPlayer(), new ValidNPCMarker());
+        SendQuestPacket.TO_CLIENT(e.getPlayer(), new ActiveQuestList(e.getEntity().getUUID()));
     }
 
     @SubscribeEvent
     public static void loadDialogOrAddQuestViaItem(PlayerInteractEvent e) throws IOException {
         final ItemStack ITEM_STACK = e.getItemStack();
-        final Player PLAYER = e.getEntity();
+        final Player PLAYER = e.getPlayer();
         final CompoundTag TAG = ITEM_STACK.getTag();
 
         if (e.getSide().isClient() || ITEM_STACK == null || TAG == null) return;
@@ -173,12 +171,12 @@ public class ServerEvent {
 
     @SubscribeEvent
     public static void loadDialogPerEntityType(PlayerInteractEvent.EntityInteract e) throws IOException {
-        Player player = e.getEntity();
+        Player player = e.getPlayer();
         Entity target = e.getTarget();
         String targetEntityType = EntityType.getKey(target.getType()).toString();
 
         List<String> dialogPerEntityType = LocateHash.getDialogPerEntityType(targetEntityType);
-        if (!player.level().isClientSide && dialogPerEntityType != null && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
+        if (!player.getLevel().isClientSide && dialogPerEntityType != null && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
             String selectedDialog = target.getPersistentData().getString("dialog");
 
             if (target.getPersistentData().get("dialog") == null) {
@@ -194,11 +192,11 @@ public class ServerEvent {
 
     @SubscribeEvent
     public static void loadDialogPerCompoundTag(PlayerInteractEvent.EntityInteract e) throws IOException {
-        Player player = e.getEntity();
+        Player player = e.getPlayer();
         Entity target = e.getTarget();
         List<String> dialogs = new ArrayList<>();
 
-        if (!player.level().isClientSide && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
+        if (!player.getLevel().isClientSide && e.getHand().equals(InteractionHand.MAIN_HAND) && !openVanillaMenu(player)) {
 
             for (Map.Entry<String, File> entry : LocateHash.dialogPerCompoundTag.entrySet()) {
                 CompoundTag entityNBT = NbtPredicate.getEntityTagToCompare(target);

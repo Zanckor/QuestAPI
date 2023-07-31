@@ -1,7 +1,6 @@
 package dev.zanckor.api.filemanager.dialog.abstractdialog;
 
 import dev.zanckor.api.filemanager.dialog.codec.NPCConversation;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -9,7 +8,6 @@ import net.minecraft.world.item.Item;
 import java.io.IOException;
 
 public abstract class AbstractDialogOption {
-
     /**
      * Abstract class to call a registered dialog option
      * @param player            The player

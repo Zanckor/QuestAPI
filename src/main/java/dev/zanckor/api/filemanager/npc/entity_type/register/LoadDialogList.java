@@ -35,17 +35,17 @@ public class LoadDialogList {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
-        resourceManager.listResources("npc/entity_type_list", (file) -> {
-            if (file.getPath().length() > 22) {
-                String fileName = file.getPath().substring(21);
-                ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
-                if(!modid.equals(file.getNamespace())) return false;
+        resourceManager.listResources("npc/entity_type_list", (path) -> {
+            if (path.length() > 22) {
+                String fileName = path.substring(21);
+                ResourceLocation resourceLocation = new ResourceLocation(modid, path);
+                if(!path.contains(modid)) return false;
 
-                if (file.getPath().endsWith(".json")) {
+                if (path.endsWith(".json")) {
                     read(resourceLocation, server);
                     write(entityTypeDialog, modid, fileName);
                 } else {
-                    throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
+                    throw new RuntimeException("File " + fileName + " in " + path + " is not .json");
                 }
             }
 
@@ -71,9 +71,9 @@ public class LoadDialogList {
 
     private static void read(ResourceLocation resourceLocation, MinecraftServer server) {
         try {
-            if(!server.getResourceManager().getResource(resourceLocation).isPresent()) return;
+            if(!server.getResourceManager().hasResource(resourceLocation)) return;
 
-            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).get().open();
+            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).getInputStream();
             entityTypeDialog = GsonManager.gson.fromJson(new InputStreamReader(inputStream), EntityTypeDialog.class);
 
         } catch (IOException e) {

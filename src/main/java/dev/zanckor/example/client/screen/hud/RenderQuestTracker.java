@@ -12,12 +12,13 @@ import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,18 +33,17 @@ public class RenderQuestTracker extends AbstractQuestTracked {
     static float sin;
 
 
-    public void renderQuestTracked(GuiGraphics graphics, int width, int height) {
+    public void renderQuestTracked(PoseStack poseStack, int width, int height) {
         Minecraft minecraft = Minecraft.getInstance();
         HashMap<String, List<UserGoal>> userQuestHashMap = new HashMap<>();
-        PoseStack poseStack = graphics.pose();
 
         if (trackedQuestList.isEmpty() || trackedQuestList == null || minecraft.player.isReducedDebugInfo() || minecraft.options.keyPlayerList.isDown() || minecraft.options.renderDebug) {
             userQuestHashMap.clear();
             return;
         }
 
-        xPosition = width / 100;
-        yPosition = width / 100;
+        xPosition = (float) width / 100;
+        yPosition = (float) width / 100;
         scale = ((float) width) / 700;
 
 
@@ -51,13 +51,14 @@ public class RenderQuestTracker extends AbstractQuestTracked {
         poseStack.pushPose();
         poseStack.scale(scale, scale, 1);
 
-        renderQuests(graphics, poseStack, minecraft, userQuestHashMap);
+        renderQuests(poseStack, minecraft, userQuestHashMap);
 
         poseStack.popPose();
         minecraft.getProfiler().pop();
     }
 
-    public static void renderQuests(GuiGraphics graphics, PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap){
+
+    public static void renderQuests(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap){
         //Gets all quest types on json and creates a HashMap with a list of goals
         trackedQuestList.forEach(userQuest -> {
             userQuestHashMap.clear();
@@ -77,24 +78,25 @@ public class RenderQuestTracker extends AbstractQuestTracked {
                 }
 
                 //Displays quest goals
-                renderTitle(graphics, poseStack, minecraft, userQuest);
-                renderQuestType(graphics, poseStack, minecraft, userQuestHashMap);
+                renderTitle(poseStack, minecraft, userQuest);
+                renderQuestType(poseStack, minecraft, userQuestHashMap);
 
                 if (userQuest.hasTimeLimit()) {
-                    MCUtilClient.renderLine(graphics, poseStack, (int) xPosition, (int) yPosition, 10, I18n.get("tracker.questapi.time_limit") + userQuest.getTimeLimitInSeconds(), minecraft.font);
+                    MCUtilClient.renderLine(poseStack, (int) xPosition, (int) yPosition, 10, I18n.get("tracker.questapi.time_limit") + userQuest.getTimeLimitInSeconds(), minecraft.font);
                 }
             }
         });
     }
 
-    public static void renderTitle(GuiGraphics graphics, PoseStack poseStack, Minecraft minecraft, UserQuest userQuest) {
+
+    public static void renderTitle(PoseStack poseStack, Minecraft minecraft, UserQuest userQuest) {
         String title = I18n.get(userQuest.getTitle());
 
-        MCUtilClient.renderLine(graphics, poseStack, (int) xPosition, (int) yPosition, 20,
-                Component.literal(I18n.get("tracker.questapi.quest") + title).withStyle(ChatFormatting.WHITE), minecraft.font);
+        MCUtilClient.renderLine(poseStack, (int) xPosition, (int) yPosition, 20,
+                new TextComponent(I18n.get("tracker.questapi.quest") + title).withStyle(ChatFormatting.WHITE), minecraft.font);
     }
 
-    public static void renderQuestType(GuiGraphics graphics, PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
+    public static void renderQuestType(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
         Font font = minecraft.font;
         Player player = minecraft.player;
         sin += 0.25;
@@ -104,8 +106,8 @@ public class RenderQuestTracker extends AbstractQuestTracked {
             List<UserGoal> questGoalList = entry.getValue();
 
             //Render quest type
-            MCUtilClient.renderLine(graphics, poseStack, Integer.MAX_VALUE, xPosition, yPosition, 10,
-                    Component.literal(I18n.get("tracker.questapi.quest_type") +
+            MCUtilClient.renderLine(poseStack, Integer.MAX_VALUE, xPosition, yPosition, 10,
+                    new TextComponent(I18n.get("tracker.questapi.quest_type") +
                             I18n.get("quest_type." + questGoalList.get(0).getTranslatableType().toLowerCase())).withStyle(ChatFormatting.WHITE), font);
 
             //Render each quest goal of a single type and render target
@@ -116,7 +118,7 @@ public class RenderQuestTracker extends AbstractQuestTracked {
                 MutableComponent goalComponentTarget = translatableTargetType.handler(questGoal.getTarget(), questGoal, player, ChatFormatting.GRAY, ChatFormatting.BLACK);
 
                 translatableTargetType.renderTarget(poseStack, (int) (goalComponentTarget.getString().length() * 6 + xPosition - 4), (int) yPosition + 3, 0.7, Math.sin(sin), questGoal, questGoal.getTarget());
-                MCUtilClient.renderLine(graphics, poseStack, 30, yPosition, yPosition, 10, goalComponentTarget.withStyle(ChatFormatting.ITALIC), font);
+                MCUtilClient.renderLine(poseStack, 30, yPosition, yPosition, 10, goalComponentTarget.withStyle(ChatFormatting.ITALIC), font);
             }
 
             poseStack.translate(0, 10, 0);

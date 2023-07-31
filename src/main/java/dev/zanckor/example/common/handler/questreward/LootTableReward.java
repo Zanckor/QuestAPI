@@ -5,14 +5,11 @@ import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,11 +35,11 @@ public class LootTableReward extends AbstractReward {
         List<ItemStack> itemStackList = new ArrayList<>();
 
         ResourceLocation rl = new ResourceLocation(lootTableRL);
-        LootTable lootTable = server.getLootData().getLootTable(rl);
+        LootTable lootTable = server.getLootTables().get(rl);
 
         for(int actualRoll = 0; actualRoll < rolls; actualRoll++) {
-            LootParams lootparams = (new LootParams.Builder((ServerLevel) player.level())).create(LootContextParamSets.EMPTY);
-            itemStackList = lootTable.getRandomItems(lootparams);
+            LootContext.Builder builder = new LootContext.Builder(player.getLevel()).withLuck(player.getLuck());
+            itemStackList = lootTable.getRandomItems(builder.create(LootContextParamSets.EMPTY));
         }
 
         for(ItemStack itemStack : itemStackList){

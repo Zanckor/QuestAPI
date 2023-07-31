@@ -30,7 +30,7 @@ public class CommandReward extends AbstractReward {
         CommandSourceStack sourceStack = player.getServer().createCommandSourceStack();
 
         for (int timesExecuted = 0; timesExecuted < quantity; timesExecuted++) {
-            sourceStack.getServer().getCommands().performPrefixedCommand(sourceStack, command);
+            sourceStack.getServer().getCommands().performCommand(sourceStack, command);
         }
     }
 }

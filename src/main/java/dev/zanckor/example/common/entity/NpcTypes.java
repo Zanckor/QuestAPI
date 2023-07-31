@@ -12,7 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class NpcTypes {
     public static final DeferredRegister<EntityType<?>>
-            ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, QuestApiMain.MOD_ID);
+            ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, QuestApiMain.MOD_ID);
 
 
     public static final RegistryObject<EntityType<NPCEntity>> NPC_ENTITY = ENTITY_TYPES.register("quest_npc",

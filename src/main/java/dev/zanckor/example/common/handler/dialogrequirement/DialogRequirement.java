@@ -1,15 +1,14 @@
 package dev.zanckor.example.common.handler.dialogrequirement;
 
 import dev.zanckor.api.database.LocateHash;
-import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
 import dev.zanckor.api.filemanager.dialog.codec.NPCConversation;
+import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
 import dev.zanckor.api.filemanager.dialog.codec.NPCDialog;
-import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogReq;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogReqStatus;
+import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogReq;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
 import dev.zanckor.mod.common.util.MCUtil;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -17,6 +16,7 @@ import net.minecraft.world.item.Item;
 import java.io.IOException;
 
 public class DialogRequirement extends AbstractDialogRequirement {
+
 
     /**
      * Dialog requirement status called to check if a player has read or not a dialog.

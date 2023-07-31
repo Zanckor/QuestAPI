@@ -56,7 +56,7 @@ public class MCUtil {
 
         AABB startEndBox = new AABB(startPos, endVec);
         Entity entity = null;
-        for (Entity entity1 : rayTraceEntity.level().getEntities(rayTraceEntity, startEndBox, (val) -> true)) {
+        for (Entity entity1 : rayTraceEntity.level.getEntities(rayTraceEntity, startEndBox, (val) -> true)) {
             AABB aabb = entity1.getBoundingBox().inflate(entity1.getPickRadius());
             Optional<Vec3> optional = aabb.clip(startPos, endVec);
             if (aabb.contains(startPos)) {
@@ -103,12 +103,11 @@ public class MCUtil {
         float ySinRotation = yRotSin * xCosDegrees;
 
         //Distance in blocks, multiplier is applied to player reach distance
-        double viewDistance = player.getBlockReach() * multiplier;
+        double viewDistance = player.getReachDistance() * multiplier;
 
         Vec3 lookingVector = eyePos.add((double) ySinRotation * viewDistance, (double) xSinDegrees * viewDistance, (double) yCosRotation * viewDistance);
         return level.clip(new ClipContext(eyePos, lookingVector, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
     }
-
 
     public static void writeDialogRead(Player player, int dialogID) throws IOException {
         String globalDialog = LocateHash.currentGlobalDialog.get(player);
@@ -160,7 +159,6 @@ public class MCUtil {
 
         return false;
     }
-
 
     public static boolean hasQuest(String quest, Path userFolder) {
         return Files.exists(Paths.get(getCompletedQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getActiveQuest(userFolder).toString(), quest)) || Files.exists(Paths.get(getFailedQuest(userFolder).toString(), quest));
@@ -217,7 +215,7 @@ public class MCUtil {
         List<Integer> slots = new ArrayList<>();
 
         for (int itemSlot = 0; itemSlot < inventory.items.size(); ++itemSlot) {
-            if (!inventory.items.get(itemSlot).isEmpty() && ItemStack.isSameItem(itemStack, inventory.items.get(itemSlot))) {
+            if (!inventory.items.get(itemSlot).isEmpty() && ItemStack.isSame(itemStack, inventory.items.get(itemSlot))) {
                 slots.add(itemSlot);
             }
         }

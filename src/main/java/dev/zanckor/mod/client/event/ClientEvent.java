@@ -1,6 +1,7 @@
 package dev.zanckor.mod.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog;
 import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.mod.QuestApiMain;
@@ -13,10 +14,7 @@ import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,11 +24,8 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -38,8 +33,8 @@ import java.util.Map;
 public class ClientEvent {
 
     @SubscribeEvent
-    public static void keyOpenScreen(InputEvent.Key e) throws IOException {
-        if (QuestApiMain.ClientEventHandlerRegister.questMenu.isDown()) {
+    public static void keyOpenScreen(InputEvent.KeyInputEvent e) throws IOException {
+        if (QuestApiMain.questMenu.isDown()) {
             AbstractQuestLog questLogScreen = ScreenRegistry.getQuestLogScreen(ScreenConfig.QUEST_LOG_SCREEN.get());
 
             Minecraft.getInstance().setScreen(questLogScreen.modifyScreen());
@@ -47,7 +42,7 @@ public class ClientEvent {
     }
 
     @SubscribeEvent
-    public static void loadHashMaps(ClientPlayerNetworkEvent.LoggingIn e) {
+    public static void loadHashMaps(ClientPlayerNetworkEvent.LoggedInEvent e) {
         ClientHandler.activeQuestList = new ArrayList<>();
     }
 
@@ -70,12 +65,11 @@ public class ClientEvent {
 
                 poseStack.translate(0, e.getEntity().getBbHeight() + 1.25, 0);
                 poseStack.scale(0.15f, 0.125f, 0.15f);
-                poseStack.mulPose(new Quaternionf().rotateXYZ((float) Math.toRadians(180), (float) Math.toRadians(player.getYHeadRot() + 180), 0));
+                poseStack.mulPose(new Quaternion(180, player.getYHeadRot() + 180,  0.0F, true));
 
-                font.drawInBatch(Component.literal("!"),
-                        0, 0, color,
+                font.drawInBatch("!", 0f, 0f, color,
                         false, poseStack.last().pose(), Minecraft.getInstance().renderBuffers().bufferSource(),
-                        Font.DisplayMode.SEE_THROUGH, 0, 0);
+                        true, 0, 0);
 
                 poseStack.popPose();
             }

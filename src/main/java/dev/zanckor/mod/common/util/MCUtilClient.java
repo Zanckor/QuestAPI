@@ -4,44 +4,39 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.model.HeadedModel;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.level.levelgen.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static net.minecraft.client.gui.components.Button.*;
@@ -53,68 +48,28 @@ public class MCUtilClient {
 
         return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
-
     public static List<List<FormattedCharSequence>> splitText(String text, Font font, int textMaxLength) {
         final List<List<FormattedCharSequence>> textBlocks = new ArrayList<>();
 
-        textBlocks.add(font.split(Component.literal(text), textMaxLength));
+        textBlocks.add(font.split(new TextComponent(text), textMaxLength));
 
         return textBlocks;
     }
 
-
     public static void playSound(SoundEvent sound, float minPitch, float maxPitch) {
         SoundManager soundManager = Minecraft.getInstance().getSoundManager();
 
-        soundManager.play(SimpleSoundInstance.forUI(sound, Mth.randomBetween(RandomSource.create(), minPitch, maxPitch)));
+        soundManager.play(SimpleSoundInstance.forUI(sound, Mth.randomBetween(new Random(), minPitch, maxPitch)));
     }
 
-    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, float xPos, float yPos, float textIndent, String text, Font font) {
-        graphics.drawString(font, text, (int) xPos, (int) yPos, 0, false);
+    public static void renderLine(PoseStack poseStack, float xPos, float yPos, float textIndent, String text, Font font) {
+        font.draw(poseStack, text, xPos, yPos, 0);
 
         poseStack.translate(0, textIndent, 0);
     }
 
-    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, String text, Font font) {
-        float splitIndent = 0;
-        List<List<FormattedCharSequence>> splintedText = splitText(text, font, maxTextLength * 5);
 
-        for (List<FormattedCharSequence> line : splintedText) {
-            for (FormattedCharSequence lineString : line) {
-                graphics.drawString(font, lineString, (int) xPos, (int) (yPos + (textIndent * (splitIndent / 2))), 0, false);
-
-                splitIndent++;
-            }
-        }
-
-        poseStack.translate(0, textIndent, 0);
-    }
-
-    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, MutableComponent text, Font font) {
-        float splitIndent = 0;
-        Style style = text.getStyle();
-        List<List<FormattedCharSequence>> splintedText = splitText(text.getString(), font, maxTextLength * 5);
-
-        for (List<FormattedCharSequence> line : splintedText) {
-            for (FormattedCharSequence lineString : line) {
-
-                StringBuilder sb = new StringBuilder();
-                lineString.accept((index, style1, cp) -> {
-                    sb.appendCodePoint(cp);
-                    return true;
-                });
-
-
-                graphics.drawString(font, Component.literal(sb.toString()).withStyle(style), (int) xPos, (int) (yPos + (textIndent * (splitIndent))), 0, false);
-
-                splitIndent++;
-            }
-        }
-
-        poseStack.translate(0, textIndent * splitIndent, 0);
-    }
-
-    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, int maxTextLength, float xPos, float yPos, float scale, float textIndent, MutableComponent text, Font font) {
+    public static void renderLine(PoseStack poseStack, int maxTextLength, float xPos, float yPos, float scale, float textIndent, MutableComponent text, Font font) {
         poseStack.pushPose();
 
         poseStack.translate(xPos, yPos, 0);
@@ -134,7 +89,7 @@ public class MCUtilClient {
                 });
 
 
-                graphics.drawString(font, Component.literal(sb.toString()).withStyle(style), 0, (int) (textIndent * (splitIndent)), 0, false);
+                font.draw(poseStack, new TextComponent(sb.toString()).withStyle(style), (int) (textIndent * (splitIndent)), 0, 0);
 
                 splitIndent++;
             }
@@ -145,26 +100,64 @@ public class MCUtilClient {
 
         poseStack.popPose();
     }
+    
+    public static void renderLine(PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, String text, Font font) {
+        float splitIndent = 0;
+        List<List<FormattedCharSequence>> splintedText = splitText(text, font, maxTextLength * 5);
 
-    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, float xPos, float yPos, float textIndent, MutableComponent text, Font font) {
-        graphics.drawString(font, text, (int) xPos, (int) yPos, 0, false);
+        for (List<FormattedCharSequence> line : splintedText) {
+            for (FormattedCharSequence lineString : line) {
+                font.draw(poseStack, lineString, xPos, yPos + (textIndent * (splitIndent / 2)), 0);
+
+                splitIndent++;
+            }
+        }
 
         poseStack.translate(0, textIndent, 0);
     }
 
-    public static void renderLine(GuiGraphics graphics, PoseStack poseStack, float xPos, float yPos, float textIndent, MutableComponent text1, MutableComponent text2, Font font) {
-        graphics.drawString(font, text1 + " " + text2, (int) xPos, (int) yPos, 0, false);
+    public static void renderLine(PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, MutableComponent text, Font font) {
+        float splitIndent = 0;
+        Style style = text.getStyle();
+        List<List<FormattedCharSequence>> splintedText = splitText(text.getString(), font, maxTextLength * 5);
+
+        for (List<FormattedCharSequence> line : splintedText) {
+            for (FormattedCharSequence lineString : line) {
+
+                StringBuilder sb = new StringBuilder();
+                lineString.accept((index, style1, cp) -> {
+                    sb.appendCodePoint(cp);
+                    return true;
+                });
+
+                font.draw(poseStack, new TextComponent(sb.toString()).withStyle(style), xPos, yPos + (textIndent * (splitIndent)), 0);
+
+                splitIndent++;
+            }
+        }
+
+        poseStack.translate(0, textIndent * splitIndent, 0);
+    }
+
+    public static void renderLine(PoseStack poseStack, float xPos, float yPos, float textIndent, MutableComponent text, Font font) {
+        font.draw(poseStack, text, xPos, yPos, 0);
 
         poseStack.translate(0, textIndent, 0);
     }
 
-    public static void renderLines(GuiGraphics graphics, PoseStack poseStack, float textIndent, int paragraphIndent, int textMaxLength, String text, Font font) {
+    public static void renderLine(PoseStack poseStack, float xPos, float yPos, float textIndent, MutableComponent text1, MutableComponent text2, Font font) {
+        font.draw(poseStack, text1 + " " + text2, xPos, yPos, 0);
+
+        poseStack.translate(0, textIndent, 0);
+    }
+
+    public static void renderLines(PoseStack poseStack, float textIndent, int paragraphIndent, int textMaxLength, String text, Font font) {
         float splitIndent = 0;
         List<List<FormattedCharSequence>> splintedText = splitText(text, font, textMaxLength * 5);
 
         for (List<FormattedCharSequence> line : splintedText) {
             for (FormattedCharSequence lineString : line) {
-                graphics.drawString(font, lineString, 0, (int) (textIndent * (splitIndent / 2)), 0, false);
+                font.draw(poseStack, lineString, 0, textIndent * (splitIndent / 2), 0);
 
                 splitIndent++;
             }
@@ -174,23 +167,7 @@ public class MCUtilClient {
         poseStack.translate(0, paragraphIndent, 0);
     }
 
-    public static void renderLines(GuiGraphics graphics, PoseStack poseStack, float textIndent, int paragraphIndent, int textMaxLength, Component text, Font font) {
-        float splitIndent = 0;
-        List<List<FormattedCharSequence>> splintedText = splitText(String.valueOf(text), font, textMaxLength * 5);
-
-        for (List<FormattedCharSequence> line : splintedText) {
-            for (FormattedCharSequence lineString : line) {
-                graphics.drawString(font, lineString, 0, (int) (textIndent * (splitIndent / 2)), 0, false);
-
-                splitIndent++;
-            }
-        }
-
-
-        poseStack.translate(0, paragraphIndent, 0);
-    }
-
-    public static void renderText(GuiGraphics graphics, PoseStack poseStack, double xPosition, double yPosition, float textIndent, float scale, int textMaxLength, String text, Font font) {
+    public static void renderText(PoseStack poseStack, double xPosition, double yPosition, float textIndent, float scale, int textMaxLength, String text, Font font) {
         float splitIndent = 0;
         List<List<FormattedCharSequence>> splintedText = splitText(text, font, textMaxLength * 5);
 
@@ -201,7 +178,7 @@ public class MCUtilClient {
 
         for (List<FormattedCharSequence> line : splintedText) {
             for (FormattedCharSequence lineString : line) {
-                graphics.drawString(font, lineString, 0, (int) (textIndent * (splitIndent / 2)), 0, false);
+                font.draw(poseStack, lineString, 0, textIndent * (splitIndent / 2), 0);
 
                 splitIndent++;
             }
@@ -210,7 +187,7 @@ public class MCUtilClient {
         poseStack.popPose();
     }
 
-    public static void renderText(GuiGraphics graphics, PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, List<String> text, Font font) {
+    public static void renderText(PoseStack poseStack, double width, double height, float textIndent, float scale, int textMaxLength, List<String> text, Font font) {
         if (text == null) return;
         float splitIndent = 0;
 
@@ -230,7 +207,7 @@ public class MCUtilClient {
             for (List<FormattedCharSequence> textBlock : MCUtilClient.splitText(text.get(i), font, 5 * textMaxLength)) {
                 for (FormattedCharSequence line : textBlock) {
                     if (splitIndent < 2) {
-                        graphics.drawString(font, line, 0, (int) (textIndent * (splitIndent / 2)), 0, false);
+                        font.draw(poseStack, line, 0, textIndent * (i + (splitIndent / 2)), 0);
                         splitIndent++;
                     }
 
@@ -250,7 +227,7 @@ public class MCUtilClient {
     }
 
     public static MutableComponent formatString(String text1, String text2, ChatFormatting chatFormatting1, ChatFormatting chatFormatting2) {
-        return Component.literal(text1).withStyle(chatFormatting1).append(Component.literal(text2).withStyle(chatFormatting2));
+        return new TextComponent(text1).withStyle(chatFormatting1).append(new TextComponent(text2).withStyle(chatFormatting2));
     }
 
     public static Entity getEntityByUUID(UUID uuid) {
@@ -260,7 +237,6 @@ public class MCUtilClient {
 
         return null;
     }
-
 
     public static void renderEntity(double xPos, double yPos, double size, double xRot, double yRot, LivingEntity entity) {
         float f = (float) Math.atan(xRot / 40.0F);
@@ -274,7 +250,7 @@ public class MCUtilClient {
         PoseStack posestack1 = new PoseStack();
         posestack1.translate(0.0D, 0.0D, 1000.0D);
         posestack1.scale((float) size, (float) size, (float) size);
-        Quaternionf quaternion = new Quaternionf().rotateZ((float) Math.toRadians(180));
+        Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
         posestack1.mulPose(quaternion);
         float f2 = entity.yBodyRot;
         float f3 = entity.getYRot();
@@ -308,7 +284,7 @@ public class MCUtilClient {
     public static void renderEntity(double xPos, double yPos, double size, double rotation, LivingEntity entity, PoseStack poseStack) {
         PoseStack posestack = RenderSystem.getModelViewStack();
         posestack.pushPose();
-        posestack.last().pose().mul(poseStack.last().pose());
+        posestack.last().pose().multiply(poseStack.last().pose());
 
         posestack.translate(xPos, yPos, 1050.0D);
         posestack.scale(1.0F, 1.0F, -1.0F);
@@ -318,7 +294,9 @@ public class MCUtilClient {
 
         posestack1.translate(0.0D, 0.0D, 1000.0D);
         posestack1.scale((float) size, (float) size, (float) size);
-        posestack1.mulPose(new Quaternionf().rotateXYZ((float) Math.toRadians(rotation), (float) Math.toRadians(90), (float) Math.toRadians(180)));
+        posestack1.mulPose(new Quaternion(Vector3f.ZP.rotationDegrees(180.0F)));
+        posestack1.mulPose(new Quaternion(Vector3f.YP.rotationDegrees(90.0F)));
+        posestack1.mulPose(new Quaternion((float) rotation, 0,0, true));
 
         float f2 = entity.yBodyRot;
         float f3 = entity.getYRot();
@@ -354,7 +332,7 @@ public class MCUtilClient {
 
     public static void renderItem(ItemStack itemStack, int xPos, int yPos, double size, double rotation, PoseStack poseStack) {
         BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(itemStack, null, null, 0);
-        Quaternionf quaternion = new Quaternionf().rotateZ((float) Math.toRadians(rotation * 10));
+        Quaternion quaternion = new Quaternion(0, 0, (float) rotation * 10, true);
 
         Minecraft.getInstance().textureManager.getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
         RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
@@ -364,7 +342,7 @@ public class MCUtilClient {
 
         PoseStack posestack = RenderSystem.getModelViewStack();
         posestack.pushPose();
-        posestack.last().pose().mul(poseStack.last().pose());
+        posestack.last().pose().multiply(poseStack.last().pose());
 
         posestack.translate(xPos, yPos, 0);
 
@@ -379,7 +357,7 @@ public class MCUtilClient {
         MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
         Lighting.setupForFlatItems();
 
-        Minecraft.getInstance().getItemRenderer().render(itemStack, ItemDisplayContext.GUI, false, new PoseStack(), multibuffersource$buffersource, 15728880, OverlayTexture.NO_OVERLAY, model);
+        Minecraft.getInstance().getItemRenderer().render(itemStack, ItemTransforms.TransformType.GUI, false, new PoseStack(), multibuffersource$buffersource, 15728880, OverlayTexture.NO_OVERLAY, model);
         multibuffersource$buffersource.endBatch();
         RenderSystem.enableDepthTest();
         Lighting.setupFor3DItems();
@@ -389,11 +367,7 @@ public class MCUtilClient {
     }
 
     public static Button createButton(int xPos, int yPos, int width, int height, Component component, OnPress onPress){
-        Button button = builder(component, onPress).build();
-
-        button.setPosition(xPos, yPos);
-        button.setWidth(width);
-        button.setHeight(height);
+        Button button = new Button(xPos, yPos, width, height, component, onPress);
 
         return button;
     }

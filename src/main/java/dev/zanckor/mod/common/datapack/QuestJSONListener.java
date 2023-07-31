@@ -35,7 +35,7 @@ public class QuestJSONListener extends SimpleJsonResourceReloadListener {
             if (obj.get("id") == null) return;
 
             //Load quest
-            if(obj.get("goals") != null) {
+            if (obj.get("goals") != null) {
                 String questId = "." + obj.get("id").toString().substring(1, obj.get("id").toString().length() - 1);
                 Path path = Path.of(rl.getNamespace() + questId + ".json");
 

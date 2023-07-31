@@ -12,7 +12,6 @@ public class ReadDialog extends FileAbstract {
      * Returns a list of dialogs already read by a certain player
      */
 
-
     public static class GlobalID extends FileAbstract  {
         String global_id;
         List<DialogID> dialog_id;

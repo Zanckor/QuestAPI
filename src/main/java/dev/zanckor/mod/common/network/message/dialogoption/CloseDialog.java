@@ -22,7 +22,7 @@ public class CloseDialog {
 
     public static void handler(CloseDialog msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientHandler.closeDialog());
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);
         });
 
         ctx.get().setPacketHandled(true);

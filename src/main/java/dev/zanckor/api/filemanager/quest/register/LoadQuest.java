@@ -33,17 +33,17 @@ public class LoadQuest {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
-        resourceManager.listResources("quest", (file) -> {
-            if (file.getPath().length() > 7) {
-                String fileName = file.getPath().substring(6);
-                ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
-                if(!modid.equals(file.getNamespace())) return false;
+        resourceManager.listResources("quest", (path) -> {
+            if (path.length() > 7) {
+                String fileName = path.substring(6);
+                ResourceLocation resourceLocation = new ResourceLocation(modid, path);
+                if(!path.contains(modid)) return false;
 
-                if (file.getPath().endsWith(".json")) {
+                if (path.endsWith(".json")) {
                     read(resourceLocation, resourceManager);
                     write(playerQuest, fileName, modid);
                 } else {
-                    throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
+                    throw new RuntimeException("File " + fileName + " in " + path + " is not .json");
                 }
             }
 
@@ -65,9 +65,9 @@ public class LoadQuest {
 
     private static void read(ResourceLocation resourceLocation, ResourceManager resourceManager) {
         try {
-            if(!resourceManager.getResource(resourceLocation).isPresent()) return;
+            if(!resourceManager.hasResource(resourceLocation)) return;
 
-            InputStream inputStream = resourceManager.getResource(resourceLocation).get().open();
+            InputStream inputStream = resourceManager.getResource(resourceLocation).getInputStream();
             playerQuest = GsonManager.gson.fromJson(new InputStreamReader(inputStream), ServerQuest.class);
 
         } catch (IOException e) {

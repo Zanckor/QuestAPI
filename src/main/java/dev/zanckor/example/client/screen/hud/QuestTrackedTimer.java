@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
 
-import static dev.zanckor.mod.common.network.handler.ClientHandler.trackedQuestList;
+import static dev.zanckor.mod.common.network.handler.ClientHandler.*;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class QuestTrackedTimer {

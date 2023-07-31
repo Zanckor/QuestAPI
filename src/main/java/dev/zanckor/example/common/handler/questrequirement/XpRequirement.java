@@ -4,7 +4,7 @@ import dev.zanckor.api.filemanager.quest.abstracquest.AbstractQuestRequirement;
 import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.api.filemanager.quest.codec.server.ServerRequirement;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogReq;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 
 import java.io.IOException;
@@ -29,9 +29,9 @@ public class XpRequirement extends AbstractQuestRequirement {
         boolean hasReqs = player.experienceLevel >= requirement.getRequirements_min() && player.experienceLevel <= requirement.getRequirements_max();
 
         if (!hasReqs) {
-            player.sendSystemMessage(Component.literal("Player " + player.getScoreboardName() + " doesn't have the requirements to access to this quest"));
-            player.sendSystemMessage(Component.literal("Minimum: " + requirement.getRequirements_min()));
-            player.sendSystemMessage(Component.literal("Maximum: " + requirement.getRequirements_max()));
+            player.sendMessage(new TextComponent("Player " + player.getScoreboardName() + " doesn't have the requirements to access to this quest"), player.getUUID());
+            player.sendMessage(new TextComponent("Minimum: " + requirement.getRequirements_min()), player.getUUID());
+            player.sendMessage(new TextComponent("Maximum: " + requirement.getRequirements_max()), player.getUUID());
         }
 
         return hasReqs;

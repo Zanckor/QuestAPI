@@ -8,7 +8,6 @@ import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class UserQuest extends FileAbstract {

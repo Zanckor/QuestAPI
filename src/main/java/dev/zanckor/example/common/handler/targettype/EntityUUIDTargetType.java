@@ -39,7 +39,7 @@ public class EntityUUIDTargetType extends AbstractTargetType {
 
     @Override
     public void renderTarget(PoseStack poseStack, int xPosition, int yPosition, double size, double rotation, UserGoal goal, String resourceLocationString) {
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocationString));
+        EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(resourceLocationString));
         rotation = goal.getCurrentAmount() >= goal.getAmount() ? rotation : 0;
 
         MCUtilClient.renderEntity(

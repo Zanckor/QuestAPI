@@ -1,6 +1,6 @@
 package dev.zanckor.example.common.entity.server;
 
-import dev.zanckor.mod.server.startdialog.StartDialog;
+import dev.zanckor.mod.server.displaydialog.StartDialog;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import java.io.IOException;
 
 public class NPCEntity extends Villager {
-    private String dialogID = "questapi.secondary_collect_items_dialog";
+    private String dialogID = "questapi_collect_items_dialog";
 
     public NPCEntity(EntityType<? extends Villager> entityType, Level level) {
         super(entityType, level);
@@ -25,9 +25,9 @@ public class NPCEntity extends Villager {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
-        if (!player.level().isClientSide && interactionHand.equals(InteractionHand.MAIN_HAND)) {
+        if (!player.level.isClientSide && interactionHand.equals(InteractionHand.MAIN_HAND)) {
             try {
-                StartDialog.loadDialog(player, dialogID, "minecraft:cow");
+                StartDialog.loadDialog(player, dialogID, this);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -12,18 +12,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import static dev.zanckor.mod.QuestApiMain.MOD_ID;
 import static dev.zanckor.mod.common.util.MCUtilClient.properNoun;
+
 
 public class EntityTargetType extends AbstractTargetType {
 
     @Override
     public MutableComponent handler(String resourceLocationString, UserGoal goal, Player player, ChatFormatting chatFormatting, ChatFormatting chatFormatting1) {
-        EntityType<?> translationKey = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocationString));
+        EntityType<?> translationKey = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(resourceLocationString));
 
         return MCUtilClient.formatString(properNoun(I18n.get(translationKey.getDescriptionId())), " " + goal.getCurrentAmount() + "/" + goal.getAmount(),
                 chatFormatting, chatFormatting1);
@@ -31,7 +29,7 @@ public class EntityTargetType extends AbstractTargetType {
 
     @Override
     public String target(String resourceLocationString) {
-        EntityType<?> translationKey = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocationString));
+        EntityType<?> translationKey = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(resourceLocationString));
 
         return properNoun(I18n.get(translationKey.getDescriptionId()));
     }
@@ -39,7 +37,7 @@ public class EntityTargetType extends AbstractTargetType {
 
     @Override
     public void renderTarget(PoseStack poseStack, int xPosition, int yPosition, double size, double rotation, UserGoal goal, String resourceLocationString) {
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocationString));
+        EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(resourceLocationString));
         rotation = goal.getCurrentAmount() >= goal.getAmount() ? rotation : 0;
 
         MCUtilClient.renderEntity(

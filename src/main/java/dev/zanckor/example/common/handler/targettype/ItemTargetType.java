@@ -14,15 +14,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.time.chrono.MinguoEra;
 
-import static dev.zanckor.mod.QuestApiMain.MOD_ID;
 import static dev.zanckor.mod.common.util.MCUtilClient.properNoun;
-
 
 public class ItemTargetType extends AbstractTargetType {
 

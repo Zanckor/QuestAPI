@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class MenuHandler {
-    public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, QuestApiMain.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, QuestApiMain.MOD_ID);
 
     public static final RegistryObject<MenuType<QuestMakerMenu>> QUEST_DEFAULT_MENU = REGISTER.register("quest_default_menu",
             () -> IForgeMenuType.create(((windowId, inv, data) -> new QuestMakerMenu(windowId))));

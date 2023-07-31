@@ -32,7 +32,7 @@ public class OpenVanillaEntityScreen {
     public static void handler(OpenVanillaEntityScreen msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Player player = ctx.get().getSender();
-            Entity entity = MCUtil.getEntityByUUID((ServerLevel) ctx.get().getSender().level(), msg.entityUUID);
+            Entity entity = MCUtil.getEntityByUUID(ctx.get().getSender().getLevel(), msg.entityUUID);
 
             player.setShiftKeyDown(true);
             player.interactOn(entity, InteractionHand.MAIN_HAND);

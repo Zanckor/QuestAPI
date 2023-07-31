@@ -3,6 +3,7 @@ package dev.zanckor.example.server.event.questevent;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.handler.ServerHandler;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -15,8 +16,8 @@ import static dev.zanckor.example.common.enumregistry.enumquest.EnumGoalType.KIL
 public class KillEvent {
     @SubscribeEvent
     public static void killQuest(LivingDeathEvent e) throws IOException {
-        if (!(e.getSource().getEntity() instanceof ServerPlayer player) || player.level().isClientSide) return;
+        if (!(e.getSource().getEntity() instanceof ServerPlayer player) || player.level.isClientSide) return;
 
-        ServerHandler.questHandler(KILL, player, e.getEntity());
+        ServerHandler.questHandler(KILL, player, (LivingEntity)e.getEntity());
     }
 }

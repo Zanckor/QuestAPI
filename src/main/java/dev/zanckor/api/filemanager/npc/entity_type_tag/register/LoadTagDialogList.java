@@ -28,24 +28,24 @@ public class LoadTagDialogList {
 
     static EntityTypeTagDialog entityTypeTagDialog;
 
-    public static void registerNPCTagDialogList(MinecraftServer server, String modid) throws IOException {
+    public static void registerNPCTagDialogList(MinecraftServer server, String modid) {
         ResourceManager resourceManager = server.getResourceManager();
 
         if (compoundTag_List == null) {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
-        resourceManager.listResources("npc/compound_tag_list", (file) -> {
-            if (file.getPath().length() > 22) {
-                String fileName = file.getPath().substring(22);
-                ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
-                if(!modid.equals(file.getNamespace())) return false;
+        resourceManager.listResources("npc/compound_tag_list", (path) -> {
+            if (path.length() > 22) {
+                String fileName = path.substring(22);
+                ResourceLocation resourceLocation = new ResourceLocation(modid, path);
+                if(!path.contains(modid)) return false;
 
-                if (file.getPath().endsWith(".json")) {
+                if (path.endsWith(".json")) {
                     read(resourceLocation, server);
                     write(entityTypeTagDialog, modid, fileName);
                 } else {
-                    throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
+                    throw new RuntimeException("File " + fileName + " in " + path + " is not .json");
                 }
             }
 
@@ -71,9 +71,9 @@ public class LoadTagDialogList {
 
     private static void read(ResourceLocation resourceLocation, MinecraftServer server) {
         try {
-            if(!server.getResourceManager().getResource(resourceLocation).isPresent()) return;
+            if(!server.getResourceManager().hasResource(resourceLocation)) return;
 
-            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).get().open();
+            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).getInputStream();
             entityTypeTagDialog = GsonManager.gson.fromJson(new InputStreamReader(inputStream), EntityTypeTagDialog.class);
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -32,17 +32,17 @@ public class LoadDialog {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
-        resourceManager.listResources("dialog", (file) -> {
-            if (file.getPath().length() > 7) {
-                String fileName = file.getPath().substring(7);
-                ResourceLocation resourceLocation = new ResourceLocation(modid, file.getPath());
-                if(!modid.equals(file.getNamespace())) return false;
+        resourceManager.listResources("dialog", (path) -> {
+            if (path.length() > 7) {
+                String fileName = path.substring(7);
+                ResourceLocation resourceLocation = new ResourceLocation(modid, path);
+                if(!path.contains(modid)) return false;
 
-                if (file.getPath().endsWith(".json")) {
+                if (path.endsWith(".json")) {
                     read(resourceLocation, server);
                     write(dialogTemplate, modid, fileName);
                 } else {
-                    throw new RuntimeException("File " + fileName + " in " + file.getPath() + " is not .json");
+                    throw new RuntimeException("File " + fileName + " in " + path + " is not .json");
                 }
             }
 
@@ -65,9 +65,9 @@ public class LoadDialog {
 
     private static void read(ResourceLocation resourceLocation, MinecraftServer server) {
         try {
-            if(!server.getResourceManager().getResource(resourceLocation).isPresent()) return;
+            if(!server.getResourceManager().hasResource(resourceLocation)) return;
 
-            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).get().open();
+            InputStream inputStream = server.getResourceManager().getResource(resourceLocation).getInputStream();
             dialogTemplate = GsonManager.gson.fromJson(new InputStreamReader(inputStream), NPCConversation.class);
 
         } catch (IOException e) {

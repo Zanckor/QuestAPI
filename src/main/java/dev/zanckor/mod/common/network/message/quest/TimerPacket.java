@@ -20,7 +20,7 @@ public class TimerPacket {
 
     public static void handler(TimerPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerHandler.questTimer(ctx.get().getSender().serverLevel());
+            ServerHandler.questTimer(ctx.get().getSender().getLevel());
         });
 
         ctx.get().setPacketHandled(true);

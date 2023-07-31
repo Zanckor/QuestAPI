@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[45,)"
+loaderVersion="[40,)"
 license="MIT License"
 [[mods]]
 modId="questapi"
@@ -10,4 +10,6 @@ authors="Zanckor"
 description='''
 QuestApi is a forge library that allows modders and modpack makers to add easily quests & dialogs by npc, command...
 just adding a few .json with easy portability between words, servers and versions.
+
+Special thanks to Coco_31240 for backporting to 1.18.2
 '''

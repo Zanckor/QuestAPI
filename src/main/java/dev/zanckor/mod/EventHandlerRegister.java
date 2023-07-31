@@ -2,6 +2,7 @@ package dev.zanckor.mod;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.zanckor.mod.common.datapack.CompoundTagDialogJSONListener;
@@ -59,7 +60,7 @@ public class EventHandlerRegister {
                                         .suggests(EventHandlerRegister::addDialogSuggestions)
                                         .executes(context ->
                                                 QuestCommand.putDialogToItem(
-                                                        context.getSource().getPlayer().getMainHandItem(),
+                                                        context.getSource().getPlayerOrException().getMainHandItem(),
                                                         StringArgumentType.getString(context, "dialogID")))))
 
                         .then(Commands.literal("itemQuest")
@@ -67,13 +68,26 @@ public class EventHandlerRegister {
                                         .suggests(EventHandlerRegister::addQuestSuggestions)
                                         .executes(context ->
                                                 QuestCommand.putQuestToItem(
-                                                        context.getSource().getPlayer().getMainHandItem(),
+                                                        context.getSource().getPlayerOrException().getMainHandItem(),
                                                         StringArgumentType.getString(context, "questID"))))))
-                /*
-                .then(Commands.literal("create")
-                        .then(Commands.literal("quest")
-                                .executes((context -> QuestCommand.openQuestMaker(context)))))
-                 */
+
+
+                .then(Commands.literal("remove")
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .then(Commands.argument("questID", StringArgumentType.string())
+                                        .suggests(EventHandlerRegister::removeQuestSuggestions)
+                                        .executes((context) -> {
+                                            try {
+                                                return QuestCommand.removeQuest(
+                                                        context,
+                                                        EntityArgument.getPlayer(context, "player").getUUID(),
+                                                        StringArgumentType.getString(context, "questID"));
+                                            } catch (IOException ex) {
+                                                QuestApiMain.LOGGER.error(ex.getMessage());
+
+                                                return 0;
+                                            }
+                                        }))))
 
                 .then(Commands.literal("remove")
                         .then(Commands.argument("player", EntityArgument.player())
@@ -104,7 +118,7 @@ public class EventHandlerRegister {
                                 .executes(context -> {
                                     try {
                                         return QuestCommand.displayDialog(
-                                                context.getSource().getPlayer(),
+                                                context.getSource().getPlayerOrException(),
                                                 StringArgumentType.getString(context, "dialogID")
                                         );
                                     } catch (IOException ex) {
@@ -117,8 +131,8 @@ public class EventHandlerRegister {
     }
 
 
-    private static CompletableFuture<Suggestions> removeQuestSuggestions(final CommandContext<CommandSourceStack> ctx, final SuggestionsBuilder builder) {
-        Player player = ctx.getSource().getPlayer();
+    private static CompletableFuture<Suggestions> removeQuestSuggestions(final CommandContext<CommandSourceStack> ctx, final SuggestionsBuilder builder) throws CommandSyntaxException {
+        Player player = ctx.getSource().getPlayerOrException();
         List<File[]> questsFile = new ArrayList<>();
 
         Path userFolder = QuestApiMain.getUserFolder(player.getUUID());
@@ -136,19 +150,6 @@ public class EventHandlerRegister {
             for (File quest : questList) {
                 builder.suggest(quest.getName().substring(0, quest.getName().length() - 5));
             }
-        }
-
-        return builder.buildFuture();
-    }
-
-    private static CompletableFuture<Suggestions> trackedQuestSuggestions(final CommandContext<CommandSourceStack> ctx, final SuggestionsBuilder builder) {
-        Player player = ctx.getSource().getPlayer();
-        Path userFolder = QuestApiMain.getUserFolder(player.getUUID());
-
-        File[] questList = QuestApiMain.getActiveQuest(userFolder).toFile().listFiles();
-
-        for (File quest : questList) {
-            builder.suggest(quest.getName().substring(0, quest.getName().length() - 5));
         }
 
         return builder.buildFuture();

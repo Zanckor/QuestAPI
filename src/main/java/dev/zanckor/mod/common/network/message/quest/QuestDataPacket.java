@@ -14,7 +14,6 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class QuestDataPacket {
-
     /**
      * Packet to execute a quest handler from client to server
      * <p>
@@ -44,7 +43,7 @@ public class QuestDataPacket {
         ctx.get().enqueueWork(() -> {
             try {
                 ServerPlayer player = ctx.get().getSender();
-                LivingEntity entity = (LivingEntity) MCUtil.getEntityByUUID((ServerLevel) player.level(), msg.entity);
+                LivingEntity entity = (LivingEntity) MCUtil.getEntityByUUID(player.getLevel(), msg.entity);
 
                 ServerHandler.questHandler(msg.quest, player, entity);
             } catch (IOException e) {

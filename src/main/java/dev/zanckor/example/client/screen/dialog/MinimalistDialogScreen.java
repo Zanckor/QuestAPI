@@ -1,5 +1,6 @@
 package dev.zanckor.example.client.screen.dialog;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.example.client.screen.button.TextButton;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogOption;
@@ -13,10 +14,10 @@ import dev.zanckor.mod.common.network.message.screen.OpenVanillaEntityScreen;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +68,7 @@ public class MinimalistDialogScreen extends AbstractDialog {
 
         switch (npcType) {
             case RESOURCE_LOCATION -> {
-                EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(resourceLocation));
+                EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(resourceLocation));
                 entity = entityType.create(Minecraft.getInstance().level);
                 this.resourceLocation = resourceLocation;
             }
@@ -106,13 +106,13 @@ public class MinimalistDialogScreen extends AbstractDialog {
             }
 
             addRenderableWidget(new TextButton(xButtonPosition, yButtonPosition, stringLength, 20, ((float) width) / 675,
-                    Component.literal(I18n.get(optionStrings.get(i).get(0))).withStyle(ChatFormatting.WHITE), 26, button -> button(index)));
+                    new TextComponent(I18n.get(optionStrings.get(i).get(0))).withStyle(ChatFormatting.WHITE), 26, button -> button(index)));
 
             xButtonPosition += (stringLength);
         }
 
         addRenderableWidget(new TextButton((int) (xScreenPos / 2 + (imageWidth / 1.35)), (int) (yScreenPos * 1.235), (int) (20 * scale), (int) (20 * scale), ((float) width) / 675,
-                Component.literal("↩").withStyle(ChatFormatting.WHITE).withStyle(ChatFormatting.BOLD), 26, button -> {
+                new TextComponent("↩").withStyle(ChatFormatting.WHITE).withStyle(ChatFormatting.BOLD), 26, button -> {
             if (npcUUID != null) SendQuestPacket.TO_SERVER(new OpenVanillaEntityScreen(npcUUID));
         }));
     }
@@ -139,16 +139,16 @@ public class MinimalistDialogScreen extends AbstractDialog {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         int xPosition = (width / 4);
         int yPosition = (int) (yScreenPos + yScreenPos / 16);
-        PoseStack poseStack = graphics.pose();
 
-        graphics.setColor(1, 1, 1, 0.5f);
-        graphics.blit(DIALOG, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-        graphics.setColor(1, 1, 1, 1);
+        RenderSystem.setShaderTexture(0, DIALOG);
+        RenderSystem.setShaderColor(1, 1, 1, 0.5f);
+        blit(poseStack, (int) (xScreenPos - (imageWidth / 2)), (int) yScreenPos, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
-        MCUtilClient.renderLine(graphics, poseStack, 80, xPosition, yPosition, (float) width / 675, 16, Component.literal(text.substring(0, textDisplaySize)).withStyle(ChatFormatting.WHITE), font);
+        MCUtilClient.renderLine(poseStack, 80, xPosition, yPosition, (float) width / 675, 16, new TextComponent(text.substring(0, textDisplaySize)).withStyle(ChatFormatting.WHITE), font);
 
         switch (npcType) {
             case UUID, RESOURCE_LOCATION -> {
@@ -163,7 +163,7 @@ public class MinimalistDialogScreen extends AbstractDialog {
                     0, poseStack);
         }
 
-        super.render(graphics, mouseX, mouseY, partialTicks);
+        super.render(poseStack, mouseX, mouseY, partialTicks);
     }
 
     private void button(int optionID) {

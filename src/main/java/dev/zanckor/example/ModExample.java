@@ -23,7 +23,7 @@ import dev.zanckor.example.common.enumregistry.enumquest.EnumGoalType;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestRequirement;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import dev.zanckor.mod.QuestApiMain;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -76,7 +76,6 @@ public class ModExample {
         LoadDialogList.registerNPCDialogList(e.getServer(), QuestApiMain.MOD_ID);
         LoadTagDialogList.registerNPCTagDialogList(e.getServer(), QuestApiMain.MOD_ID);
 
-
         //Do not mind bout this, is background logic for data-packs.
         LoadQuest.registerDatapackQuest(e.getServer());
         LoadDialog.registerDatapackDialog(e.getServer());
@@ -99,10 +98,10 @@ public class ModExample {
 
         @SubscribeEvent
         public static void registerScreen(FMLClientSetupEvent e) {
-            ScreenRegistry.registerDialogScreen(MOD_ID, new DialogScreen(Component.literal("dialog_screen")));
-            ScreenRegistry.registerDialogScreen("minimalist_" + MOD_ID, new MinimalistDialogScreen(Component.literal("minimalist_dialog_screen")));
+            ScreenRegistry.registerDialogScreen(MOD_ID, new DialogScreen(new TextComponent("dialog_screen")));
+            ScreenRegistry.registerDialogScreen("minimalist_" + MOD_ID, new MinimalistDialogScreen(new TextComponent("minimalist_dialog_screen")));
             ScreenRegistry.registerQuestTrackedScreen(MOD_ID, new RenderQuestTracker());
-            ScreenRegistry.registerQuestLogScreen(MOD_ID, new QuestLog(Component.literal("quest_log_screen")));
+            ScreenRegistry.registerQuestLogScreen(MOD_ID, new QuestLog(new TextComponent("quest_log_screen")));
         }
     }
 }

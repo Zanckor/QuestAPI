@@ -16,8 +16,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,12 +33,15 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import static dev.zanckor.mod.QuestApiMain.MOD_ID;
+import static net.minecraftforge.client.gui.ForgeIngameGui.HOTBAR_ELEMENT;
 
 @Mod(MOD_ID)
 public class QuestApiMain {
     public static final String MOD_ID = "questapi";
     public static final Logger LOGGER = LogUtils.getLogger();
     public static Path serverDirectory, questApi, playerData, serverQuests, serverDialogs, serverNPC, entity_type_list, compoundTag_List;
+
+    public static KeyMapping questMenu;
 
     public QuestApiMain() {
         LOGGER.debug("Loading QuestAPI");
@@ -54,6 +57,22 @@ public class QuestApiMain {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ScreenConfig.SPEC, "questapi-screen.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, RendererConfig.SPEC, "questapi-renderer.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, GoalConfig.SPEC, "questapi-goals.toml");
+
+        LOGGER.debug("Registering overlay screens");
+
+        OverlayRegistry.registerOverlayAbove(HOTBAR_ELEMENT, "quest_tracker", (gui, poseStack, partialTick, width, height) -> {
+            Player player = Minecraft.getInstance().player;
+
+            if (player != null && !player.isDeadOrDying()) {
+                AbstractQuestTracked abstractQuestTracked = ScreenRegistry.getQuestTrackedScreen(ScreenConfig.QUEST_TRACKED_SCREEN.get());
+                abstractQuestTracked.renderQuestTracked(poseStack, width, height);
+            }
+        });
+
+        LOGGER.debug("Registering key bindings");
+
+        questMenu = registerKey("quest_menu", InputConstants.KEY_K);
+        ClientRegistry.registerKeyBinding(questMenu);
     }
 
 
@@ -87,40 +106,13 @@ public class QuestApiMain {
         return readDialogs;
     }
 
+    public static KeyMapping registerKey(String name, int keycode) {
+        return new KeyMapping("key." + QuestApiMain.MOD_ID + "." + name, keycode, "key.categories.QuestApi");
+    }
+
 
     @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public class ClientEventHandlerRegister {
-        @SubscribeEvent
-        public static void registerOverlays(RegisterGuiOverlaysEvent e) {
-            LOGGER.debug("Registering overlay screens");
-
-            e.registerAboveAll("quest_tracker", (gui, guiGraphics, partialTick, screenWidth, screenHeight) ->  {
-                Player player = Minecraft.getInstance().player;
-
-                if (player != null && !player.isDeadOrDying()) {
-                    AbstractQuestTracked abstractQuestTracked = ScreenRegistry.getQuestTrackedScreen(ScreenConfig.QUEST_TRACKED_SCREEN.get());
-                    abstractQuestTracked.renderQuestTracked(guiGraphics, screenWidth, screenHeight);
-                }
-            });
-        }
-
-        public static KeyMapping questMenu;
-
-        public static KeyMapping registerKey(String name, int keycode) {
-            LOGGER.debug("Registering keys");
-
-            final var key = new KeyMapping("key." + QuestApiMain.MOD_ID + "." + name, keycode, "key.categories.QuestApi");
-
-            return key;
-        }
-
-        @SubscribeEvent
-        public static void keyInit(RegisterKeyMappingsEvent e) {
-            questMenu = registerKey("quest_menu", InputConstants.KEY_K);
-
-            e.register(questMenu);
-        }
-
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent e) {
             e.enqueueWork(() -> MenuScreens.register(MenuHandler.QUEST_DEFAULT_MENU.get(), QuestDefaultScreen::new));

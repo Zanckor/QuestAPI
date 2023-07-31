@@ -13,7 +13,8 @@ import dev.zanckor.mod.common.util.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
@@ -37,9 +38,9 @@ public class ClientHandler {
     public static void toastQuestCompleted(String questName) {
         String title = I18n.get(questName);
 
-        SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, Component.literal("Quest Completed"), Component.literal(title));
+        SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, new TextComponent("Quest Completed"), new TranslatableComponent(title));
 
-        MCUtilClient.playSound(SoundEvents.NOTE_BLOCK_PLING.get(), 1, 2);
+        MCUtilClient.playSound(SoundEvents.NOTE_BLOCK_PLING, 1, 2);
     }
 
     public static void displayDialog(String dialogIdentifier, int dialogID, String text, int optionSize, HashMap<Integer, List<Integer>> optionIntegers, HashMap<Integer, List<String>> optionStrings, UUID entity, String resourceLocation, Item item, DisplayDialog.NpcType npcType) {
@@ -57,7 +58,9 @@ public class ClientHandler {
         if (addQuest) {
             var totalGoals = new AtomicInteger();
             trackedQuestList.forEach(quest -> totalGoals.addAndGet(quest.getQuestGoals().size()));
-            if (totalGoals.get() < 5) { trackedQuestList.add(userQuest); }
+            if (totalGoals.get() < 5) {
+                trackedQuestList.add(userQuest);
+            }
         } else {
             trackedQuestList.removeIf(quest -> quest.getId().equals(userQuest.getId()));
         }
@@ -65,7 +68,7 @@ public class ClientHandler {
 
     public static void updateQuestTracked(UserQuest userQuest) {
         ClientHandler.trackedQuestList.forEach(quest -> {
-            if(!userQuest.getId().equals(quest.getId())) return;
+            if (!userQuest.getId().equals(quest.getId())) return;
 
             quest.setQuestGoals(userQuest.getQuestGoals());
         });
@@ -97,9 +100,9 @@ public class ClientHandler {
 
     public static void setAvailableEntityTypeForQuest(List<String> entityTypeForQuest, Map<String, String> entityTagMap) {
         for (String entityTypeString : entityTypeForQuest) {
-            if(entityTypeString.isBlank()) return;
+            if (entityTypeString.isBlank()) return;
             ResourceLocation entityResourceLocation = new ResourceLocation(entityTypeString.strip());
-            EntityType entityType = ForgeRegistries.ENTITY_TYPES.getValue(entityResourceLocation);
+            EntityType entityType = ForgeRegistries.ENTITIES.getValue(entityResourceLocation);
 
             availableEntityTypeForQuest.add(entityType);
         }

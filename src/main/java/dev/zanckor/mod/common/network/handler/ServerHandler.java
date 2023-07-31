@@ -81,9 +81,10 @@ public class ServerHandler {
         try {
             NPCConversation dialog = (NPCConversation) GsonManager.getJsonClass(dialogFile, NPCConversation.class);
 
-            switch (npcType){
+            switch (npcType) {
                 case ITEM -> dialogTemplate.handler(player, dialog, optionID, item);
-                case UUID -> dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID((ServerLevel) player.level(), entityUUID));
+                case UUID ->
+                        dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID(player.getLevel(), entityUUID));
                 case RESOURCE_LOCATION -> dialogTemplate.handler(player, dialog, optionID, resourceLocation);
             }
         } catch (IOException e) {

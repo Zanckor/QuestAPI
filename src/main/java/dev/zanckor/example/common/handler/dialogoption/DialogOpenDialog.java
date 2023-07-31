@@ -7,7 +7,6 @@ import dev.zanckor.api.filemanager.dialog.codec.NPCDialog;
 import dev.zanckor.example.common.enumregistry.enumdialog.EnumDialogOption;
 import dev.zanckor.mod.common.network.SendQuestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;

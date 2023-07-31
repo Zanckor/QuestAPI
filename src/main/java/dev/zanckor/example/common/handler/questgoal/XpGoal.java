@@ -39,7 +39,7 @@ public class XpGoal extends AbstractGoal {
     }
 
     @Override
-    public void updateData(ServerPlayer player, File file) throws IOException {
+    public void updateData(ServerPlayer player, File file) {
     }
 
     @Override

@@ -10,7 +10,7 @@ public class SendQuestPacket {
     public static void NEAR(Player player, Object packet, double radius) {
         NetworkHandler.CHANNEL.send(
                 PacketDistributor.NEAR.with(() ->
-                        new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(), radius, player.level().dimension())),
+                        new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(), radius, player.level.dimension())),
                 packet);
     }
 
@@ -31,7 +31,7 @@ public class SendQuestPacket {
     public static void DIMENSION(Player player, Object packet) {
         NetworkHandler.CHANNEL.send(
                 PacketDistributor.DIMENSION.with(() ->
-                        player.level().dimension()),
+                        player.level.dimension()),
                 packet);
     }
 }

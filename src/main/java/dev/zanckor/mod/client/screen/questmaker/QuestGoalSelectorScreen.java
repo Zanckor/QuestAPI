@@ -1,5 +1,6 @@
 package dev.zanckor.mod.client.screen.questmaker;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractTargetType;
 import dev.zanckor.api.filemanager.quest.codec.server.ServerGoal;
@@ -10,10 +11,12 @@ import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.util.MCUtilClient;
 import dev.zanckor.mod.server.menu.questmaker.QuestMakerMenu;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -54,7 +57,7 @@ public class QuestGoalSelectorScreen extends AbstractContainerScreen<QuestMakerM
             int linesOffSet = lines * 10;
 
             TextButton textButton = new TextButton((int) (xPosition / 1.9), (int) (yPosition / 1.3) + buttonYOffSet.get(), 80, lines * 20, scale,
-                    Component.literal(buttonText), 14,
+                    new TextComponent(buttonText), 14,
                     onPress -> {
                     });
 
@@ -64,31 +67,34 @@ public class QuestGoalSelectorScreen extends AbstractContainerScreen<QuestMakerM
     }
 
     @Override
-    protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
-
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        PoseStack poseStack = graphics.pose();
-        graphics.blit(BG, xPosition - (imageWidth / 2), yPosition - (imageHeight / 2), 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         poseStack.pushPose();
-        renderTitles(graphics, poseStack, scale, xPosition, yPosition);
+        RenderSystem.setShaderTexture(0, BG);
+
+        blit(poseStack, xPosition - (imageWidth / 2), yPosition - (imageHeight / 2), 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+
+        renderTitles(poseStack, scale, xPosition, yPosition);
+
         poseStack.popPose();
 
-        super.render(graphics, mouseX, mouseY, partialTicks);
+        super.render(poseStack, mouseX, mouseY, partialTicks);
     }
 
-    public void renderTitles(GuiGraphics graphics, PoseStack poseStack, float scale, int xPosition, int yPosition) {
-        String questTitle = I18n.get(editingQuest.getTitle());
+    public void renderTitles(PoseStack poseStack, float scale, int xPosition, int yPosition) {
+        String questTitle = editingQuest.getTitle();
+        questTitle = questTitle.startsWith("#") ? I18n.get("quest_name.questapi." + editingQuest.getTitle().substring(1)) : questTitle;
 
-        MCUtilClient.renderText(graphics, poseStack, xPosition, yPosition / 1.5, 0, scale, 40, questTitle, font);
-        MCUtilClient.renderText(graphics, poseStack, xPosition / 1.725, yPosition / 1.5, 0, scale, 40, "Goals", font);
+        MCUtilClient.renderText(poseStack, xPosition, yPosition / 1.5, 0, scale, 40, questTitle, font);
+        MCUtilClient.renderText(poseStack, xPosition / 1.725, yPosition / 1.5, 0, scale, 40, "Goals", font);
     }
 
     @Override
-    protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {
-        super.renderLabels(p_281635_, p_282681_, p_283686_);
+    protected void renderLabels(PoseStack p_97808_, int p_97809_, int p_97810_) {
+    }
+
+
+    @Override
+    protected void renderBg(PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
+
     }
 }
