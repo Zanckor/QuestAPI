@@ -17,6 +17,7 @@ public class UserQuest extends FileAbstract {
     private boolean timeLimit;
     private int timeLimitInSeconds;
     private boolean completed;
+    private String description;
 
 
     public static UserQuest createQuest(ServerQuest serverQuest, Path path) {
@@ -29,6 +30,7 @@ public class UserQuest extends FileAbstract {
         userQuest.setTimeLimit(serverQuest.hasTimeLimit());
         userQuest.setTimeLimitInSeconds(serverQuest.getTimeLimitInSeconds());
         userQuest.setCompleted(false);
+        userQuest.setDescription(serverQuest.getDescription());
 
         for (int goalsIndex = 0; goalsIndex < serverQuest.getGoalList().size(); goalsIndex++) {
             UserGoal questGoal = UserGoal.createQuestGoal(serverQuest.getGoalList().get(goalsIndex), questModid);
@@ -90,6 +92,14 @@ public class UserQuest extends FileAbstract {
 
     public void setTimeLimitInSeconds(int timeLimitInSeconds) {
         this.timeLimitInSeconds = timeLimitInSeconds;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 

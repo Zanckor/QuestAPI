@@ -38,8 +38,7 @@ public class LoadTagDialogList {
         resourceManager.listResources("npc/compound_tag_list", (path) -> {
             if (path.length() > 22) {
                 String fileName = path.substring(22);
-                ResourceLocation resourceLocation = new ResourceLocation(modid, path);
-                if(!path.contains(modid)) return false;
+                ResourceLocation resourceLocation = new ResourceLocation(modid, "npc/compound_tag_list/" + path);
 
                 if (path.endsWith(".json")) {
                     read(resourceLocation, server);

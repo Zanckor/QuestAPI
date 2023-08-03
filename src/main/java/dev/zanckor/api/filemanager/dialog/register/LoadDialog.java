@@ -1,6 +1,5 @@
 package dev.zanckor.api.filemanager.dialog.register;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.zanckor.api.filemanager.FolderManager;
 import dev.zanckor.api.filemanager.dialog.codec.NPCConversation;
@@ -35,8 +34,7 @@ public class LoadDialog {
         resourceManager.listResources("dialog", (path) -> {
             if (path.length() > 7) {
                 String fileName = path.substring(7);
-                ResourceLocation resourceLocation = new ResourceLocation(modid, path);
-                if(!path.contains(modid)) return false;
+                ResourceLocation resourceLocation = new ResourceLocation(modid, "dialog/" + path);
 
                 if (path.endsWith(".json")) {
                     read(resourceLocation, server);
@@ -56,7 +54,7 @@ public class LoadDialog {
             FolderManager.createAPIFolder(server.getWorldPath(LevelResource.ROOT).toAbsolutePath());
         }
 
-        for(Map.Entry<String, JsonObject> entry : DialogJSONListener.datapackDialogList.entrySet()){
+        for (Map.Entry<String, JsonObject> entry : DialogJSONListener.datapackDialogList.entrySet()) {
             FileWriter writer = new FileWriter(String.valueOf(Path.of(serverDialogs + "/" + entry.getKey())));
             writer.write(entry.getValue().toString());
             writer.close();
@@ -65,7 +63,7 @@ public class LoadDialog {
 
     private static void read(ResourceLocation resourceLocation, MinecraftServer server) {
         try {
-            if(!server.getResourceManager().hasResource(resourceLocation)) return;
+            if (!server.getResourceManager().hasResource(resourceLocation)) return;
 
             InputStream inputStream = server.getResourceManager().getResource(resourceLocation).getInputStream();
             dialogTemplate = GsonManager.gson.fromJson(new InputStreamReader(inputStream), NPCConversation.class);
@@ -77,7 +75,7 @@ public class LoadDialog {
 
     private static void write(NPCConversation dialogTemplate, String identifier, String fileName) {
         try {
-            if(dialogTemplate == null) return;
+            if (dialogTemplate == null) return;
 
             File file = new File(serverDialogs.toFile(), identifier + "." + fileName);
 

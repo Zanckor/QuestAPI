@@ -26,7 +26,7 @@ public class ActiveQuestList {
         try {
             File[] activeQuests = QuestApiMain.getActiveQuest(QuestApiMain.getUserFolder(playerUUID)).toFile().listFiles();
 
-            if(activeQuests == null) return;
+            if (activeQuests == null) return;
 
             for (File file : activeQuests) {
                 questFileList.add(Files.readString(file.toPath()));

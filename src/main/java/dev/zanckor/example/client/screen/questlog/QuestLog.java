@@ -39,7 +39,8 @@ import static dev.zanckor.mod.common.network.handler.ClientHandler.trackedQuestL
 
 public class QuestLog extends AbstractQuestLog {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
-    int selectedPage = 0;
+    int selectedQuestPage = 0;
+    int selectedInfoPage = 0;
 
 
     double xScreenPos, yScreenPos;
@@ -84,7 +85,7 @@ public class QuestLog extends AbstractQuestLog {
 
         //For each quest, checks if it can be added as a button to display data
         for (int i = 0; i < activeQuestList.size(); i++) {
-            int buttonIndex = i + (4 * selectedPage);
+            int buttonIndex = i + (4 * selectedQuestPage);
 
             //Only add widget if there's 4 or fewer buttons added
             if (displayedButton.size() < 4 && activeQuestList.size() > buttonIndex) {
@@ -107,19 +108,27 @@ public class QuestLog extends AbstractQuestLog {
             }
         }
 
-        Button prevPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
-            if (selectedPage > 0) {
-                selectedPage--;
+        Button questPreviousPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
+            if (selectedQuestPage > 0) {
+                selectedQuestPage--;
 
                 init();
             }
         });
-        Button nextPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
-            if (selectedPage + 1 < Math.ceil(activeQuestList.size()) / 4) {
-                selectedPage++;
+        Button questNextPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
+            if (selectedQuestPage + 1 < Math.ceil(activeQuestList.size()) / 4) {
+                selectedQuestPage++;
 
                 init();
             }
+        });
+        Button infoPreviousPage = MCUtilClient.createButton((int) (xScreenPos + (imageWidth / 3.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
+            selectedInfoPage = 0;
+            questInfoScroll = 0;
+        });
+        Button infoNextPage = MCUtilClient.createButton((int) (xScreenPos + (imageWidth / 2.8)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
+            selectedInfoPage = 1;
+            questInfoScroll = 0;
         });
         Button addTrackedQuest = MCUtilClient.createButton((int) (xScreenPos + (imageWidth / 25)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, new TextComponent("Track Quest"), button -> {
             AtomicBoolean containsSelectedQuest = new AtomicBoolean(false);
@@ -137,8 +146,11 @@ public class QuestLog extends AbstractQuestLog {
 
         addRenderableWidget(textButton);
         addWidget(addTrackedQuest);
-        addWidget(prevPage);
-        addWidget(nextPage);
+        addWidget(questPreviousPage);
+        addWidget(questNextPage);
+        addWidget(infoPreviousPage);
+        addWidget(infoNextPage);
+
 
         textButton.setValue("Quest name - Press Enter");
         SendQuestPacket.TO_SERVER(new RequestActiveQuests());
@@ -188,7 +200,6 @@ public class QuestLog extends AbstractQuestLog {
         HashMap<String, List<UserGoal>> userQuestHashMap = new HashMap<>();
         int xPosition = (int) (width / 1.925);
         float scale = ((float) width) / 700;
-
         poseStack.pushPose();
         poseStack.translate(xPosition, yScreenPos + ((((float) width) / 500) * 40), 0);
         poseStack.scale(scale, scale, 0);
@@ -210,7 +221,11 @@ public class QuestLog extends AbstractQuestLog {
 
         //Displays quest goals
         renderTitle(poseStack, minecraft);
-        renderQuestType(poseStack, minecraft, userQuestHashMap);
+        if (selectedInfoPage == 0) {
+            renderGoals(poseStack, minecraft, userQuestHashMap);
+        } else {
+            renderDescription(poseStack);
+        }
 
         if (selectedQuest.hasTimeLimit()) {
             MCUtilClient.renderLine(poseStack, 0, 0, 30, I18n.get("tracker.questapi.time_limit") + selectedQuest.getTimeLimitInSeconds(), font);
@@ -226,15 +241,15 @@ public class QuestLog extends AbstractQuestLog {
     }
 
 
-    public void renderQuestType(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
-        int scissorBottom = (int) (height - (yScreenPos + imageHeight) + 15) * 2;
-        int scissorTop = (int) (imageHeight * 1.25) - 15;
+    public void renderGoals(PoseStack poseStack, Minecraft minecraft, HashMap<String, List<UserGoal>> userQuestHashMap) {
+        int scissorBottom = (int) (height * 0.4);
+        int scissorTop = (int) (height * 0.7);
 
         RenderSystem.enableScissor(width, scissorBottom, (width / 2) + (imageWidth / 2), scissorTop);
 
         Font font = minecraft.font;
         Player player = minecraft.player;
-        poseStack.translate(0, questInfoScroll + 20, 0);
+        poseStack.translate(0, questInfoScroll + 10, 0);
         sin += 0.5;
 
         for (Map.Entry<String, List<UserGoal>> entry : userQuestHashMap.entrySet()) {
@@ -261,6 +276,17 @@ public class QuestLog extends AbstractQuestLog {
         RenderSystem.disableScissor();
     }
 
+    public void renderDescription(PoseStack poseStack) {
+        int scissorBottom = (int) (height * 0.4);
+        int scissorTop = (int) (height * 0.7);
+
+        RenderSystem.enableScissor(width, scissorBottom, (width / 2) + (imageWidth / 2), scissorTop);
+        poseStack.translate(0, questInfoScroll + 7, 0);
+
+        MCUtilClient.renderLine(poseStack, 30, 0, 0, 18, selectedQuest.getDescription(), font);
+
+        RenderSystem.disableScissor();
+    }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
@@ -268,7 +294,7 @@ public class QuestLog extends AbstractQuestLog {
         boolean mouseYInBox = (mouseY > yScreenPos) && (mouseY < (yScreenPos + imageHeight));
 
         if (mouseXInBox && mouseYInBox) {
-            questInfoScroll += scroll * 4;
+            questInfoScroll = (int) Math.min(0, questInfoScroll + (scroll * 4));
         }
 
         return super.mouseScrolled(mouseX, mouseY, scroll);

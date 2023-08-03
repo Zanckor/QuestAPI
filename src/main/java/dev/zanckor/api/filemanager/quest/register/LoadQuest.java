@@ -1,6 +1,5 @@
 package dev.zanckor.api.filemanager.quest.register;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.zanckor.api.filemanager.FolderManager;
 import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
@@ -36,8 +35,7 @@ public class LoadQuest {
         resourceManager.listResources("quest", (path) -> {
             if (path.length() > 7) {
                 String fileName = path.substring(6);
-                ResourceLocation resourceLocation = new ResourceLocation(modid, path);
-                if(!path.contains(modid)) return false;
+                ResourceLocation resourceLocation = new ResourceLocation(modid, "quest/" + path);
 
                 if (path.endsWith(".json")) {
                     read(resourceLocation, resourceManager);
@@ -65,7 +63,7 @@ public class LoadQuest {
 
     private static void read(ResourceLocation resourceLocation, ResourceManager resourceManager) {
         try {
-            if(!resourceManager.hasResource(resourceLocation)) return;
+            if (!resourceManager.hasResource(resourceLocation)) return;
 
             InputStream inputStream = resourceManager.getResource(resourceLocation).getInputStream();
             playerQuest = GsonManager.gson.fromJson(new InputStreamReader(inputStream), ServerQuest.class);
@@ -77,7 +75,7 @@ public class LoadQuest {
 
     private static void write(ServerQuest serverQuest, String fileName, String identifier) {
         try {
-            if(serverQuest == null) return;
+            if (serverQuest == null) return;
 
             File file = new File(serverQuests.toFile(), identifier + "." + fileName);
             serverQuest.setId(identifier + "." + fileName.substring(0, fileName.length() - 5));

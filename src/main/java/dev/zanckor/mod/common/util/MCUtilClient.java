@@ -6,7 +6,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-
 import dev.zanckor.mod.QuestApiMain;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -21,15 +20,14 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.levelgen.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
@@ -39,7 +37,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import static net.minecraft.client.gui.components.Button.*;
+import static net.minecraft.client.gui.components.Button.OnPress;
 
 @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, value = Dist.CLIENT)
 public class MCUtilClient {
@@ -48,10 +46,14 @@ public class MCUtilClient {
 
         return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
+
     public static List<List<FormattedCharSequence>> splitText(String text, Font font, int textMaxLength) {
         final List<List<FormattedCharSequence>> textBlocks = new ArrayList<>();
+        final List<String> textWithLineJumps = List.of(text.split("\\\\n"));
 
-        textBlocks.add(font.split(new TextComponent(text), textMaxLength));
+        textWithLineJumps.forEach(textLines -> {
+            textBlocks.add(font.split(new TextComponent(textLines), textMaxLength));
+        });
 
         return textBlocks;
     }
@@ -100,13 +102,14 @@ public class MCUtilClient {
 
         poseStack.popPose();
     }
-    
+
     public static void renderLine(PoseStack poseStack, int maxTextLength, float xPos, float yPos, float textIndent, String text, Font font) {
         float splitIndent = 0;
         List<List<FormattedCharSequence>> splintedText = splitText(text, font, maxTextLength * 5);
 
         for (List<FormattedCharSequence> line : splintedText) {
             for (FormattedCharSequence lineString : line) {
+
                 font.draw(poseStack, lineString, xPos, yPos + (textIndent * (splitIndent / 2)), 0);
 
                 splitIndent++;
@@ -296,7 +299,7 @@ public class MCUtilClient {
         posestack1.scale((float) size, (float) size, (float) size);
         posestack1.mulPose(new Quaternion(Vector3f.ZP.rotationDegrees(180.0F)));
         posestack1.mulPose(new Quaternion(Vector3f.YP.rotationDegrees(90.0F)));
-        posestack1.mulPose(new Quaternion((float) rotation, 0,0, true));
+        posestack1.mulPose(new Quaternion((float) rotation, 0, 0, true));
 
         float f2 = entity.yBodyRot;
         float f3 = entity.getYRot();
@@ -366,7 +369,7 @@ public class MCUtilClient {
         RenderSystem.applyModelViewMatrix();
     }
 
-    public static Button createButton(int xPos, int yPos, int width, int height, Component component, OnPress onPress){
+    public static Button createButton(int xPos, int yPos, int width, int height, Component component, OnPress onPress) {
         Button button = new Button(xPos, yPos, width, height, component, onPress);
 
         return button;

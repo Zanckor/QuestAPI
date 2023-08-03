@@ -6,6 +6,7 @@ import dev.zanckor.api.screen.ScreenRegistry;
 import dev.zanckor.example.ModExample;
 import dev.zanckor.mod.client.screen.abstractscreen.AbstractQuestTracked;
 import dev.zanckor.mod.client.screen.questmaker.QuestDefaultScreen;
+import dev.zanckor.mod.client.toast.QuestTutorialToast;
 import dev.zanckor.mod.common.config.client.RendererConfig;
 import dev.zanckor.mod.common.config.client.ScreenConfig;
 import dev.zanckor.mod.common.config.server.GoalConfig;
@@ -14,11 +15,13 @@ import dev.zanckor.mod.common.network.NetworkHandler;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.tutorial.Tutorial;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -112,10 +115,26 @@ public class QuestApiMain {
 
 
     @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public class ClientEventHandlerRegister {
+    public static class ClientEventHandlerRegister {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent e) {
             e.enqueueWork(() -> MenuScreens.register(MenuHandler.QUEST_DEFAULT_MENU.get(), QuestDefaultScreen::new));
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = QuestApiMain.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    public static class ClientEvent {
+        @SubscribeEvent
+        public static void howToOpenQuestLog(PlayerEvent.PlayerLoggedInEvent e) {
+            Player player = e.getPlayer();
+
+            if (!player.getPersistentData().contains("has_displayed_tutorial")) {
+                Tutorial tutorial = Minecraft.getInstance().getTutorial();
+                player.getPersistentData().putBoolean("has_displayed_tutorial", true);
+
+                QuestTutorialToast toast = new QuestTutorialToast();
+                tutorial.addTimedToast(toast, 1);
+            }
         }
     }
 }

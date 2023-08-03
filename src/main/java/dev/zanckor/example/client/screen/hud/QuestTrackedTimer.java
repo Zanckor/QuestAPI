@@ -23,7 +23,7 @@ public class QuestTrackedTimer {
         }
 
         ClientHandler.trackedQuestList.forEach(quest -> {
-            if (mc.player.tickCount % 20 == 0 && quest.hasTimeLimit() && Timer.existsTimer(mc.player.getUUID(), "TIMER_QUEST" + quest.getId()) && quest.getTimeLimitInSeconds() > 0) {
+            if (quest != null && mc.player.tickCount % 20 == 0 && quest.hasTimeLimit() && Timer.existsTimer(mc.player.getUUID(), "TIMER_QUEST" + quest.getId()) && quest.getTimeLimitInSeconds() > 0) {
                 quest.setTimeLimitInSeconds((int) Timer.remainingTime(mc.player.getUUID(), "TIMER_QUEST" + quest.getId()) / 1000);
             }
         });

@@ -38,7 +38,7 @@ public class LoadDialogList {
         resourceManager.listResources("npc/entity_type_list", (path) -> {
             if (path.length() > 22) {
                 String fileName = path.substring(21);
-                ResourceLocation resourceLocation = new ResourceLocation(modid, path);
+                ResourceLocation resourceLocation = new ResourceLocation(modid, "npc/entity_type_list/" + path);
                 if(!path.contains(modid)) return false;
 
                 if (path.endsWith(".json")) {
