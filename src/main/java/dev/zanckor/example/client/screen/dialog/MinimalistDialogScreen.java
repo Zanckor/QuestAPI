@@ -97,7 +97,7 @@ public class MinimalistDialogScreen extends AbstractDialog {
         yButtonPosition = (int) (yScreenPos * 1.225);
 
         for (int i = 0; i < optionSize; i++) {
-            int stringLength = (int) ((optionStrings.get(i).get(0).length()) * (2.6 * scale));
+            int stringLength = (int) ((optionStrings.get(i).get(0).length()) * (2.6 * scale) + (25 * scale));
             int index = i;
 
             if (xButtonPosition + stringLength > (width / 1.3)) {

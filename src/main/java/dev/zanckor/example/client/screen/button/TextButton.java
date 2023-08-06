@@ -29,7 +29,7 @@ public class TextButton extends Button {
         poseStack.translate(this.x, this.y, 0);
         poseStack.scale(scale, scale, 1);
 
-        MCUtilClient.renderLine(poseStack, 16, 0, maxLength, new TextComponent(getMessage().getString()).withStyle(style), Minecraft.getInstance().font);
+        MCUtilClient.renderLine(poseStack, 0, 3, maxLength, new TextComponent(getMessage().getString()).withStyle(style), Minecraft.getInstance().font);
         poseStack.popPose();
     }
 }

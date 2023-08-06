@@ -63,6 +63,8 @@ public class RenderQuestTracker extends AbstractQuestTracked {
         trackedQuestList.forEach(userQuest -> {
             userQuestHashMap.clear();
 
+            if(userQuest == null) return;
+
             if(!MCUtil.isQuestCompleted(userQuest)) {
                 for (UserGoal questGoal : userQuest.getQuestGoals()) {
                     String type = questGoal.getType();

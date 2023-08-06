@@ -18,7 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -33,20 +33,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 
 import static dev.zanckor.mod.common.network.handler.ClientHandler.activeQuestList;
 import static dev.zanckor.mod.common.network.handler.ClientHandler.trackedQuestList;
 
 public class QuestLog extends AbstractQuestLog {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
+    private final static ResourceLocation TRACK_BUTTON = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/track_button.png");
     int selectedQuestPage = 0;
     int selectedInfoPage = 0;
 
 
     double xScreenPos, yScreenPos;
     int imageWidth, imageHeight;
-    EditBox textButton;
-    String questSearch;
     int questInfoScroll;
     float sin;
 
@@ -73,104 +73,83 @@ public class QuestLog extends AbstractQuestLog {
         imageHeight = width / 3;
         xScreenPos = width - (imageWidth);
         yScreenPos = (double) height / 4;
-        int xButtonPosition = (int) (xScreenPos - (imageWidth / 2.25));
+        int xButtonPosition = (int) (xScreenPos - (imageWidth / 2.6));
         int yButtonPosition = (int) (yScreenPos + ((((float) width) / 500) * 40));
 
-        float textLengthScale = ((float) width) / 575;
-        float buttonScale = ((float) width) / 700;
+        float buttonScale = ((float) width) / 690;
         int maxLength = 26 * 5;
 
         HashMap<Integer, Integer> displayedButton = new HashMap<>();
 
 
         //For each quest, checks if it can be added as a button to display data
-        for (int i = 0; i < activeQuestList.size(); i++) {
-            int buttonIndex = i + (4 * selectedQuestPage);
-
-            //Only add widget if there's 4 or fewer buttons added
+        //Only add widget if there's 4 or fewer buttons added
+        IntStream.range(0, activeQuestList.size()).forEachOrdered(index -> {
+            int buttonIndex = index + (4 * selectedQuestPage);
             if (displayedButton.size() < 4 && activeQuestList.size() > buttonIndex) {
                 String title = I18n.get(activeQuestList.get(buttonIndex).getTitle());
+                UserQuest currentQuest = activeQuestList.get(buttonIndex);
+                AtomicBoolean containsSelectedQuest = new AtomicBoolean(false);
+
+                //If trackedQuestList don't contain this quest, track it, else unTrack it.
+                for (UserQuest trackedQuest : trackedQuestList) {
+                    if (trackedQuest != null && trackedQuest.getId().equals(currentQuest.getId())) {
+                        containsSelectedQuest.set(true);
+                    }
+                }
+                int yUVOffset = containsSelectedQuest.get() ? 14 * buttonIndex : 0;
+
+                System.out.println(containsSelectedQuest.get());
 
                 int textLines = (title.length() * 5) / maxLength;
-                float buttonWidth = textLines < 1 ? activeQuestList.get(buttonIndex).getTitle().length() * 5 * textLengthScale : maxLength * textLengthScale;
+                float buttonWidth = textLines < 1 ? (title.length() * 5) * buttonScale : maxLength * buttonScale;
 
+                //Button to select a quest - Will change page and display quest data
                 Button questSelect = new TextButton(
                         xButtonPosition, yButtonPosition, (int) buttonWidth, 20, buttonScale,
                         new TextComponent(title), 26, button -> {
-                    selectedQuest = activeQuestList.get(buttonIndex);
+                    selectedQuest = currentQuest;
                     SendQuestPacket.TO_SERVER(new RequestActiveQuests());
                 });
 
-                displayedButton.put(displayedButton.size() + 1, i);
+                //Button to track quest
+                ImageButton trackQuest = new ImageButton(
+                        (int) (xButtonPosition * 0.925), (yButtonPosition + 25),
+                        width / 50, width / 50, 0, yUVOffset, 0,
+                        TRACK_BUTTON,
+                        width / 50, width / 25,
+                        button -> ClientHandler.modifyTrackedQuests(!containsSelectedQuest.get(), currentQuest));
 
+                displayedButton.put(displayedButton.size() + 1, index);
+
+                //Move 30 px down for render next button. Similar to split indent.
                 questSelect.y = ((int) (questSelect.y + buttonIndex * (30 * buttonScale)));
+                trackQuest.y = ((int) (questSelect.y + buttonIndex * (30 * buttonScale)));
+
+                addRenderableWidget(trackQuest);
                 addRenderableWidget(questSelect);
             }
-        }
+        });
 
-        Button questPreviousPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 5.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
+        Button questPreviousPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 2.25)), (int) (yScreenPos + imageHeight * 0.81), width / 50, width / 50, Component.nullToEmpty(""), button -> {
             if (selectedQuestPage > 0) {
                 selectedQuestPage--;
 
                 init();
             }
         });
-        Button questNextPage = MCUtilClient.createButton((int) (xScreenPos - (imageWidth / 9)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
+        Button questNextPage = MCUtilClient.createButton((int) (xScreenPos + (imageWidth / 2.5)), (int) (yScreenPos + imageHeight * 0.81), width / 50, width / 50, Component.nullToEmpty(""), button -> {
             if (selectedQuestPage + 1 < Math.ceil(activeQuestList.size()) / 4) {
                 selectedQuestPage++;
 
                 init();
             }
         });
-        Button infoPreviousPage = MCUtilClient.createButton((int) (xScreenPos + (imageWidth / 3.5)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
-            selectedInfoPage = 0;
-            questInfoScroll = 0;
-        });
-        Button infoNextPage = MCUtilClient.createButton((int) (xScreenPos + (imageWidth / 2.8)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, Component.nullToEmpty(""), button -> {
-            selectedInfoPage = 1;
-            questInfoScroll = 0;
-        });
-        Button addTrackedQuest = MCUtilClient.createButton((int) (xScreenPos + (imageWidth / 25)), (int) (yScreenPos + imageHeight * 0.85), width / 25, width / 30, new TextComponent("Track Quest"), button -> {
-            AtomicBoolean containsSelectedQuest = new AtomicBoolean(false);
 
-            trackedQuestList.forEach(trackedQuest -> {
-                if (trackedQuest.getId().equals(selectedQuest.getId())) {
-                    containsSelectedQuest.set(true);
-                }
-            });
+        addRenderableWidget(questPreviousPage);
+        addRenderableWidget(questNextPage);
 
-            ClientHandler.modifyTrackedQuests(!containsSelectedQuest.get(), selectedQuest);
-        });
-        textButton = new EditBox(font, (int) (xScreenPos - (imageWidth / 2.4)), (int) (yScreenPos + imageHeight * 0.75), width / 6, 10, Component.nullToEmpty(""));
-
-
-        addRenderableWidget(textButton);
-        addWidget(addTrackedQuest);
-        addWidget(questPreviousPage);
-        addWidget(questNextPage);
-        addWidget(infoPreviousPage);
-        addWidget(infoNextPage);
-
-
-        textButton.setValue("Quest name - Press Enter");
         SendQuestPacket.TO_SERVER(new RequestActiveQuests());
-    }
-
-    @Override
-    public boolean keyReleased(int x, int y, int p_94717_) {
-        if (textButton != null && x == 257 && y == 28) {
-            questSearch = textButton.getValue();
-            init();
-        }
-
-        return super.keyReleased(x, y, p_94717_);
-    }
-
-    @Override
-    public boolean mouseClicked(double x, double y, int p_94697_) {
-        textButton.setValue("");
-
-        return super.mouseClicked(x, y, p_94697_);
     }
 
     @Override
