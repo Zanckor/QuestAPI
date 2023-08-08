@@ -1,7 +1,7 @@
 package dev.zanckor.example.common.handler.questreward;
 
-import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.api.filemanager.quest.abstracquest.AbstractReward;
+import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,6 +31,13 @@ public class ItemReward extends AbstractReward {
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
         ItemStack stack = new ItemStack(item, quantity);
 
-        player.addItem(stack);
+        //If player's inventory has enough space, give to inventory, else drop it
+        int stackCount = quantity / stack.getMaxStackSize();
+
+        if (player.getInventory().getFreeSlot() > stackCount) {
+            player.addItem(stack);
+        } else {
+            player.drop(stack, false, false);
+        }
     }
 }
