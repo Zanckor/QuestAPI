@@ -38,6 +38,7 @@ import java.util.stream.IntStream;
 import static dev.zanckor.mod.common.network.handler.ClientHandler.activeQuestList;
 import static dev.zanckor.mod.common.network.handler.ClientHandler.trackedQuestList;
 
+
 public class QuestLog extends AbstractQuestLog {
     private final static ResourceLocation QUEST_LOG = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/questlog_api.png");
     private final static ResourceLocation TRACK_BUTTON = new ResourceLocation(QuestApiMain.MOD_ID, "textures/gui/track_button.png");
@@ -97,10 +98,8 @@ public class QuestLog extends AbstractQuestLog {
                         containsSelectedQuest.set(true);
                     }
                 }
-                int yUVOffset = containsSelectedQuest.get() ? 14 * buttonIndex : 0;
 
-                System.out.println(containsSelectedQuest.get());
-
+                int yUVOffset = containsSelectedQuest.get() ? (int) (14 * buttonScale) : 0;
                 int textLines = (title.length() * 5) / maxLength;
                 float buttonWidth = textLines < 1 ? (title.length() * 5) * buttonScale : maxLength * buttonScale;
 
@@ -118,7 +117,10 @@ public class QuestLog extends AbstractQuestLog {
                         width / 50, width / 50, 0, yUVOffset, 0,
                         TRACK_BUTTON,
                         width / 50, width / 25,
-                        button -> ClientHandler.modifyTrackedQuests(!containsSelectedQuest.get(), currentQuest));
+                        button -> {
+                            ClientHandler.modifyTrackedQuests(!containsSelectedQuest.get(), currentQuest);
+                            init();
+                        });
 
                 displayedButton.put(displayedButton.size() + 1, index);
 
@@ -146,8 +148,8 @@ public class QuestLog extends AbstractQuestLog {
             }
         });
 
-        addRenderableWidget(questPreviousPage);
-        addRenderableWidget(questNextPage);
+        addWidget(questPreviousPage);
+        addWidget(questNextPage);
 
         SendQuestPacket.TO_SERVER(new RequestActiveQuests());
     }
@@ -252,19 +254,15 @@ public class QuestLog extends AbstractQuestLog {
             poseStack.translate(0, 10, 0);
         }
 
+        renderDescription(poseStack);
+
         RenderSystem.disableScissor();
     }
 
     public void renderDescription(PoseStack poseStack) {
-        int scissorBottom = (int) (height * 0.4);
-        int scissorTop = (int) (height * 0.7);
-
-        RenderSystem.enableScissor(width, scissorBottom, (width / 2) + (imageWidth / 2), scissorTop);
-        poseStack.translate(0, questInfoScroll + 7, 0);
-
+        MCUtilClient.renderLine(poseStack, 30, 30, 0, 18, "§l§nDESCRIPTION", font);
+        poseStack.translate(-8, 0, 0);
         MCUtilClient.renderLine(poseStack, 30, 0, 0, 18, selectedQuest.getDescription(), font);
-
-        RenderSystem.disableScissor();
     }
 
     @Override
