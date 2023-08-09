@@ -4,7 +4,7 @@
   "entity.questapi.quest_npc": "Quest NPC Test",
 
   "tracker.questapi.quest_type": "Quest Type: ",
-  "tracker.questapi.quest": "Quest: ",
+  "tracker.questapi.quest": "§lQuest: ",
   "tracker.questapi.time_limit": "Time limit: ",
 
   "quest_type.questapi.interact_entity": "Interact with entity",

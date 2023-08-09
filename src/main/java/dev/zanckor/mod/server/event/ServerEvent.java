@@ -6,7 +6,6 @@ import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog
 import dev.zanckor.api.filemanager.npc.entity_type_tag.codec.EntityTypeTagDialog.EntityTypeTagDialogCondition.EntityTypeTagDialogNBT;
 import dev.zanckor.api.filemanager.quest.codec.user.UserGoal;
 import dev.zanckor.api.filemanager.quest.codec.user.UserQuest;
-import dev.zanckor.mod.client.event.StartDialog;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.QuestApiMain;
 import dev.zanckor.mod.common.network.SendQuestPacket;
@@ -15,6 +14,7 @@ import dev.zanckor.mod.common.network.message.quest.ActiveQuestList;
 import dev.zanckor.mod.common.util.GsonManager;
 import dev.zanckor.mod.common.util.MCUtil;
 import dev.zanckor.mod.common.util.Timer;
+import dev.zanckor.mod.server.displaydialog.StartDialog;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.nbt.CompoundTag;
@@ -159,16 +159,16 @@ public class ServerEvent {
         final Player PLAYER = e.getEntity();
         final CompoundTag TAG = ITEM_STACK.getTag();
 
-        if(e.getSide().isClient() || ITEM_STACK == null || TAG == null) return;
+        if (e.getSide().isClient() || ITEM_STACK == null || TAG == null) return;
 
-        if(TAG.contains("display_dialog")){
+        if (TAG.contains("display_dialog")) {
             String dialogID = TAG.getString("display_dialog");
 
             StartDialog.loadDialog(PLAYER, dialogID, e.getItemStack().getItem());
             ITEM_STACK.getTooltipLines(PLAYER, TooltipFlag.NORMAL).add(Component.literal("Displays Dialog").withStyle(ChatFormatting.RED).withStyle(ChatFormatting.BOLD));
         }
 
-        if(TAG.contains("give_quest")){
+        if (TAG.contains("give_quest")) {
             String questID = TAG.getString("give_quest");
 
             MCUtil.addQuest(PLAYER, questID);

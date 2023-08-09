@@ -1,6 +1,6 @@
 package dev.zanckor.example.common.entity.server;
 
-import dev.zanckor.mod.client.event.StartDialog;
+import dev.zanckor.mod.server.displaydialog.StartDialog;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;

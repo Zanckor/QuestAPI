@@ -1,4 +1,4 @@
-package dev.zanckor.mod.client.event;
+package dev.zanckor.mod.server.displaydialog;
 
 import dev.zanckor.api.database.LocateHash;
 import dev.zanckor.api.filemanager.dialog.abstractdialog.AbstractDialogRequirement;
@@ -6,7 +6,6 @@ import dev.zanckor.api.filemanager.dialog.codec.NPCConversation;
 import dev.zanckor.api.filemanager.quest.register.QuestTemplateRegistry;
 import dev.zanckor.example.common.enumregistry.EnumRegistry;
 import dev.zanckor.mod.common.util.GsonManager;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -41,6 +40,7 @@ public class StartDialog {
             if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id, entity)) return;
         }
     }
+
     public static void loadDialog(Player player, String globalDialogID, String resourceLocation) throws IOException {
         Path path = LocateHash.getDialogLocation(globalDialogID);
 
@@ -56,7 +56,8 @@ public class StartDialog {
 
             AbstractDialogRequirement dialogRequirement = QuestTemplateRegistry.getDialogRequirement(requirementEnum);
 
-            if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id, resourceLocation)) return;
+            if (dialogRequirement != null && dialogRequirement.handler(player, dialog, dialog_id, resourceLocation))
+                return;
         }
     }
 

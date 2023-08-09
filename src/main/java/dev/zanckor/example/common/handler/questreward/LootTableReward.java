@@ -5,7 +5,6 @@ import dev.zanckor.api.filemanager.quest.codec.server.ServerQuest;
 import dev.zanckor.example.common.enumregistry.enumquest.EnumQuestReward;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -38,13 +37,20 @@ public class LootTableReward extends AbstractReward {
         ResourceLocation rl = new ResourceLocation(lootTableRL);
         LootTable lootTable = server.getLootTables().get(rl);
 
-        for(int actualRoll = 0; actualRoll < rolls; actualRoll++) {
+        for (int actualRoll = 0; actualRoll < rolls; actualRoll++) {
             LootContext.Builder builder = new LootContext.Builder(player.getLevel()).withLuck(player.getLuck());
             itemStackList = lootTable.getRandomItems(builder.create(LootContextParamSets.EMPTY));
         }
 
-        for(ItemStack itemStack : itemStackList){
-            player.getInventory().add(itemStack);
+        for (ItemStack itemStack : itemStackList) {
+
+            //If player's inventory has enough space, give to inventory, else drop it
+
+            if (player.getInventory().getFreeSlot() > 0) {
+                player.getInventory().add(itemStack);
+            } else {
+                player.drop(itemStack, false, false);
+            }
         }
     }
 }
