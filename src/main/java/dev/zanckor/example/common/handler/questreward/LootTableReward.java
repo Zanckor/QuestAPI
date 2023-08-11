@@ -45,8 +45,15 @@ public class LootTableReward extends AbstractReward {
             itemStackList = lootTable.getRandomItems(lootparams);
         }
 
-        for(ItemStack itemStack : itemStackList){
-            player.getInventory().add(itemStack);
+        for (ItemStack itemStack : itemStackList) {
+
+            //If player's inventory has enough space, give to inventory, else drop it
+
+            if (player.getInventory().getFreeSlot() > 0) {
+                player.getInventory().add(itemStack);
+            } else {
+                player.drop(itemStack, false, false);
+            }
         }
     }
 }

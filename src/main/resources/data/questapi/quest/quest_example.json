@@ -38,5 +38,6 @@
       "requirements_min": 0,
       "requirements_max": 10
     }
-  ]
+  ],
+  "description": "Text example for §ndescription formatting§r. \n \n You can add all formatting codes that Minecraft admits. As: \n  -§4Colors§r \n  -§lBold§r \n  -§mStrikethrough§r \n  -§nUnderline§r \n  -§oItalic§r \n  -Obfusc§r§kated"
 }
