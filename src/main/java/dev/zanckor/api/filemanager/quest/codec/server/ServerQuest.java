@@ -12,6 +12,7 @@ public class ServerQuest extends FileAbstract {
     private List<ServerGoal> goals;
     private List<ServerReward> rewards;
     private List<ServerRequirement> requirements;
+    private String description;
 
 
     public String getId() {
@@ -69,5 +70,12 @@ public class ServerQuest extends FileAbstract {
     public void setRequirements(List<ServerRequirement> ServerRequirements) {
         this.requirements = ServerRequirements;
     }
-}
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+}

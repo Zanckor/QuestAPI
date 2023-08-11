@@ -31,6 +31,13 @@ public class ItemReward extends AbstractReward {
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(valueItem));
         ItemStack stack = new ItemStack(item, quantity);
 
-        player.addItem(stack);
+        //If player's inventory has enough space, give to inventory, else drop it
+        int stackCount = quantity / stack.getMaxStackSize();
+
+        if (player.getInventory().getFreeSlot() > stackCount) {
+            player.addItem(stack);
+        } else {
+            player.drop(stack, false, false);
+        }
     }
 }

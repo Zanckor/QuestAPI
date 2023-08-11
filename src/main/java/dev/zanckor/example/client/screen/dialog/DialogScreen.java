@@ -11,7 +11,6 @@ import dev.zanckor.mod.common.network.message.dialogoption.DialogRequestPacket;
 import dev.zanckor.mod.common.network.message.dialogoption.DisplayDialog;
 import dev.zanckor.mod.common.network.message.screen.OpenVanillaEntityScreen;
 import dev.zanckor.mod.common.util.MCUtilClient;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -111,8 +110,8 @@ public class DialogScreen extends AbstractDialog {
             xButtonPosition += optionStrings.get(i).get(0).length() * 5.7 + 20;
         }
 
-        addRenderableWidget(new TextButton((int) (imageWidth * 1.4), (int) (imageHeight * 1.1), (int) (20 * scale), (int) (20 * scale), ((float) width) / 675,
-                Component.literal("↩").withStyle(ChatFormatting.BOLD), 26, button -> {
+        addRenderableWidget(new TextButton((int) (imageWidth * 1.4), (int) (imageHeight * 1.1), 20, 20, ((float) width) / 300,
+                Component.literal("↩"), 26, button -> {
             if (npcUUID != null) SendQuestPacket.TO_SERVER(new OpenVanillaEntityScreen(npcUUID));
         }));
     }
@@ -168,7 +167,7 @@ public class DialogScreen extends AbstractDialog {
 
         switch (optionType) {
             case OPEN_DIALOG, CLOSE_DIALOG:
-                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID, entity, resourceLocation, item, npcType));
+                SendQuestPacket.TO_SERVER(new DialogRequestPacket(optionType, optionID, entity, item, npcType));
                 break;
             case ADD_QUEST:
                 SendQuestPacket.TO_SERVER(new AddQuest(optionType, optionID));

@@ -71,7 +71,7 @@ public class ServerHandler {
         }
     }
 
-    public static void requestDialog(ServerPlayer player, int optionID, Enum optionType, UUID entityUUID, String resourceLocation, Item item, DisplayDialog.NpcType npcType) {
+    public static void requestDialog(ServerPlayer player, int optionID, Enum optionType, UUID entityUUID, Item item, DisplayDialog.NpcType npcType) {
         String globalDialogID = LocateHash.currentGlobalDialog.get(player);
 
         Path path = LocateHash.getDialogLocation(globalDialogID);
@@ -83,8 +83,7 @@ public class ServerHandler {
 
             switch (npcType){
                 case ITEM -> dialogTemplate.handler(player, dialog, optionID, item);
-                case UUID -> dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID((ServerLevel) player.level(), entityUUID));
-                case RESOURCE_LOCATION -> dialogTemplate.handler(player, dialog, optionID, resourceLocation);
+                case UUID, RESOURCE_LOCATION -> dialogTemplate.handler(player, dialog, optionID, MCUtil.getEntityByUUID((ServerLevel) player.level(), entityUUID));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
