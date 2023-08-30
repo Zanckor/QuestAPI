@@ -52,12 +52,12 @@ public class DialogAddQuest extends AbstractDialogOption {
         String quest = option.getQuest_id() + ".json";
         Path userFolder = Paths.get(playerData.toString(), player.getUUID().toString());
 
+
         if (!(option.getType().equals(EnumDialogOption.ADD_QUEST.toString()))) return;
         if (MCUtil.hasQuest(quest, userFolder)) {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientHandler::closeDialog);
             return;
         }
-
 
         for (File file : serverQuests.toFile().listFiles()) {
             if (!(file.getName().equals(quest))) continue;
@@ -76,6 +76,7 @@ public class DialogAddQuest extends AbstractDialogOption {
                 }
             }
 
+            //Add quest to player
             UserQuest userQuest = UserQuest.createQuest(serverQuest, path);
             GsonManager.writeJson(path.toFile(), userQuest);
 
@@ -87,6 +88,7 @@ public class DialogAddQuest extends AbstractDialogOption {
 
             break;
         }
+
 
         //Close screen and update active quest list on client side
         SendQuestPacket.TO_CLIENT(player, new CloseDialog());

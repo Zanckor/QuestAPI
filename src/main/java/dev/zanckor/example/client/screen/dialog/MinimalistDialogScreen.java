@@ -91,11 +91,11 @@ public class MinimalistDialogScreen extends AbstractDialog {
         yScreenPos = (double) width / 3;
         scale = ((float) width) / 700;
 
-        xButtonPosition = (int) (xScreenPos - (imageWidth / 2.75));
+        xButtonPosition = width / 4;
         yButtonPosition = (int) (yScreenPos * 1.225);
 
         for (int i = 0; i < optionSize; i++) {
-            int stringLength = (int) ((optionStrings.get(i).get(0).length()) * (2.6 * scale));
+            int stringLength = (int) ((optionStrings.get(i).get(0).length() + 5) * (2.6 * scale));
             int index = i;
 
             if (xButtonPosition + stringLength > (width / 1.3)) {
@@ -113,27 +113,6 @@ public class MinimalistDialogScreen extends AbstractDialog {
                 Component.literal("↩"), 26, button -> {
             if (npcUUID != null) SendQuestPacket.TO_SERVER(new OpenVanillaEntityScreen(npcUUID));
         }));
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        if (textDisplaySize < text.length()) {
-            if (textDisplayDelay == 0) {
-                MCUtilClient.playSound(SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_ON, 0.975f, 1.025f);
-                textDisplaySize++;
-
-                if (textDisplaySize < text.length()) {
-                    switch (Character.toString(text.charAt(textDisplaySize))) {
-                        case ".", "?", "!" -> textDisplayDelay = 9;
-                        case "," -> textDisplayDelay = 5;
-                    }
-                }
-            } else {
-                textDisplayDelay--;
-            }
-        }
     }
 
     @Override
@@ -162,6 +141,27 @@ public class MinimalistDialogScreen extends AbstractDialog {
         }
 
         super.render(graphics, mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (textDisplaySize < text.length()) {
+            if (textDisplayDelay == 0) {
+                MCUtilClient.playSound(SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_ON, 0.975f, 1.025f);
+                textDisplaySize++;
+
+                if (textDisplaySize < text.length()) {
+                    switch (Character.toString(text.charAt(textDisplaySize))) {
+                        case ".", "?", "!" -> textDisplayDelay = 9;
+                        case "," -> textDisplayDelay = 5;
+                    }
+                }
+            } else {
+                textDisplayDelay--;
+            }
+        }
     }
 
     private void button(int optionID) {
